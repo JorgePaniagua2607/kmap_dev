@@ -1247,45 +1247,134 @@ body::after {
   }
 
   .btn {
-    @apply cursor-pointer select-none rounded-full px-5 py-2.5 font-bold text-[#021226] bg-gradient-to-r from-[#00d2ff] to-[#0099ff] hover:from-[#00f2fe] hover:to-[#00b4d8] hover:-translate-y-0.5 active:scale-95 disabled:opacity-45 disabled:pointer-events-none transition-all duration-200 ease-out flex items-center justify-center gap-2;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 9999px;
+    padding: 0.625rem 1.25rem;
+    font-weight: 700;
+    color: #021226;
+    background-image: linear-gradient(to right, #00d2ff, #0099ff);
     box-shadow: 0 0 20px rgba(0, 210, 255, 0.45);
+    transition: all 0.2s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
   .btn:hover {
+    background-image: linear-gradient(to right, #00f2fe, #00b4d8);
+    transform: translateY(-2px);
     box-shadow: 0 0 28px rgba(0, 242, 254, 0.75);
   }
 
+  .btn:active {
+    transform: scale(0.95);
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
   .btn-pill {
-    @apply cursor-pointer select-none rounded-full px-5 py-2 font-semibold text-[#00d2ff] border border-[#00d2ff]/40 bg-[#00b4ff]/10 hover:bg-gradient-to-r hover:from-[#0088ff] hover:to-[#00d2ff] hover:border-transparent hover:text-[#021226] hover:font-bold hover:-translate-y-0.5 active:scale-95 transition-all duration-200 ease-out flex items-center justify-center gap-2;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 9999px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 600;
+    color: #00d2ff;
+    border: 1px solid rgba(0, 210, 255, 0.4);
+    background-color: rgba(0, 180, 255, 0.1);
     box-shadow: 0 0 12px rgba(0, 210, 255, 0.18);
+    transition: all 0.2s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
   .btn-pill:hover {
+    background-image: linear-gradient(to right, #0088ff, #00d2ff);
+    border-color: transparent;
+    color: #021226;
+    font-weight: 700;
+    transform: translateY(-2px);
     box-shadow: 0 0 20px rgba(0, 210, 255, 0.45);
   }
 
+  .btn-pill:active {
+    transform: scale(0.95);
+  }
+
   .btn-ghost {
-    @apply cursor-pointer select-none rounded-xl px-3.5 py-2 border border-[#00d2ff]/35 bg-[#061630]/75 text-cyan-100 hover:bg-[#00d2ff]/20 hover:border-[#00f2fe] hover:text-white hover:-translate-y-0.5 active:scale-95 disabled:opacity-45 disabled:pointer-events-none transition-all duration-200 ease-out;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid rgba(0, 210, 255, 0.35);
+    background-color: rgba(6, 22, 48, 0.75);
+    color: #cffafe;
+    transition: all 0.2s ease-out;
   }
 
   .btn-ghost:hover {
+    background-color: rgba(0, 210, 255, 0.2);
+    border-color: #00f2fe;
+    color: #ffffff;
+    transform: translateY(-2px);
     box-shadow: 0 0 16px rgba(0, 210, 255, 0.3);
   }
 
+  .btn-ghost:active {
+    transform: scale(0.95);
+  }
+
+  .btn-ghost:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
   .input {
-    @apply w-full rounded-xl bg-[#030d1e]/90 border border-[#00d2ff]/35 px-3.5 py-2.5 text-sm text-white placeholder-[#8ca5c9]/65 outline-none hover:border-[#00d2ff]/70 focus:border-[#00f2fe] transition-all duration-200;
+    width: 100%;
+    border-radius: 0.75rem;
+    background-color: rgba(3, 13, 30, 0.9);
+    border: 1px solid rgba(0, 210, 255, 0.35);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #ffffff;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .input::placeholder {
+    color: rgba(140, 165, 201, 0.65);
+  }
+
+  .input:hover {
+    border-color: rgba(0, 210, 255, 0.7);
   }
 
   .input:focus {
+    border-color: #00f2fe;
     box-shadow: 0 0 18px rgba(0, 210, 255, 0.35);
   }
 
   .interactive-row {
-    @apply cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:translate-x-1 hover:border-[#00f2fe]/75 hover:bg-[#00d2ff]/15 active:scale-[0.99];
+    cursor: pointer;
+    transition: all 0.2s ease-out;
   }
 
   .interactive-row:hover {
+    transform: translate(4px, -2px);
+    border-color: rgba(0, 242, 254, 0.75);
+    background-color: rgba(0, 210, 255, 0.15);
     box-shadow: 0 0 18px rgba(0, 210, 255, 0.22);
+  }
+
+  .interactive-row:active {
+    transform: scale(0.99);
   }
 }
 
