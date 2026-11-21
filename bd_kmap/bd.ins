@@ -14,50 +14,64 @@ INSERT INTO catalogo_roles (nombre_del_rol, descripcion_del_rol) VALUES
 ('invitado', 'Acceso limitado a contenidos publicos sin inscripcion');
 
 -- ============================================================
--- 2. USUARIO
+-- 2. USUARIO (adaptado a: nombre, apellido, celular, CI)
 -- ============================================================
-INSERT INTO usuario (id_catalogo_roles, nombre_completo, correo_electronico, contrasena_encriptada, enlace_a_su_foto, esta_habilitado) VALUES
-(1, 'Ana Maria Rodriguez',        'ana.rodriguez@kmap.edu',      '$2b$12$hashAnaRodriguez001', 'https://cdn.kmap.edu/avatars/ana.png',        1),
-(1, 'Carlos Eduardo Perez',       'carlos.perez@kmap.edu',       '$2b$12$hashCarlosPerez002', 'https://cdn.kmap.edu/avatars/carlos.png',     1),
-(2, 'Laura Gimenez Lopez',        'laura.gimenez@kmap.edu',      '$2b$12$hashLauraGimenez003', 'https://cdn.kmap.edu/avatars/laura.png',       1),
-(2, 'Pedro Antonio Silva',        'pedro.silva@kmap.edu',        '$2b$12$hashPedroSilva004', 'https://cdn.kmap.edu/avatars/pedro.png',       1),
-(2, 'Marta Fernandez Ruiz',       'marta.fernandez@kmap.edu',    '$2b$12$hashMartaFernandez005', 'https://cdn.kmap.edu/avatars/marta.png',     1),
-(2, 'Jorge Luis Mendez',          'jorge.mendez@kmap.edu',       '$2b$12$hashJorgeMendez006', 'https://cdn.kmap.edu/avatars/jorge.png',       1),
-(2, 'Sofia Castro Vidal',         'sofia.castro@kmap.edu',       '$2b$12$hashSofiaCastro007', 'https://cdn.kmap.edu/avatars/sofia.png',       1),
-(3, 'Juan David Torres',          'juan.torres@kmap.edu',        '$2b$12$hashJuanTorres008', 'https://cdn.kmap.edu/avatars/juan.png',        1),
-(3, 'Valentina Rios Herrera',     'valentina.rios@kmap.edu',     '$2b$12$hashValentinaRios009', 'https://cdn.kmap.edu/avatars/valentina.png', 1),
-(3, 'Andres Felipe Mora',         'andres.mora@kmap.edu',        '$2b$12$hashAndresMora010', 'https://cdn.kmap.edu/avatars/andres.png',      1),
-(3, 'Camila Andrea Suarez',       'camila.suarez@kmap.edu',      '$2b$12$hashCamilaSuarez011', 'https://cdn.kmap.edu/avatars/camila.png',     1),
-(3, 'Sebastian Molina Vargas',    'sebastian.molina@kmap.edu',   '$2b$12$hashSebastianMolina012', 'https://cdn.kmap.edu/avatars/sebastian.png', 1),
-(3, 'Isabella Navarro Pena',      'isabella.navarro@kmap.edu',   '$2b$12$hashIsabellaNavarro013', 'https://cdn.kmap.edu/avatars/isabella.png', 1),
-(3, 'Mateo Ramirez Gil',          'mateo.ramirez@kmap.edu',      '$2b$12$hashMateoRamirez014', 'https://cdn.kmap.edu/avatars/mateo.png',       1),
-(3, 'Daniela Ortiz Fuentes',      'daniela.ortiz@kmap.edu',      '$2b$12$hashDanielaOrtiz015', 'https://cdn.kmap.edu/avatars/daniela.png',     1),
-(3, 'Santiago Herrera Luna',      'santiago.herrera@kmap.edu',   '$2b$12$hashSantiagoHerrera016', 'https://cdn.kmap.edu/avatars/santiago.png', 1),
-(3, 'Mariana Lopez Cardenas',     'mariana.lopez@kmap.edu',      '$2b$12$hashMarianaLopez017', 'https://cdn.kmap.edu/avatars/mariana.png',     1),
-(3, 'Alejandro Gomez Rivas',      'alejandro.gomez@kmap.edu',    '$2b$12$hashAlejandroGomez018', 'https://cdn.kmap.edu/avatars/alejandro.png', 1),
-(3, 'Gabriela Torres Pineda',     'gabriela.torres@kmap.edu',    '$2b$12$hashGabrielaTorres019', 'https://cdn.kmap.edu/avatars/gabriela.png',   1),
-(3, 'Nicolas Vargas Rojas',       'nicolas.vargas@kmap.edu',     '$2b$12$hashNicolasVargas020', 'https://cdn.kmap.edu/avatars/nicolas.png',     1),
-(3, 'Luciana Mejia Salazar',      'luciana.mejia@kmap.edu',      '$2b$12$hashLucianaMejia021', 'https://cdn.kmap.edu/avatars/luciana.png',     1),
-(3, 'Emilio Castano Duarte',      'emilio.castano@kmap.edu',     '$2b$12$hashEmilioCastano022', 'https://cdn.kmap.edu/avatars/emilio.png',     1),
-(3, 'Antonella Rojas Benitez',    'antonella.rojas@kmap.edu',    '$2b$12$hashAntonellaRojas023', 'https://cdn.kmap.edu/avatars/antonella.png', 1),
-(3, 'Samuel Quintero Acosta',     'samuel.quintero@kmap.edu',    '$2b$12$hashSamuelQuintero024', 'https://cdn.kmap.edu/avatars/samuel.png',     1),
-(3, 'Victoria Salgado Marin',     'victoria.salgado@kmap.edu',   '$2b$12$hashVictoriaSalgado025', 'https://cdn.kmap.edu/avatars/victoria.png', 1),
-(3, 'Tomas Espinoza Cruz',        'tomas.espinoza@kmap.edu',     '$2b$12$hashTomasEspinoza026', 'https://cdn.kmap.edu/avatars/tomas.png',      1),
-(3, 'Renata Palacios Ferrer',     'renata.palacios@kmap.edu',    '$2b$12$hashRenataPalacios027', 'https://cdn.kmap.edu/avatars/renata.png',     1),
-(3, 'Benjamin Cordero Paredes',   'benjamin.cordero@kmap.edu',   '$2b$12$hashBenjaminCordero028', 'https://cdn.kmap.edu/avatars/benjamin.png', 1),
-(3, 'Julieta Montoya Reyes',      'julieta.montoya@kmap.edu',    '$2b$12$hashJulietaMontoya029', 'https://cdn.kmap.edu/avatars/julieta.png',    1),
-(3, 'Martin Villalba Sosa',       'martin.villalba@kmap.edu',    '$2b$12$hashMartinVillalba030', 'https://cdn.kmap.edu/avatars/martin.png',     1),
-(4, 'Patricia Nunez Arango',      'patricia.nunez@kmap.edu',     '$2b$12$hashPatriciaNunez031', 'https://cdn.kmap.edu/avatars/patricia.png',   1),
-(4, 'Ricardo Pena Lozano',        'ricardo.pena@kmap.edu',       '$2b$12$hashRicardoPena032', 'https://cdn.kmap.edu/avatars/ricardo.png',     1),
-(5, 'Monica Serrano Prada',       'monica.serrano@kmap.edu',     '$2b$12$hashMonicaSerrano033', 'https://cdn.kmap.edu/avatars/monica.png',     1),
-(5, 'Felipe Guzman Ocampo',       'felipe.guzman@kmap.edu',      '$2b$12$hashFelipeGuzman034', 'https://cdn.kmap.edu/avatars/felipe.png',      1),
-(6, 'Invitado Demo Uno',          'invitado1@kmap.edu',          '$2b$12$hashInvitadoUno035', 'https://cdn.kmap.edu/avatars/inv1.png',         1),
-(6, 'Invitado Demo Dos',          'invitado2@kmap.edu',          '$2b$12$hashInvitadoDos036', 'https://cdn.kmap.edu/avatars/inv2.png',         1),
-(3, 'Paula Andrea Beltran',       'paula.beltran@kmap.edu',      '$2b$12$hashPaulaBeltran037', 'https://cdn.kmap.edu/avatars/paula.png',      1),
-(3, 'Diego Alejandro Cortes',     'diego.cortes@kmap.edu',       '$2b$12$hashDiegoCortes038', 'https://cdn.kmap.edu/avatars/diego.png',       1),
-(3, 'Sara Lucia Ospina',          'sara.ospina@kmap.edu',        '$2b$12$hashSaraOspina039', 'https://cdn.kmap.edu/avatars/sara.png',         1),
-(3, 'Cristian Camilo Rios',       'cristian.rios@kmap.edu',      '$2b$12$hashCristianRios040', 'https://cdn.kmap.edu/avatars/cristian.png',   1);
+INSERT INTO usuario
+(id_catalogo_roles, nombre, apellido, numero_de_celular, cedula_de_identidad, correo_electronico, contrasena_encriptada, enlace_a_su_foto, esta_habilitado)
+VALUES
+-- ===== ADMINISTRADORES =====
+(1, 'Ana Maria',   'Rodriguez',   '+59170000001', '10000001', 'ana.rodriguez@kmap.edu',      '$2b$12$hashAnaRodriguez001',   'https://cdn.kmap.edu/avatars/ana.png',        1),
+(1, 'Carlos Eduardo','Perez',     '+59170000002', '10000002', 'carlos.perez@kmap.edu',       '$2b$12$hashCarlosPerez002',    'https://cdn.kmap.edu/avatars/carlos.png',     1),
 
+-- ===== DOCENTES =====
+(2, 'Laura',       'Gimenez',     '+59170000003', '10000003', 'laura.gimenez@kmap.edu',      '$2b$12$hashLauraGimenez003',   'https://cdn.kmap.edu/avatars/laura.png',      1),
+(2, 'Pedro Antonio','Silva',      '+59170000004', '10000004', 'pedro.silva@kmap.edu',        '$2b$12$hashPedroSilva004',     'https://cdn.kmap.edu/avatars/pedro.png',      1),
+(2, 'Marta',       'Fernandez',   '+59170000005', '10000005', 'marta.fernandez@kmap.edu',    '$2b$12$hashMartaFernandez005', 'https://cdn.kmap.edu/avatars/marta.png',      1),
+(2, 'Jorge Luis',  'Mendez',      '+59170000006', '10000006', 'jorge.mendez@kmap.edu',       '$2b$12$hashJorgeMendez006',    'https://cdn.kmap.edu/avatars/jorge.png',      1),
+(2, 'Sofia',       'Castro',      '+59170000007', '10000007', 'sofia.castro@kmap.edu',       '$2b$12$hashSofiaCastro007',    'https://cdn.kmap.edu/avatars/sofia.png',      1),
+
+-- ===== ESTUDIANTES =====
+(3, 'Juan David',  'Torres',      '+59170000008', '10000008', 'juan.torres@kmap.edu',        '$2b$12$hashJuanTorres008',     'https://cdn.kmap.edu/avatars/juan.png',       1),
+(3, 'Valentina',   'Rios',        '+59170000009', '10000009', 'valentina.rios@kmap.edu',     '$2b$12$hashValentinaRios009',  'https://cdn.kmap.edu/avatars/valentina.png',  1),
+(3, 'Andres Felipe','Mora',       '+59170000010', '10000010', 'andres.mora@kmap.edu',        '$2b$12$hashAndresMora010',     'https://cdn.kmap.edu/avatars/andres.png',     1),
+(3, 'Camila Andrea','Suarez',     '+59170000011', '10000011', 'camila.suarez@kmap.edu',      '$2b$12$hashCamilaSuarez011',   'https://cdn.kmap.edu/avatars/camila.png',     1),
+(3, 'Sebastian',   'Molina',      '+59170000012', '10000012', 'sebastian.molina@kmap.edu',   '$2b$12$hashSebastianMolina012', 'https://cdn.kmap.edu/avatars/sebastian.png', 1),
+(3, 'Isabella',    'Navarro',     '+59170000013', '10000013', 'isabella.navarro@kmap.edu',   '$2b$12$hashIsabellaNavarro013', 'https://cdn.kmap.edu/avatars/isabella.png', 1),
+(3, 'Mateo',       'Ramirez',     '+59170000014', '10000014', 'mateo.ramirez@kmap.edu',      '$2b$12$hashMateoRamirez014',   'https://cdn.kmap.edu/avatars/mateo.png',      1),
+(3, 'Daniela',     'Ortiz',       '+59170000015', '10000015', 'daniela.ortiz@kmap.edu',      '$2b$12$hashDanielaOrtiz015',   'https://cdn.kmap.edu/avatars/daniela.png',    1),
+(3, 'Santiago',    'Herrera',     '+59170000016', '10000016', 'santiago.herrera@kmap.edu',   '$2b$12$hashSantiagoHerrera016', 'https://cdn.kmap.edu/avatars/santiago.png', 1),
+(3, 'Mariana',     'Lopez',       '+59170000017', '10000017', 'mariana.lopez@kmap.edu',      '$2b$12$hashMarianaLopez017',   'https://cdn.kmap.edu/avatars/mariana.png',    1),
+(3, 'Alejandro',   'Gomez',       '+59170000018', '10000018', 'alejandro.gomez@kmap.edu',    '$2b$12$hashAlejandroGomez018', 'https://cdn.kmap.edu/avatars/alejandro.png', 1),
+(3, 'Gabriela',    'Torres',      '+59170000019', '10000019', 'gabriela.torres@kmap.edu',    '$2b$12$hashGabrielaTorres019', 'https://cdn.kmap.edu/avatars/gabriela.png',   1),
+(3, 'Nicolas',     'Vargas',      '+59170000020', '10000020', 'nicolas.vargas@kmap.edu',     '$2b$12$hashNicolasVargas020',  'https://cdn.kmap.edu/avatars/nicolas.png',    1),
+(3, 'Luciana',     'Mejia',       '+59170000021', '10000021', 'luciana.mejia@kmap.edu',      '$2b$12$hashLucianaMejia021',   'https://cdn.kmap.edu/avatars/luciana.png',    1),
+(3, 'Emilio',      'Castano',     '+59170000022', '10000022', 'emilio.castano@kmap.edu',     '$2b$12$hashEmilioCastano022',  'https://cdn.kmap.edu/avatars/emilio.png',     1),
+(3, 'Antonella',   'Rojas',       '+59170000023', '10000023', 'antonella.rojas@kmap.edu',    '$2b$12$hashAntonellaRojas023', 'https://cdn.kmap.edu/avatars/antonella.png', 1),
+(3, 'Samuel',      'Quintero',    '+59170000024', '10000024', 'samuel.quintero@kmap.edu',    '$2b$12$hashSamuelQuintero024', 'https://cdn.kmap.edu/avatars/samuel.png',     1),
+(3, 'Victoria',    'Salgado',     '+59170000025', '10000025', 'victoria.salgado@kmap.edu',   '$2b$12$hashVictoriaSalgado025', 'https://cdn.kmap.edu/avatars/victoria.png', 1),
+(3, 'Tomas',       'Espinoza',    '+59170000026', '10000026', 'tomas.espinoza@kmap.edu',     '$2b$12$hashTomasEspinoza026',  'https://cdn.kmap.edu/avatars/tomas.png',      1),
+(3, 'Renata',      'Palacios',    '+59170000027', '10000027', 'renata.palacios@kmap.edu',    '$2b$12$hashRenataPalacios027', 'https://cdn.kmap.edu/avatars/renata.png',     1),
+(3, 'Benjamin',    'Cordero',     '+59170000028', '10000028', 'benjamin.cordero@kmap.edu',   '$2b$12$hashBenjaminCordero028', 'https://cdn.kmap.edu/avatars/benjamin.png', 1),
+(3, 'Julieta',     'Montoya',     '+59170000029', '10000029', 'julieta.montoya@kmap.edu',    '$2b$12$hashJulietaMontoya029', 'https://cdn.kmap.edu/avatars/julieta.png',    1),
+(3, 'Martin',      'Villalba',    '+59170000030', '10000030', 'martin.villalba@kmap.edu',    '$2b$12$hashMartinVillalba030', 'https://cdn.kmap.edu/avatars/martin.png',     1),
+
+-- ===== TUTORES =====
+(4, 'Patricia',    'Nunez',       '+59170000031', '10000031', 'patricia.nunez@kmap.edu',     '$2b$12$hashPatriciaNunez031',  'https://cdn.kmap.edu/avatars/patricia.png',   1),
+(4, 'Ricardo',     'Pena',        '+59170000032', '10000032', 'ricardo.pena@kmap.edu',       '$2b$12$hashRicardoPena032',    'https://cdn.kmap.edu/avatars/ricardo.png',    1),
+
+-- ===== AUDITORES =====
+(5, 'Monica',      'Serrano',     '+59170000033', '10000033', 'monica.serrano@kmap.edu',     '$2b$12$hashMonicaSerrano033',  'https://cdn.kmap.edu/avatars/monica.png',     1),
+(5, 'Felipe',      'Guzman',      '+59170000034', '10000034', 'felipe.guzman@kmap.edu',      '$2b$12$hashFelipeGuzman034',   'https://cdn.kmap.edu/avatars/felipe.png',     1),
+
+-- ===== INVITADOS =====
+(6, 'Invitado',    'Demo Uno',    '+59170000035', '10000035', 'invitado1@kmap.edu',          '$2b$12$hashInvitadoUno035',    'https://cdn.kmap.edu/avatars/inv1.png',       1),
+(6, 'Invitado',    'Demo Dos',    '+59170000036', '10000036', 'invitado2@kmap.edu',          '$2b$12$hashInvitadoDos036',    'https://cdn.kmap.edu/avatars/inv2.png',       1),
+
+-- ===== ESTUDIANTES (continuación) =====
+(3, 'Paula Andrea','Beltran',     '+59170000037', '10000037', 'paula.beltran@kmap.edu',      '$2b$12$hashPaulaBeltran037',   'https://cdn.kmap.edu/avatars/paula.png',      1),
+(3, 'Diego Alejandro','Cortes',   '+59170000038', '10000038', 'diego.cortes@kmap.edu',       '$2b$12$hashDiegoCortes038',    'https://cdn.kmap.edu/avatars/diego.png',      1),
+(3, 'Sara Lucia',  'Ospina',      '+59170000039', '10000039', 'sara.ospina@kmap.edu',        '$2b$12$hashSaraOspina039',     'https://cdn.kmap.edu/avatars/sara.png',       1),
+(3, 'Cristian Camilo','Rios',     '+59170000040', '10000040', 'cristian.rios@kmap.edu',      '$2b$12$hashCristianRios040',   'https://cdn.kmap.edu/avatars/cristian.png',   1);
 -- ============================================================
 -- 3. MATERIA_ASIGNATURA
 -- ============================================================

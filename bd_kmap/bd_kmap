@@ -52,7 +52,10 @@ CREATE TABLE catalogo_roles (
 CREATE TABLE usuario (
     id_usuario              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_catalogo_roles       INT UNSIGNED    NOT NULL,
-    nombre_completo         VARCHAR(120)    NOT NULL,
+    nombre                  VARCHAR(80)     NOT NULL,
+    apellido                VARCHAR(80)     NOT NULL,
+    numero_de_celular       VARCHAR(20)     NULL,
+    cedula_de_identidad     VARCHAR(20)     NOT NULL,
     correo_electronico      VARCHAR(254)    NOT NULL COLLATE utf8mb4_general_ci,
     contrasena_encriptada   VARCHAR(255)    NOT NULL,
     enlace_a_su_foto        VARCHAR(500)    NULL,
@@ -61,7 +64,9 @@ CREATE TABLE usuario (
     ultima_actualizacion    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id_usuario),
     UNIQUE KEY uq_usuario_correo (correo_electronico),
+    UNIQUE KEY uq_usuario_cedula (cedula_de_identidad),
     KEY idx_usuario_rol (id_catalogo_roles),
+    KEY idx_usuario_nombre_apellido (nombre, apellido),
     CONSTRAINT fk_usuario_rol FOREIGN KEY (id_catalogo_roles)
         REFERENCES catalogo_roles(id_catalogo_roles) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -141,8 +146,8 @@ CREATE TABLE catalogo_tipos_archivo (
 
 CREATE TABLE material_estudio (
     id_material_estudio             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    id_materia_asignatura           BIGINT UNSIGNED NOT NULL, 
-    id_tema_conocimiento            BIGINT UNSIGNED NOT NULL, 
+    id_materia_asignatura           BIGINT UNSIGNED NOT NULL,
+    id_tema_conocimiento            BIGINT UNSIGNED NOT NULL,
     id_usuario_docente              BIGINT UNSIGNED NOT NULL,
     id_catalogo_tipos_archivo       INT UNSIGNED    NOT NULL,
     titulo_del_material             VARCHAR(200)    NOT NULL,
@@ -151,7 +156,7 @@ CREATE TABLE material_estudio (
     esta_visible_para_estudiantes   TINYINT(1) NOT NULL DEFAULT 1,
     fecha_en_que_se_subio           DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_material_estudio),
-    KEY idx_material_materia (id_materia_asignatura), 
+    KEY idx_material_materia (id_materia_asignatura),
     KEY idx_material_tema (id_tema_conocimiento),
     CONSTRAINT fk_material_materia FOREIGN KEY (id_materia_asignatura)
         REFERENCES materia_asignatura(id_materia_asignatura) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -174,7 +179,6 @@ CREATE TABLE catalogo_tipos_pregunta (
     PRIMARY KEY (id_catalogo_tipos_pregunta)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- El banco es independiente. Solo guarda preguntas para sugerir.
 CREATE TABLE banco_preguntas (
     id_banco_preguntas          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_tema_conocimiento        BIGINT UNSIGNED NOT NULL,
@@ -202,7 +206,6 @@ CREATE TABLE opcion_respuesta (
         REFERENCES banco_preguntas(id_banco_preguntas) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- El quiz es la evaluación real que el profesor arma.
 CREATE TABLE evaluacion_quiz (
     id_evaluacion_quiz              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_materia_asignatura           BIGINT UNSIGNED NOT NULL,
@@ -218,7 +221,6 @@ CREATE TABLE evaluacion_quiz (
         REFERENCES tema_conocimiento(id_tema_conocimiento) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Une el Quiz con las preguntas del banco que el profesor eligió.
 CREATE TABLE preguntas_del_quiz (
     id_preguntas_del_quiz       BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_evaluacion_quiz          BIGINT UNSIGNED NOT NULL,
@@ -232,7 +234,6 @@ CREATE TABLE preguntas_del_quiz (
         REFERENCES banco_preguntas(id_banco_preguntas) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Aquí se guarda cuál es la respuesta correcta de las preguntas del quiz.
 CREATE TABLE respuesta_oficial_quiz (
     id_respuesta_oficial_quiz   BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_preguntas_del_quiz       BIGINT UNSIGNED NOT NULL,
@@ -273,7 +274,7 @@ CREATE TABLE respuesta_estudiante (
     id_respuesta_estudiante     BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_intento_de_quiz          BIGINT UNSIGNED NOT NULL,
     id_preguntas_del_quiz       BIGINT UNSIGNED NOT NULL,
-    id_opcion_que_eligio        BIGINT UNSIGNED NULL, 
+    id_opcion_que_eligio        BIGINT UNSIGNED NULL,
     texto_que_escribio          VARCHAR(2000)   NULL,
     fue_correcta_su_respuesta   TINYINT(1)      NULL,
     tiempo_que_tardo_en_responder_milisegundos INT UNSIGNED NULL,
