@@ -557,22 +557,8 @@ export default function StudentHome() {
             </div>
           </div>
 
-          {/* Widget 3: Welcome Robot Banner (from univalle_bot widgets.css + robot.svg) */}
-          <div className="welcome-banner-card">
-            <div className="welcome-content">
-              <h3 className="welcome-title">¡Hola, {user.name.split(' ')[0]}!</h3>
-              <p className="welcome-desc">
-                Tu tutor robot de BIT ACADEMY está listo para guiarte por tu grafo de conocimiento.
-              </p>
-              <button type="button" onClick={handleRobotGotoCourse} className="btn-goto-course">
-                <span>Ir al curso</span>
-                <span>❯</span>
-              </button>
-            </div>
-            <div className="robot-mascot-wrapper">
-              <img src="/assets/images/robot.svg" alt="Robot Tutor BIT ACADEMY" />
-            </div>
-          </div>
+          
+        
         </aside>
       </div>
     </Page>
