@@ -5,7 +5,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ============================================================
 -- 1. CATALOGO_ROLES
 -- ============================================================
-
 INSERT INTO catalogo_roles (nombre_del_rol, descripcion_del_rol) VALUES
 ('administrador', 'Acceso total al sistema, gestiona usuarios, materias y configuracion global'),
 ('docente', 'Crea materias, temas, materiales, preguntas y evaluaciones'),
@@ -17,8 +16,7 @@ INSERT INTO catalogo_roles (nombre_del_rol, descripcion_del_rol) VALUES
 -- ============================================================
 -- 2. USUARIO
 -- ============================================================
-
-INSERT INTO usuario (id_rol, nombre_completo, correo_electronico, contrasena_encriptada, enlace_a_su_foto, esta_habilitado) VALUES
+INSERT INTO usuario (id_catalogo_roles, nombre_completo, correo_electronico, contrasena_encriptada, enlace_a_su_foto, esta_habilitado) VALUES
 (1, 'Ana Maria Rodriguez',        'ana.rodriguez@kmap.edu',      '$2b$12$hashAnaRodriguez001', 'https://cdn.kmap.edu/avatars/ana.png',        1),
 (1, 'Carlos Eduardo Perez',       'carlos.perez@kmap.edu',       '$2b$12$hashCarlosPerez002', 'https://cdn.kmap.edu/avatars/carlos.png',     1),
 (2, 'Laura Gimenez Lopez',        'laura.gimenez@kmap.edu',      '$2b$12$hashLauraGimenez003', 'https://cdn.kmap.edu/avatars/laura.png',       1),
@@ -63,8 +61,7 @@ INSERT INTO usuario (id_rol, nombre_completo, correo_electronico, contrasena_enc
 -- ============================================================
 -- 3. MATERIA_ASIGNATURA
 -- ============================================================
-
-INSERT INTO materia_asignatura (nombre_de_la_materia, codigo_de_la_materia, descripcion_corta, id_del_docente, enlace_al_icono, color_representativo, esta_habilitada) VALUES
+INSERT INTO materia_asignatura (nombre_de_la_materia, codigo_de_la_materia, descripcion_corta, id_usuario_docente, enlace_al_icono, color_representativo, esta_habilitada) VALUES
 ('Matematicas Basicas',           'MAT101', 'Fundamentos de aritmetica, algebra y geometria',            3, 'https://cdn.kmap.edu/icons/mat.png', '#FF5733', 1),
 ('Algebra Lineal',                'MAT201', 'Vectores, matrices, espacios vectoriales y transformaciones', 3, 'https://cdn.kmap.edu/icons/algebra.png', '#33A1FF', 1),
 ('Calculo Diferencial',           'MAT301', 'Limites, derivadas y aplicaciones',                         4, 'https://cdn.kmap.edu/icons/calculo.png', '#8E44AD', 1),
@@ -81,8 +78,7 @@ INSERT INTO materia_asignatura (nombre_de_la_materia, codigo_de_la_materia, desc
 -- ============================================================
 -- 4. INSCRIPCION_MATERIA
 -- ============================================================
-
-INSERT INTO inscripcion_materia (id_materia, id_estudiante, estado_de_la_inscripcion) VALUES
+INSERT INTO inscripcion_materia (id_materia_asignatura, id_usuario_estudiante, estado_de_la_inscripcion) VALUES
 (1, 8, 'activo'), (1, 9, 'activo'), (1, 10, 'activo'), (1, 11, 'activo'), (1, 12, 'activo'),
 (2, 8, 'activo'), (2, 13, 'activo'), (2, 14, 'activo'), (2, 15, 'activo'),
 (3, 9, 'activo'), (3, 16, 'activo'), (3, 17, 'activo'), (3, 18, 'activo'),
@@ -100,91 +96,88 @@ INSERT INTO inscripcion_materia (id_materia, id_estudiante, estado_de_la_inscrip
 -- ============================================================
 -- 5. TEMA_CONOCIMIENTO (60 temas)
 -- ============================================================
-
-INSERT INTO tema_conocimiento (id_materia, nombre_del_tema, descripcion_del_tema, nota_minima_para_aprobar, importancia_del_tema, esta_habilitado) VALUES
-(1, 'Numeros enteros y racionales', 'Operaciones basicas con enteros y fracciones', 0.800, 1.00, 1),
-(1, 'Potencias y raices', 'Propiedades de exponentes y radicales', 0.800, 1.00, 1),
-(1, 'Expresiones algebraicas', 'Simplificacion y factorizacion', 0.800, 1.20, 1),
-(1, 'Ecuaciones lineales', 'Resolucion de ecuaciones de primer grado', 0.800, 1.50, 1),
-(1, 'Geometria basica', 'Perimetros, areas y volumenes', 0.750, 1.00, 1),
-(2, 'Vectores', 'Operaciones vectoriales y producto punto', 0.800, 1.00, 1),
-(2, 'Matrices', 'Operaciones con matrices y determinantes', 0.800, 1.30, 1),
-(2, 'Sistemas de ecuaciones', 'Metodos de Gauss y Gauss-Jordan', 0.800, 1.50, 1),
-(2, 'Espacios vectoriales', 'Bases, dimension y subespacios', 0.800, 1.20, 1),
-(2, 'Transformaciones lineales', 'Nucleo, imagen y matrices asociadas', 0.800, 1.00, 1),
-(3, 'Limites', 'Concepto y calculo de limites', 0.800, 1.40, 1),
-(3, 'Continuidad', 'Tipos de discontinuidad y teoremas', 0.800, 1.00, 1),
-(3, 'Derivadas', 'Reglas de derivacion y regla de la cadena', 0.800, 1.60, 1),
-(3, 'Aplicaciones de la derivada', 'Maximos, minimos y optimizacion', 0.800, 1.20, 1),
-(3, 'Trazado de curvas', 'Concavidad y puntos de inflexion', 0.750, 1.00, 1),
-(4, 'Cinematica', 'MRU, MRUA y caida libre', 0.800, 1.30, 1),
-(4, 'Dinamica', 'Leyes de Newton y diagramas de cuerpo libre', 0.800, 1.50, 1),
-(4, 'Trabajo y energia', 'Teorema trabajo-energia y conservacion', 0.800, 1.20, 1),
-(4, 'Momento lineal', 'Impulso y choques', 0.800, 1.00, 1),
-(4, 'Rotacion', 'Cinematica y dinamica rotacional', 0.800, 1.00, 1),
-(5, 'Estructura atomica', 'Modelos atomicos y configuracion electronica', 0.800, 1.20, 1),
-(5, 'Tabla periodica', 'Propiedades periodicas', 0.800, 1.00, 1),
-(5, 'Enlaces quimicos', 'Ionico, covalente y metalico', 0.800, 1.40, 1),
-(5, 'Estequiometria', 'Calculos molares y balanceo', 0.800, 1.50, 1),
-(5, 'Reacciones quimicas', 'Tipos de reacciones y ecuaciones', 0.800, 1.10, 1),
-(6, 'Membrana celular', 'Estructura y transporte', 0.800, 1.20, 1),
-(6, 'Organelos', 'Funciones de los organelos celulares', 0.800, 1.30, 1),
-(6, 'Metabolismo', 'Anabolismo y catabolismo', 0.800, 1.50, 1),
-(6, 'Division celular', 'Mitosis y meiosis', 0.800, 1.20, 1),
-(6, 'Genetica basica', 'Herencia mendeliana', 0.800, 1.00, 1),
-(7, 'Variables y tipos de datos', 'Tipos primitivos y declaracion', 0.800, 1.00, 1),
-(7, 'Estructuras de control', 'Condicionales y bucles', 0.800, 1.50, 1),
-(7, 'Funciones', 'Declaracion, parametros y retorno', 0.800, 1.30, 1),
-(7, 'Arreglos', 'Arreglos unidimensionales y multidimensionales', 0.800, 1.20, 1),
-(7, 'Algoritmos basicos', 'Busqueda y ordenamiento simple', 0.800, 1.00, 1),
-(8, 'Listas enlazadas', 'Simples, dobles y circulares', 0.800, 1.30, 1),
-(8, 'Pilas y colas', 'Implementacion y aplicaciones', 0.800, 1.20, 1),
-(8, 'Arboles', 'Arboles binarios y recorridos', 0.800, 1.50, 1),
-(8, 'Grafos', 'Representacion y recorridos BFS/DFS', 0.800, 1.40, 1),
-(8, 'Complejidad algoritmica', 'Notacion Big-O', 0.800, 1.00, 1),
-(9, 'Modelo relacional', 'Tablas, claves y relaciones', 0.800, 1.30, 1),
-(9, 'SQL basico', 'SELECT, INSERT, UPDATE, DELETE', 0.800, 1.50, 1),
-(9, 'Joins', 'INNER, LEFT, RIGHT y FULL', 0.800, 1.20, 1),
-(9, 'Normalizacion', '1FN, 2FN, 3FN y BCNF', 0.800, 1.10, 1),
-(9, 'Indices y vistas', 'Optimizacion y vistas', 0.750, 1.00, 1),
-(10, 'Vocabulario tecnico', 'Terminos de ingenieria y tecnologia', 0.800, 1.00, 1),
-(10, 'Comprension lectora', 'Lectura de textos tecnicos', 0.800, 1.30, 1),
-(10, 'Gramatica basica', 'Tiempos verbales y estructuras', 0.800, 1.20, 1),
-(10, 'Escritura tecnica', 'Informes y documentacion', 0.800, 1.10, 1),
-(10, 'Listening', 'Comprension auditiva', 0.750, 1.00, 1),
-(11, 'Medidas de tendencia central', 'Media, mediana y moda', 0.800, 1.20, 1),
-(11, 'Medidas de dispersion', 'Varianza, desviacion y rango', 0.800, 1.30, 1),
-(11, 'Graficos estadisticos', 'Histogramas, barras y pastel', 0.800, 1.00, 1),
-(11, 'Probabilidad basica', 'Espacios muestrales y eventos', 0.800, 1.40, 1),
-(11, 'Distribuciones', 'Binomial y normal', 0.800, 1.20, 1),
-(12, 'Modelo OSI', 'Las siete capas y sus funciones', 0.800, 1.30, 1),
-(12, 'TCP/IP', 'Protocolos y capas', 0.800, 1.40, 1),
-(12, 'Direccionamiento IP', 'IPv4, IPv6 y subredes', 0.800, 1.50, 1),
-(12, 'Dispositivos de red', 'Routers, switches y hubs', 0.800, 1.00, 1),
-(12, 'Seguridad basica', 'Firewalls y cifrado', 0.750, 1.10, 1);
+INSERT INTO tema_conocimiento (id_materia_asignatura, nombre_del_tema, descripcion_del_tema, nota_minima_para_aprobar, importancia_del_tema, esta_habilitado) VALUES
+(1, 'Numeros enteros y racionales', 'Operaciones basicas con enteros y fracciones', 80, 1, 1),
+(1, 'Potencias y raices', 'Propiedades de exponentes y radicales', 80, 1, 1),
+(1, 'Expresiones algebraicas', 'Simplificacion y factorizacion', 80, 1, 1),
+(1, 'Ecuaciones lineales', 'Resolucion de ecuaciones de primer grado', 80, 2, 1),
+(1, 'Geometria basica', 'Perimetros, areas y volumenes', 75, 1, 1),
+(2, 'Vectores', 'Operaciones vectoriales y producto punto', 80, 1, 1),
+(2, 'Matrices', 'Operaciones con matrices y determinantes', 80, 1, 1),
+(2, 'Sistemas de ecuaciones', 'Metodos de Gauss y Gauss-Jordan', 80, 2, 1),
+(2, 'Espacios vectoriales', 'Bases, dimension y subespacios', 80, 1, 1),
+(2, 'Transformaciones lineales', 'Nucleo, imagen y matrices asociadas', 80, 1, 1),
+(3, 'Limites', 'Concepto y calculo de limites', 80, 1, 1),
+(3, 'Continuidad', 'Tipos de discontinuidad y teoremas', 80, 1, 1),
+(3, 'Derivadas', 'Reglas de derivacion y regla de la cadena', 80, 2, 1),
+(3, 'Aplicaciones de la derivada', 'Maximos, minimos y optimizacion', 80, 1, 1),
+(3, 'Trazado de curvas', 'Concavidad y puntos de inflexion', 75, 1, 1),
+(4, 'Cinematica', 'MRU, MRUA y caida libre', 80, 1, 1),
+(4, 'Dinamica', 'Leyes de Newton y diagramas de cuerpo libre', 80, 2, 1),
+(4, 'Trabajo y energia', 'Teorema trabajo-energia y conservacion', 80, 1, 1),
+(4, 'Momento lineal', 'Impulso y choques', 80, 1, 1),
+(4, 'Rotacion', 'Cinematica y dinamica rotacional', 80, 1, 1),
+(5, 'Estructura atomica', 'Modelos atomicos y configuracion electronica', 80, 1, 1),
+(5, 'Tabla periodica', 'Propiedades periodicas', 80, 1, 1),
+(5, 'Enlaces quimicos', 'Ionico, covalente y metalico', 80, 1, 1),
+(5, 'Estequiometria', 'Calculos molares y balanceo', 80, 2, 1),
+(5, 'Reacciones quimicas', 'Tipos de reacciones y ecuaciones', 80, 1, 1),
+(6, 'Membrana celular', 'Estructura y transporte', 80, 1, 1),
+(6, 'Organelos', 'Funciones de los organelos celulares', 80, 1, 1),
+(6, 'Metabolismo', 'Anabolismo y catabolismo', 80, 2, 1),
+(6, 'Division celular', 'Mitosis y meiosis', 80, 1, 1),
+(6, 'Genetica basica', 'Herencia mendeliana', 80, 1, 1),
+(7, 'Variables y tipos de datos', 'Tipos primitivos y declaracion', 80, 1, 1),
+(7, 'Estructuras de control', 'Condicionales y bucles', 80, 2, 1),
+(7, 'Funciones', 'Declaracion, parametros y retorno', 80, 1, 1),
+(7, 'Arreglos', 'Arreglos unidimensionales y multidimensionales', 80, 1, 1),
+(7, 'Algoritmos basicos', 'Busqueda y ordenamiento simple', 80, 1, 1),
+(8, 'Listas enlazadas', 'Simples, dobles y circulares', 80, 1, 1),
+(8, 'Pilas y colas', 'Implementacion y aplicaciones', 80, 1, 1),
+(8, 'Arboles', 'Arboles binarios y recorridos', 80, 2, 1),
+(8, 'Grafos', 'Representacion y recorridos BFS/DFS', 80, 1, 1),
+(8, 'Complejidad algoritmica', 'Notacion Big-O', 80, 1, 1),
+(9, 'Modelo relacional', 'Tablas, claves y relaciones', 80, 1, 1),
+(9, 'SQL basico', 'SELECT, INSERT, UPDATE, DELETE', 80, 2, 1),
+(9, 'Joins', 'INNER, LEFT, RIGHT y FULL', 80, 1, 1),
+(9, 'Normalizacion', '1FN, 2FN, 3FN y BCNF', 80, 1, 1),
+(9, 'Indices y vistas', 'Optimizacion y vistas', 75, 1, 1),
+(10, 'Vocabulario tecnico', 'Terminos de ingenieria y tecnologia', 80, 1, 1),
+(10, 'Comprension lectora', 'Lectura de textos tecnicos', 80, 1, 1),
+(10, 'Gramatica basica', 'Tiempos verbales y estructuras', 80, 1, 1),
+(10, 'Escritura tecnica', 'Informes y documentacion', 80, 1, 1),
+(10, 'Listening', 'Comprension auditiva', 75, 1, 1),
+(11, 'Medidas de tendencia central', 'Media, mediana y moda', 80, 1, 1),
+(11, 'Medidas de dispersion', 'Varianza, desviacion y rango', 80, 1, 1),
+(11, 'Graficos estadisticos', 'Histogramas, barras y pastel', 80, 1, 1),
+(11, 'Probabilidad basica', 'Espacios muestrales y eventos', 80, 2, 1),
+(11, 'Distribuciones', 'Binomial y normal', 80, 1, 1),
+(12, 'Modelo OSI', 'Las siete capas y sus funciones', 80, 1, 1),
+(12, 'TCP/IP', 'Protocolos y capas', 80, 2, 1),
+(12, 'Direccionamiento IP', 'IPv4, IPv6 y subredes', 80, 2, 1),
+(12, 'Dispositivos de red', 'Routers, switches y hubs', 80, 1, 1),
+(12, 'Seguridad basica', 'Firewalls y cifrado', 75, 1, 1);
 
 -- ============================================================
 -- 6. REQUISITO_ENTRE_TEMAS
 -- ============================================================
-
-INSERT INTO requisito_entre_temas (id_tema, id_del_tema_que_se_necesita_primero, necesidad_de_saber_el_tema_anterior) VALUES
-(2, 1, 1.000), (3, 1, 1.000), (3, 2, 0.900), (4, 3, 1.000), (5, 1, 0.700),
-(7, 6, 1.000), (8, 7, 1.000), (8, 6, 0.800), (9, 8, 0.900), (10, 9, 1.000),
-(12, 11, 1.000), (13, 11, 1.000), (13, 12, 0.900), (14, 13, 1.000), (15, 14, 0.800),
-(17, 16, 1.000), (18, 17, 0.900), (19, 18, 0.800), (20, 19, 0.700),
-(22, 21, 1.000), (23, 22, 0.900), (24, 23, 1.000), (25, 24, 0.800),
-(27, 26, 1.000), (28, 27, 0.900), (29, 28, 1.000), (30, 29, 0.700),
-(32, 31, 1.000), (33, 32, 0.900), (34, 33, 1.000), (35, 34, 0.800),
-(37, 36, 1.000), (38, 37, 1.000), (39, 38, 0.900), (40, 39, 0.800),
-(42, 41, 1.000), (43, 42, 0.900), (44, 43, 1.000), (45, 44, 0.800),
-(47, 46, 1.000), (48, 47, 0.900), (49, 48, 0.800), (50, 49, 0.700),
-(52, 51, 1.000), (53, 52, 0.900), (54, 53, 1.000), (55, 54, 0.800),
-(57, 56, 1.000), (58, 57, 1.000), (59, 58, 0.900), (60, 59, 0.800);
+INSERT INTO requisito_entre_temas (id_tema_conocimiento, id_tema_conocimiento_que_se_necesita, necesidad_de_saber_el_tema_anterior) VALUES
+(2, 1, 100), (3, 1, 100), (3, 2, 90), (4, 3, 100), (5, 1, 70),
+(7, 6, 100), (8, 7, 100), (8, 6, 80), (9, 8, 90), (10, 9, 100),
+(12, 11, 100), (13, 11, 100), (13, 12, 90), (14, 13, 100), (15, 14, 80),
+(17, 16, 100), (18, 17, 90), (19, 18, 80), (20, 19, 70),
+(22, 21, 100), (23, 22, 90), (24, 23, 100), (25, 24, 80),
+(27, 26, 100), (28, 27, 90), (29, 28, 100), (30, 29, 70),
+(32, 31, 100), (33, 32, 90), (34, 33, 100), (35, 34, 80),
+(37, 36, 100), (38, 37, 100), (39, 38, 90), (40, 39, 80),
+(42, 41, 100), (43, 42, 90), (44, 43, 100), (45, 44, 80),
+(47, 46, 100), (48, 47, 90), (49, 48, 80), (50, 49, 70),
+(52, 51, 100), (53, 52, 90), (54, 53, 100), (55, 54, 80),
+(57, 56, 100), (58, 57, 100), (59, 58, 90), (60, 59, 80);
 
 -- ============================================================
 -- 7. CATALOGO_TIPOS_ARCHIVO
 -- ============================================================
-
 INSERT INTO catalogo_tipos_archivo (nombre_del_tipo, icono_que_lo_representa) VALUES
 ('PDF', 'fa-file-pdf'),
 ('Video MP4', 'fa-file-video'),
@@ -200,8 +193,7 @@ INSERT INTO catalogo_tipos_archivo (nombre_del_tipo, icono_que_lo_representa) VA
 -- ============================================================
 -- 8. MATERIAL_ESTUDIO
 -- ============================================================
-
-INSERT INTO material_estudio (id_materia, id_tema, id_del_docente_que_lo_subio, id_tipo_archivo, titulo_del_material, descripcion_del_material, enlace_para_descargar, esta_visible_para_estudiantes) VALUES
+INSERT INTO material_estudio (id_materia_asignatura, id_tema_conocimiento, id_usuario_docente, id_catalogo_tipos_archivo, titulo_del_material, descripcion_del_material, enlace_para_descargar, esta_visible_para_estudiantes) VALUES
 (1, 1, 3, 1, 'Guia de numeros enteros', 'Ejercicios resueltos de operaciones con enteros', 'https://cdn.kmap.edu/materiales/mat101_t1_guia.pdf', 1),
 (1, 2, 3, 2, 'Video potencias y raices', 'Explicacion paso a paso con ejemplos', 'https://cdn.kmap.edu/materiales/mat101_t2_video.mp4', 1),
 (1, 3, 3, 3, 'Presentacion expresiones algebraicas', 'Diapositivas con reglas de factorizacion', 'https://cdn.kmap.edu/materiales/mat101_t3_pres.pptx', 1),
@@ -266,7 +258,6 @@ INSERT INTO material_estudio (id_materia, id_tema, id_del_docente_que_lo_subio, 
 -- ============================================================
 -- 9. CATALOGO_TIPOS_PREGUNTA
 -- ============================================================
-
 INSERT INTO catalogo_tipos_pregunta (nombre_del_tipo, descripcion_del_tipo) VALUES
 ('seleccion_multiple', 'Pregunta con varias opciones y una sola correcta'),
 ('verdadero_falso', 'Pregunta de dos opciones'),
@@ -276,140 +267,138 @@ INSERT INTO catalogo_tipos_pregunta (nombre_del_tipo, descripcion_del_tipo) VALU
 ('completar', 'Completar espacios en blanco');
 
 -- ============================================================
--- 10. BANCO_PREGUNTAS (103 preguntas)
+-- 10. BANCO_PREGUNTAS (103 preguntas independientes)
 -- ============================================================
-
-INSERT INTO banco_preguntas (id_tema, id_tipo_pregunta, texto_de_la_pregunta, nivel_de_dificultad, esta_habilitada) VALUES
-(1, 1, 'Cual es el resultado de -5 + 8?', 0.200, 1),
-(1, 2, 'La suma de dos numeros negativos siempre es negativa.', 0.300, 1),
-(1, 3, 'Escribe el resultado de 3/4 + 1/4', 0.400, 1),
-(2, 1, 'Cual es el valor de 2^5?', 0.300, 1),
-(2, 1, 'Cual es la raiz cuadrada de 81?', 0.300, 1),
-(2, 2, 'La raiz cubica de un numero negativo es siempre negativa.', 0.500, 1),
-(3, 1, 'Cual es la factorizacion de x^2 - 9?', 0.500, 1),
-(3, 3, 'Simplifica 3x + 2x - x', 0.400, 1),
-(4, 1, 'Cual es la solucion de 2x + 3 = 11?', 0.400, 1),
-(4, 2, 'Una ecuacion lineal siempre tiene una unica solucion.', 0.500, 1),
-(5, 1, 'Cual es el area de un rectangulo de 5 cm por 3 cm?', 0.300, 1),
-(5, 3, 'Escribe la formula del area del circulo', 0.400, 1),
-(6, 1, 'Cual es el producto punto de (1,2) y (3,4)?', 0.500, 1),
-(6, 2, 'El producto punto de vectores ortogonales es cero.', 0.400, 1),
-(7, 1, 'Cual es el determinante de la matriz [[1,2],[3,4]]?', 0.600, 1),
-(7, 2, 'Toda matriz cuadrada tiene inversa.', 0.700, 1),
-(8, 1, 'En el metodo de Gauss-Jordan, el objetivo es obtener una matriz identidad ampliada.', 0.600, 1),
-(8, 3, 'Cuantas variables tiene un sistema 3x3?', 0.400, 1),
-(9, 1, 'Un conjunto de vectores es base si son linealmente independientes y generan el espacio.', 0.700, 1),
-(9, 2, 'La dimension de R^3 es 3.', 0.500, 1),
-(10, 1, 'El nucleo de una transformacion lineal es siempre un subespacio.', 0.700, 1),
-(10, 2, 'Una transformacion lineal puede no preservar la suma.', 0.600, 1),
-(11, 1, 'Cual es el limite de (x^2 - 1)/(x - 1) cuando x tiende a 1?', 0.600, 1),
-(11, 2, 'El limite de una funcion en un punto siempre existe.', 0.700, 1),
-(11, 3, 'Calcula el limite de 1/x cuando x tiende a infinito', 0.500, 1),
-(12, 1, 'Una funcion es continua en un punto si el limite existe y es igual al valor de la funcion.', 0.600, 1),
-(12, 2, 'Toda funcion polinomica es continua en todos los reales.', 0.500, 1),
-(13, 1, 'Cual es la derivada de x^2?', 0.400, 1),
-(13, 1, 'Cual es la derivada de sen(x)?', 0.500, 1),
-(13, 2, 'La derivada de una constante es cero.', 0.300, 1),
-(14, 1, 'Para encontrar un maximo local, la derivada debe ser cero o no existir.', 0.600, 1),
-(14, 3, 'Que prueba se usa para determinar concavidad?', 0.700, 1),
-(15, 1, 'Un punto de inflexion ocurre donde cambia la concavidad.', 0.700, 1),
-(15, 2, 'La segunda derivada positiva indica concavidad hacia arriba.', 0.600, 1),
-(16, 1, 'Un objeto en MRU recorre distancias iguales en tiempos iguales.', 0.400, 1),
-(16, 3, 'Cual es la formula de la velocidad en MRU?', 0.300, 1),
-(17, 1, 'La segunda ley de Newton establece que F = m * a.', 0.400, 1),
-(17, 2, 'La inercia es la resistencia al cambio de movimiento.', 0.500, 1),
-(18, 1, 'El trabajo realizado por una fuerza conservativa depende solo de los puntos inicial y final.', 0.700, 1),
-(18, 2, 'La energia mecanica total se conserva en sistemas conservativos.', 0.600, 1),
-(19, 1, 'En un choque elastico se conserva el momento lineal y la energia cinetica.', 0.700, 1),
-(19, 2, 'El impulso es igual al cambio de momento lineal.', 0.600, 1),
-(20, 1, 'La velocidad angular se mide en radianes por segundo.', 0.500, 1),
-(20, 3, 'Escribe la formula de la aceleracion centripeta', 0.600, 1),
-(21, 1, 'Cuantos electrones puede tener el nivel 2?', 0.500, 1),
-(21, 2, 'El modelo de Bohr introdujo niveles de energia cuantizados.', 0.600, 1),
-(22, 1, 'Los metales alcalinos estan en el grupo 1 de la tabla periodica.', 0.500, 1),
-(22, 2, 'La electronegatividad aumenta de izquierda a derecha en un periodo.', 0.700, 1),
-(23, 1, 'Un enlace ionico se forma entre un metal y un no metal.', 0.600, 1),
-(23, 2, 'El enlace covalente implica comparticion de electrones.', 0.500, 1),
-(24, 1, 'Cuantos moles hay en 36 g de agua (H2O, masa molar 18 g/mol)?', 0.700, 1),
-(24, 2, 'La estequiometria se basa en la conservacion de la masa.', 0.600, 1),
-(25, 1, 'Una reaccion de sintesis combina dos o mas sustancias para formar una.', 0.500, 1),
-(25, 3, 'Escribe la ecuacion balanceada de la combustion del metano', 0.800, 1),
-(26, 1, 'La membrana celular es una bicapa lipidica.', 0.500, 1),
-(26, 2, 'La osmosis es un tipo de transporte pasivo.', 0.600, 1),
-(27, 1, 'Cual organelo produce ATP?', 0.500, 1),
-(27, 3, 'Menciona dos funciones del reticulo endoplasmatico', 0.600, 1),
-(28, 1, 'El catabolismo libera energia.', 0.500, 1),
-(28, 2, 'La fotosintesis es un proceso anabolico.', 0.600, 1),
-(29, 1, 'La mitosis produce dos celulas hijas identicas.', 0.500, 1),
-(29, 2, 'La meiosis produce cuatro celulas hijas con la mitad de cromosomas.', 0.600, 1),
-(30, 1, 'En la herencia mendeliana, los alelos dominantes enmascaran a los recesivos.', 0.600, 1),
-(30, 3, 'Cual es el genotipo de un individuo heterocigoto?', 0.500, 1),
-(31, 1, 'Una variable de tipo entero puede almacenar numeros decimales.', 0.300, 1),
-(31, 3, 'Declara una variable de tipo cadena en pseudocodigo', 0.400, 1),
-(32, 1, 'Un bucle while se ejecuta mientras la condicion sea verdadera.', 0.400, 1),
-(32, 2, 'Una estructura if-else permite tomar decisiones.', 0.300, 1),
-(33, 1, 'Una funcion puede retornar un valor.', 0.400, 1),
-(33, 3, 'Escribe la diferencia entre parametro y argumento', 0.600, 1),
-(34, 1, 'Un arreglo unidimensional almacena elementos del mismo tipo.', 0.400, 1),
-(34, 2, 'Los indices de un arreglo siempre comienzan en 1.', 0.500, 1),
-(35, 1, 'La busqueda binaria requiere que el arreglo este ordenado.', 0.600, 1),
-(35, 3, 'Menciona un algoritmo de ordenamiento simple', 0.500, 1),
-(36, 1, 'Una lista enlazada simple permite recorrido en ambos sentidos.', 0.600, 1),
-(36, 2, 'Las listas enlazadas pueden crecer dinamicamente.', 0.500, 1),
-(37, 1, 'Una pila sigue el principio LIFO.', 0.500, 1),
-(37, 2, 'Una cola sigue el principio FIFO.', 0.500, 1),
-(38, 1, 'Un arbol binario tiene como maximo dos hijos por nodo.', 0.500, 1),
-(38, 3, 'Menciona los tres recorridos de un arbol binario', 0.600, 1),
-(39, 1, 'BFS utiliza una cola para recorrer grafos.', 0.600, 1),
-(39, 2, 'DFS utiliza una pila o recursion para recorrer grafos.', 0.600, 1),
-(40, 1, 'La notacion Big-O mide el tiempo de ejecucion en el peor caso.', 0.700, 1),
-(40, 2, 'O(1) es mejor que O(n^2) en terminos de crecimiento.', 0.500, 1),
-(41, 1, 'En el modelo relacional, una clave primaria identifica univocamente una fila.', 0.500, 1),
-(41, 3, 'Define clave foranea', 0.600, 1),
-(42, 1, 'Que comando SQL se usa para consultar datos?', 0.400, 1),
-(42, 2, 'DELETE elimina filas de una tabla.', 0.500, 1),
-(43, 1, 'INNER JOIN devuelve solo las filas que coinciden en ambas tablas.', 0.600, 1),
-(43, 3, 'Escribe un ejemplo de LEFT JOIN', 0.700, 1),
-(44, 1, 'La primera forma normal elimina grupos repetidos.', 0.600, 1),
-(44, 2, 'La tercera forma normal elimina dependencias transitivas.', 0.700, 1),
-(45, 1, 'Un indice acelera las consultas a costa de espacio y escritura.', 0.600, 1),
-(45, 2, 'Una vista es una tabla virtual basada en una consulta.', 0.500, 1),
-(46, 1, 'El vocabulario tecnico incluye terminos especificos de una disciplina.', 0.500, 1),
-(46, 3, 'Traduce al ingles: red de computadores', 0.400, 1),
-(47, 1, 'La comprension lectora implica identificar ideas principales.', 0.500, 1),
-(47, 2, 'Skimming es una tecnica de lectura rapida.', 0.600, 1),
-(48, 1, 'El presente simple se usa para rutinas.', 0.500, 1),
-(48, 2, 'El pasado simple de "run" es "runned".', 0.400, 1),
-(49, 1, 'Un informe tecnico debe tener una estructura clara.', 0.500, 1),
-(49, 3, 'Menciona tres partes de un informe tecnico', 0.600, 1),
-(50, 1, 'Listening es la habilidad de comprension auditiva.', 0.400, 1),
-(50, 2, 'Tomar notas mientras se escucha puede mejorar la comprension.', 0.500, 1),
-(51, 1, 'La media aritmetica se calcula sumando todos los datos y dividiendo por el numero de datos.', 0.400, 1),
-(51, 3, 'Calcula la media de 2, 4, 6, 8', 0.300, 1),
-(52, 1, 'La varianza mide la dispersion de los datos respecto a la media.', 0.500, 1),
-(52, 2, 'La desviacion estandar es la raiz cuadrada de la varianza.', 0.500, 1),
-(53, 1, 'Un histograma muestra la distribucion de frecuencias.', 0.500, 1),
-(53, 2, 'Un grafico de pastel muestra proporciones.', 0.400, 1),
-(54, 1, 'La probabilidad de un evento seguro es 1.', 0.500, 1),
-(54, 3, 'Cual es la probabilidad de obtener cara al lanzar una moneda?', 0.300, 1),
-(55, 1, 'La distribucion normal es simetrica respecto a la media.', 0.600, 1),
-(55, 2, 'La distribucion binomial modela ensayos de Bernoulli.', 0.600, 1),
-(56, 1, 'El modelo OSI tiene siete capas.', 0.400, 1),
-(56, 3, 'Menciona las capas del modelo OSI de abajo hacia arriba', 0.700, 1),
-(57, 1, 'TCP es orientado a conexion.', 0.600, 1),
-(57, 2, 'UDP garantiza la entrega de paquetes.', 0.700, 1),
-(58, 1, 'Cuantos bits tiene una direccion IPv4?', 0.500, 1),
-(58, 2, 'IPv6 usa direcciones de 128 bits.', 0.600, 1),
-(59, 1, 'Un router opera en la capa de red.', 0.600, 1),
-(59, 2, 'Un switch opera en la capa de enlace de datos.', 0.600, 1),
-(60, 1, 'Un firewall puede filtrar trafico por puerto.', 0.600, 1),
-(60, 3, 'Menciona un protocolo de cifrado para redes', 0.700, 1);
+INSERT INTO banco_preguntas (id_tema_conocimiento, id_catalogo_tipos_pregunta, texto_de_la_pregunta, nivel_de_dificultad, esta_habilitada) VALUES
+(1, 1, 'Cual es el resultado de -5 + 8?', 20, 1),
+(1, 2, 'La suma de dos numeros negativos siempre es negativa.', 30, 1),
+(1, 3, 'Escribe el resultado de 3/4 + 1/4', 40, 1),
+(2, 1, 'Cual es el valor de 2^5?', 30, 1),
+(2, 1, 'Cual es la raiz cuadrada de 81?', 30, 1),
+(2, 2, 'La raiz cubica de un numero negativo es siempre negativa.', 50, 1),
+(3, 1, 'Cual es la factorizacion de x^2 - 9?', 50, 1),
+(3, 3, 'Simplifica 3x + 2x - x', 40, 1),
+(4, 1, 'Cual es la solucion de 2x + 3 = 11?', 40, 1),
+(4, 2, 'Una ecuacion lineal siempre tiene una unica solucion.', 50, 1),
+(5, 1, 'Cual es el area de un rectangulo de 5 cm por 3 cm?', 30, 1),
+(5, 3, 'Escribe la formula del area del circulo', 40, 1),
+(6, 1, 'Cual es el producto punto de (1,2) y (3,4)?', 50, 1),
+(6, 2, 'El producto punto de vectores ortogonales es cero.', 40, 1),
+(7, 1, 'Cual es el determinante de la matriz [[1,2],[3,4]]?', 60, 1),
+(7, 2, 'Toda matriz cuadrada tiene inversa.', 70, 1),
+(8, 1, 'En el metodo de Gauss-Jordan, el objetivo es obtener una matriz identidad ampliada.', 60, 1),
+(8, 3, 'Cuantas variables tiene un sistema 3x3?', 40, 1),
+(9, 1, 'Un conjunto de vectores es base si son linealmente independientes y generan el espacio.', 70, 1),
+(9, 2, 'La dimension de R^3 es 3.', 50, 1),
+(10, 1, 'El nucleo de una transformacion lineal es siempre un subespacio.', 70, 1),
+(10, 2, 'Una transformacion lineal puede no preservar la suma.', 60, 1),
+(11, 1, 'Cual es el limite de (x^2 - 1)/(x - 1) cuando x tiende a 1?', 60, 1),
+(11, 2, 'El limite de una funcion en un punto siempre existe.', 70, 1),
+(11, 3, 'Calcula el limite de 1/x cuando x tiende a infinito', 50, 1),
+(12, 1, 'Una funcion es continua en un punto si el limite existe y es igual al valor de la funcion.', 60, 1),
+(12, 2, 'Toda funcion polinomica es continua en todos los reales.', 50, 1),
+(13, 1, 'Cual es la derivada de x^2?', 40, 1),
+(13, 1, 'Cual es la derivada de sen(x)?', 50, 1),
+(13, 2, 'La derivada de una constante es cero.', 30, 1),
+(14, 1, 'Para encontrar un maximo local, la derivada debe ser cero o no existir.', 60, 1),
+(14, 3, 'Que prueba se usa para determinar concavidad?', 70, 1),
+(15, 1, 'Un punto de inflexion ocurre donde cambia la concavidad.', 70, 1),
+(15, 2, 'La segunda derivada positiva indica concavidad hacia arriba.', 60, 1),
+(16, 1, 'Un objeto en MRU recorre distancias iguales en tiempos iguales.', 40, 1),
+(16, 3, 'Cual es la formula de la velocidad en MRU?', 30, 1),
+(17, 1, 'La segunda ley de Newton establece que F = m * a.', 40, 1),
+(17, 2, 'La inercia es la resistencia al cambio de movimiento.', 50, 1),
+(18, 1, 'El trabajo realizado por una fuerza conservativa depende solo de los puntos inicial y final.', 70, 1),
+(18, 2, 'La energia mecanica total se conserva en sistemas conservativos.', 60, 1),
+(19, 1, 'En un choque elastico se conserva el momento lineal y la energia cinetica.', 70, 1),
+(19, 2, 'El impulso es igual al cambio de momento lineal.', 60, 1),
+(20, 1, 'La velocidad angular se mide en radianes por segundo.', 50, 1),
+(20, 3, 'Escribe la formula de la aceleracion centripeta', 60, 1),
+(21, 1, 'Cuantos electrones puede tener el nivel 2?', 50, 1),
+(21, 2, 'El modelo de Bohr introdujo niveles de energia cuantizados.', 60, 1),
+(22, 1, 'Los metales alcalinos estan en el grupo 1 de la tabla periodica.', 50, 1),
+(22, 2, 'La electronegatividad aumenta de izquierda a derecha en un periodo.', 70, 1),
+(23, 1, 'Un enlace ionico se forma entre un metal y un no metal.', 60, 1),
+(23, 2, 'El enlace covalente implica comparticion de electrones.', 50, 1),
+(24, 1, 'Cuantos moles hay en 36 g de agua (H2O, masa molar 18 g/mol)?', 70, 1),
+(24, 2, 'La estequiometria se basa en la conservacion de la masa.', 60, 1),
+(25, 1, 'Una reaccion de sintesis combina dos o mas sustancias para formar una.', 50, 1),
+(25, 3, 'Escribe la ecuacion balanceada de la combustion del metano', 80, 1),
+(26, 1, 'La membrana celular es una bicapa lipidica.', 50, 1),
+(26, 2, 'La osmosis es un tipo de transporte pasivo.', 60, 1),
+(27, 1, 'Cual organelo produce ATP?', 50, 1),
+(27, 3, 'Menciona dos funciones del reticulo endoplasmatico', 60, 1),
+(28, 1, 'El catabolismo libera energia.', 50, 1),
+(28, 2, 'La fotosintesis es un proceso anabolico.', 60, 1),
+(29, 1, 'La mitosis produce dos celulas hijas identicas.', 50, 1),
+(29, 2, 'La meiosis produce cuatro celulas hijas con la mitad de cromosomas.', 60, 1),
+(30, 1, 'En la herencia mendeliana, los alelos dominantes enmascaran a los recesivos.', 60, 1),
+(30, 3, 'Cual es el genotipo de un individuo heterocigoto?', 50, 1),
+(31, 1, 'Una variable de tipo entero puede almacenar numeros decimales.', 30, 1),
+(31, 3, 'Declara una variable de tipo cadena en pseudocodigo', 40, 1),
+(32, 1, 'Un bucle while se ejecuta mientras la condicion sea verdadera.', 40, 1),
+(32, 2, 'Una estructura if-else permite tomar decisiones.', 30, 1),
+(33, 1, 'Una funcion puede retornar un valor.', 40, 1),
+(33, 3, 'Escribe la diferencia entre parametro y argumento', 60, 1),
+(34, 1, 'Un arreglo unidimensional almacena elementos del mismo tipo.', 40, 1),
+(34, 2, 'Los indices de un arreglo siempre comienzan en 1.', 50, 1),
+(35, 1, 'La busqueda binaria requiere que el arreglo este ordenado.', 60, 1),
+(35, 3, 'Menciona un algoritmo de ordenamiento simple', 50, 1),
+(36, 1, 'Una lista enlazada simple permite recorrido en ambos sentidos.', 60, 1),
+(36, 2, 'Las listas enlazadas pueden crecer dinamicamente.', 50, 1),
+(37, 1, 'Una pila sigue el principio LIFO.', 50, 1),
+(37, 2, 'Una cola sigue el principio FIFO.', 50, 1),
+(38, 1, 'Un arbol binario tiene como maximo dos hijos por nodo.', 50, 1),
+(38, 3, 'Menciona los tres recorridos de un arbol binario', 60, 1),
+(39, 1, 'BFS utiliza una cola para recorrer grafos.', 60, 1),
+(39, 2, 'DFS utiliza una pila o recursion para recorrer grafos.', 60, 1),
+(40, 1, 'La notacion Big-O mide el tiempo de ejecucion en el peor caso.', 70, 1),
+(40, 2, 'O(1) es mejor que O(n^2) en terminos de crecimiento.', 50, 1),
+(41, 1, 'En el modelo relacional, una clave primaria identifica univocamente una fila.', 50, 1),
+(41, 3, 'Define clave foranea', 60, 1),
+(42, 1, 'Que comando SQL se usa para consultar datos?', 40, 1),
+(42, 2, 'DELETE elimina filas de una tabla.', 50, 1),
+(43, 1, 'INNER JOIN devuelve solo las filas que coinciden en ambas tablas.', 60, 1),
+(43, 3, 'Escribe un ejemplo de LEFT JOIN', 70, 1),
+(44, 1, 'La primera forma normal elimina grupos repetidos.', 60, 1),
+(44, 2, 'La tercera forma normal elimina dependencias transitivas.', 70, 1),
+(45, 1, 'Un indice acelera las consultas a costa de espacio y escritura.', 60, 1),
+(45, 2, 'Una vista es una tabla virtual basada en una consulta.', 50, 1),
+(46, 1, 'El vocabulario tecnico incluye terminos especificos de una disciplina.', 50, 1),
+(46, 3, 'Traduce al ingles: red de computadores', 40, 1),
+(47, 1, 'La comprension lectora implica identificar ideas principales.', 50, 1),
+(47, 2, 'Skimming es una tecnica de lectura rapida.', 60, 1),
+(48, 1, 'El presente simple se usa para rutinas.', 50, 1),
+(48, 2, 'El pasado simple de "run" es "runned".', 40, 1),
+(49, 1, 'Un informe tecnico debe tener una estructura clara.', 50, 1),
+(49, 3, 'Menciona tres partes de un informe tecnico', 60, 1),
+(50, 1, 'Listening es la habilidad de comprension auditiva.', 40, 1),
+(50, 2, 'Tomar notas mientras se escucha puede mejorar la comprension.', 50, 1),
+(51, 1, 'La media aritmetica se calcula sumando todos los datos y dividiendo por el numero de datos.', 40, 1),
+(51, 3, 'Calcula la media de 2, 4, 6, 8', 30, 1),
+(52, 1, 'La varianza mide la dispersion de los datos respecto a la media.', 50, 1),
+(52, 2, 'La desviacion estandar es la raiz cuadrada de la varianza.', 50, 1),
+(53, 1, 'Un histograma muestra la distribucion de frecuencias.', 50, 1),
+(53, 2, 'Un grafico de pastel muestra proporciones.', 40, 1),
+(54, 1, 'La probabilidad de un evento seguro es 1.', 50, 1),
+(54, 3, 'Cual es la probabilidad de obtener cara al lanzar una moneda?', 30, 1),
+(55, 1, 'La distribucion normal es simetrica respecto a la media.', 60, 1),
+(55, 2, 'La distribucion binomial modela ensayos de Bernoulli.', 60, 1),
+(56, 1, 'El modelo OSI tiene siete capas.', 40, 1),
+(56, 3, 'Menciona las capas del modelo OSI de abajo hacia arriba', 70, 1),
+(57, 1, 'TCP es orientado a conexion.', 60, 1),
+(57, 2, 'UDP garantiza la entrega de paquetes.', 70, 1),
+(58, 1, 'Cuantos bits tiene una direccion IPv4?', 50, 1),
+(58, 2, 'IPv6 usa direcciones de 128 bits.', 60, 1),
+(59, 1, 'Un router opera en la capa de red.', 60, 1),
+(59, 2, 'Un switch opera en la capa de enlace de datos.', 60, 1),
+(60, 1, 'Un firewall puede filtrar trafico por puerto.', 60, 1),
+(60, 3, 'Menciona un protocolo de cifrado para redes', 70, 1);
 
 -- ============================================================
 -- 11. OPCION_RESPUESTA
 -- ============================================================
-
-INSERT INTO opcion_respuesta (id_pregunta, texto_de_la_opcion, orden_en_que_aparece) VALUES
+INSERT INTO opcion_respuesta (id_banco_preguntas, texto_de_la_opcion, orden_en_que_aparece) VALUES
 (1, '3', 1), (1, '-3', 2), (1, '13', 3), (1, '-13', 4),
 (2, 'Verdadero', 1), (2, 'Falso', 2),
 (4, '32', 1), (4, '25', 2), (4, '10', 3), (4, '64', 4),
@@ -508,41 +497,9 @@ INSERT INTO opcion_respuesta (id_pregunta, texto_de_la_opcion, orden_en_que_apar
 (103, 'Verdadero', 1), (103, 'Falso', 2);
 
 -- ============================================================
--- 12. RESPUESTA_OFICIAL
+-- 12. EVALUACION_QUIZ
 -- ============================================================
-
-INSERT INTO respuesta_oficial (id_pregunta, id_opcion_correcta, texto_correcto) VALUES
-(1, 1, NULL), (2, 5, NULL), (3, NULL, '1'), (4, 7, NULL), (5, 11, NULL),
-(6, 14, NULL), (7, 15, NULL), (8, NULL, '4x'), (9, 23, NULL), (10, 26, NULL),
-(11, 27, NULL), (12, NULL, 'pi * r^2'), (13, 31, NULL), (14, 34, NULL), (15, 35, NULL),
-(16, 38, NULL), (17, 39, NULL), (18, NULL, '3'), (19, 43, NULL), (20, 45, NULL),
-(21, 47, NULL), (22, 50, NULL), (23, 51, NULL), (24, 54, NULL), (25, NULL, '0'),
-(26, 57, NULL), (27, 59, NULL), (28, 61, NULL), (29, 63, NULL), (30, 65, NULL),
-(31, 67, NULL), (32, NULL, 'segunda derivada'), (33, 69, NULL), (34, 71, NULL),
-(35, NULL, 'v = d / t'), (36, 75, NULL), (37, 77, NULL), (38, 79, NULL), (39, 81, NULL),
-(40, NULL, 'a = v^2 / r'), (41, 85, NULL), (42, 87, NULL), (43, 89, NULL), (44, 91, NULL),
-(45, 93, NULL), (46, 95, NULL), (47, 97, NULL), (48, NULL, 'CH4 + 2O2 -> CO2 + 2H2O'),
-(49, 101, NULL), (50, 103, NULL), (51, 105, NULL), (52, NULL, 'sintesis de proteinas y transporte'),
-(53, 109, NULL), (54, 111, NULL), (55, 113, NULL), (56, 115, NULL), (57, 117, NULL),
-(58, NULL, 'Aa'), (59, 121, NULL), (60, NULL, 'cadena nombre = "texto"'), (61, 125, NULL),
-(62, 127, NULL), (63, NULL, 'el parametro es la definicion, el argumento es el valor enviado'),
-(64, 131, NULL), (65, 133, NULL), (66, NULL, 'burbuja'), (67, 137, NULL), (68, 139, NULL),
-(69, 141, NULL), (70, NULL, 'inorden, preorden, postorden'), (71, 145, NULL), (72, 147, NULL),
-(73, 149, NULL), (74, 151, NULL), (75, NULL, 'clave que referencia la clave primaria de otra tabla'),
-(76, 155, NULL), (77, 157, NULL), (78, NULL, 'SELECT * FROM tabla LEFT JOIN otra ON ...'),
-(79, 161, NULL), (80, 163, NULL), (81, 165, NULL), (82, NULL, 'computer network'),
-(83, 169, NULL), (84, 171, NULL), (85, 173, NULL), (86, 175, NULL),
-(87, NULL, 'introduccion, desarrollo, conclusiones'), (88, 179, NULL), (89, 181, NULL),
-(90, NULL, '5'), (91, 185, NULL), (92, 187, NULL), (93, 189, NULL), (94, 191, NULL),
-(95, NULL, '0.5'), (96, 195, NULL), (97, 197, NULL),
-(98, NULL, 'fisica, enlace de datos, red, transporte, sesion, presentacion, aplicacion'),
-(99, 201, NULL), (100, 203, NULL), (101, 205, NULL), (102, NULL, 'TLS'), (103, 209, NULL);
-
--- ============================================================
--- 13. EVALUACION_QUIZ
--- ============================================================
-
-INSERT INTO evaluacion_quiz (id_materia, id_tema, titulo_del_quiz, tiempo_limite_en_milisegundos, esta_habilitado) VALUES
+INSERT INTO evaluacion_quiz (id_materia_asignatura, id_tema_conocimiento, titulo_del_quiz, tiempo_limite_en_milisegundos, esta_habilitado) VALUES
 (1, 1, 'Quiz de numeros enteros', 600000, 1),
 (1, 4, 'Quiz de algebra basica', 900000, 1),
 (2, 6, 'Quiz de vectores', 1200000, 1),
@@ -565,10 +522,132 @@ INSERT INTO evaluacion_quiz (id_materia, id_tema, titulo_del_quiz, tiempo_limite
 (12, 56, 'Quiz de modelo OSI', 900000, 1);
 
 -- ============================================================
--- 14. INTENTO_DE_QUIZ
+-- 13. PREGUNTAS_DEL_QUIZ (asignacion de preguntas a cada quiz)
 -- ============================================================
+INSERT INTO preguntas_del_quiz (id_evaluacion_quiz, id_banco_preguntas, orden_en_el_quiz) VALUES
+-- Quiz 1 (Numeros enteros): preguntas 1,2,3
+(1, 1, 1), (1, 2, 2), (1, 3, 3),
+-- Quiz 2 (Algebra basica): preguntas 4,5,6,7,8
+(2, 4, 1), (2, 5, 2), (2, 6, 3), (2, 7, 4), (2, 8, 5),
+-- Quiz 3 (Vectores): preguntas 13,14
+(3, 13, 1), (3, 14, 2),
+-- Quiz 4 (Sistemas de ecuaciones): preguntas 17,18
+(4, 17, 1), (4, 18, 2),
+-- Quiz 5 (Limites y continuidad): preguntas 23,24,26
+(5, 23, 1), (5, 24, 2), (5, 26, 3),
+-- Quiz 6 (Derivadas): preguntas 28,29,30
+(6, 28, 1), (6, 29, 2), (6, 30, 3),
+-- Quiz 7 (Cinematica): preguntas 34,35,36
+(7, 34, 1), (7, 35, 2), (7, 36, 3),
+-- Quiz 8 (Dinamica): preguntas 37,38
+(8, 37, 1), (8, 38, 2),
+-- Quiz 9 (Estructura atomica): preguntas 41,42
+(9, 41, 1), (9, 42, 2),
+-- Quiz 10 (Enlaces quimicos): preguntas 46,47
+(10, 46, 1), (10, 47, 2),
+-- Quiz 11 (Membrana celular): preguntas 51,52
+(11, 51, 1), (11, 52, 2),
+-- Quiz 12 (Metabolismo): preguntas 56,57
+(12, 56, 1), (12, 57, 2),
+-- Quiz 13 (Variables y tipos): preguntas 61,62
+(13, 61, 1), (13, 62, 2),
+-- Quiz 14 (Funciones): preguntas 64,65
+(14, 64, 1), (14, 65, 2),
+-- Quiz 15 (Listas enlazadas): preguntas 70,71,72
+(15, 70, 1), (15, 71, 2), (15, 72, 3),
+-- Quiz 16 (Modelo relacional): preguntas 76,77,78
+(16, 76, 1), (16, 77, 2), (16, 78, 3),
+-- Quiz 17 (SQL basico): preguntas 79,80,81
+(17, 79, 1), (17, 80, 2), (17, 81, 3),
+-- Quiz 18 (Vocabulario tecnico): preguntas 82,83,84
+(18, 82, 1), (18, 83, 2), (18, 84, 3),
+-- Quiz 19 (Medidas de tendencia central): preguntas 85,86,87
+(19, 85, 1), (19, 86, 2), (19, 87, 3),
+-- Quiz 20 (Modelo OSI): preguntas 100,101,102
+(20, 100, 1), (20, 101, 2), (20, 102, 3);
 
-INSERT INTO intento_de_quiz (id_quiz, id_estudiante, fecha_en_que_inicio, fecha_en_que_termino, tiempo_total_en_milisegundos, puntaje_que_obtuvo, estado_del_intento) VALUES
+-- ============================================================
+-- 14. RESPUESTA_OFICIAL_QUIZ
+-- ============================================================
+INSERT INTO respuesta_oficial_quiz (id_preguntas_del_quiz, id_opcion_correcta, texto_correcto) VALUES
+-- Quiz 1
+(1, 1, NULL),      -- pregunta 1 -> opcion 1
+(2, 5, NULL),      -- pregunta 2 -> opcion 5 (Verdadero)
+(3, NULL, '1'),    -- pregunta 3 -> texto
+-- Quiz 2
+(4, 7, NULL),      -- pregunta 4 -> opcion 7
+(5, 11, NULL),     -- pregunta 5 -> opcion 11
+(6, 14, NULL),     -- pregunta 6 -> opcion 14
+(7, 15, NULL),     -- pregunta 7 -> opcion 15
+(8, NULL, '4x'),   -- pregunta 8 -> texto
+-- Quiz 3
+(9, 23, NULL),     -- pregunta 13 -> opcion 23
+(10, 26, NULL),    -- pregunta 14 -> opcion 26
+-- Quiz 4
+(11, 31, NULL),    -- pregunta 17 -> opcion 31
+(12, 34, NULL),    -- pregunta 18 -> opcion 34
+-- Quiz 5
+(13, 35, NULL),    -- pregunta 23 -> opcion 35
+(14, 38, NULL),    -- pregunta 24 -> opcion 38
+(15, 39, NULL),    -- pregunta 26 -> opcion 39
+-- Quiz 6
+(16, 43, NULL),    -- pregunta 28 -> opcion 43
+(17, 45, NULL),    -- pregunta 29 -> opcion 45
+(18, NULL, '0'),   -- pregunta 30 -> texto
+-- Quiz 7
+(19, 47, NULL),    -- pregunta 34 -> opcion 47
+(20, 50, NULL),    -- pregunta 35 -> opcion 50
+(21, NULL, 'v = d / t'), -- pregunta 36 -> texto
+-- Quiz 8
+(22, 51, NULL),    -- pregunta 37 -> opcion 51
+(23, 54, NULL),    -- pregunta 38 -> opcion 54
+-- Quiz 9
+(24, 57, NULL),    -- pregunta 41 -> opcion 57
+(25, 59, NULL),    -- pregunta 42 -> opcion 59
+-- Quiz 10
+(26, 61, NULL),    -- pregunta 46 -> opcion 61
+(27, 63, NULL),    -- pregunta 47 -> opcion 63
+-- Quiz 11
+(28, 65, NULL),    -- pregunta 51 -> opcion 65
+(29, 67, NULL),    -- pregunta 52 -> opcion 67
+-- Quiz 12
+(30, 69, NULL),    -- pregunta 56 -> opcion 69
+(31, 71, NULL),    -- pregunta 57 -> opcion 71
+-- Quiz 13
+(32, 75, NULL),    -- pregunta 61 -> opcion 75
+(33, 77, NULL),    -- pregunta 62 -> opcion 77
+-- Quiz 14
+(34, 79, NULL),    -- pregunta 64 -> opcion 79
+(35, 81, NULL),    -- pregunta 65 -> opcion 81
+-- Quiz 15
+(36, 85, NULL),    -- pregunta 70 -> opcion 85
+(37, 87, NULL),    -- pregunta 71 -> opcion 87
+(38, NULL, 'inorden, preorden, postorden'), -- pregunta 72
+-- Quiz 16
+(39, 93, NULL),    -- pregunta 76 -> opcion 93
+(40, 95, NULL),    -- pregunta 77 -> opcion 95
+(41, NULL, 'clave que referencia la clave primaria de otra tabla'), -- pregunta 78
+-- Quiz 17
+(42, 101, NULL),   -- pregunta 79 -> opcion 101
+(43, 103, NULL),   -- pregunta 80 -> opcion 103
+(44, NULL, 'SELECT * FROM tabla LEFT JOIN otra ON ...'), -- pregunta 81
+-- Quiz 18
+(45, 105, NULL),   -- pregunta 82 -> opcion 105
+(46, 107, NULL),   -- pregunta 83 -> opcion 107
+(47, NULL, 'computer network'), -- pregunta 84
+-- Quiz 19
+(48, 109, NULL),   -- pregunta 85 -> opcion 109
+(49, 111, NULL),   -- pregunta 86 -> opcion 111
+(50, NULL, '5'),   -- pregunta 87 -> texto
+-- Quiz 20
+(51, 113, NULL),   -- pregunta 100 -> opcion 113
+(52, 115, NULL),   -- pregunta 101 -> opcion 115
+(53, NULL, 'fisica, enlace de datos, red, transporte, sesion, presentacion, aplicacion'); -- pregunta 102
+
+-- ============================================================
+-- 15. INTENTO_DE_QUIZ
+-- ============================================================
+INSERT INTO intento_de_quiz (id_evaluacion_quiz, id_usuario_estudiante, fecha_en_que_inicio, fecha_en_que_termino, tiempo_total_en_milisegundos, puntaje_que_obtuvo, estado_del_intento) VALUES
 (1, 8,  '2025-01-10 08:00:00', '2025-01-10 08:08:30', 510000, 85.00, 'completado'),
 (1, 9,  '2025-01-10 09:00:00', '2025-01-10 09:09:10', 550000, 72.50, 'completado'),
 (1, 10, '2025-01-10 10:00:00', '2025-01-10 10:07:45', 465000, 90.00, 'completado'),
@@ -610,112 +689,96 @@ INSERT INTO intento_de_quiz (id_quiz, id_estudiante, fecha_en_que_inicio, fecha_
 (9, 24, '2025-02-03 08:00:00', '2025-02-03 09:06:00', 360000, 0.00, 'abandonado');
 
 -- ============================================================
--- 15. RESPUESTA_ESTUDIANTE
+-- 16. RESPUESTA_ESTUDIANTE
 -- ============================================================
-
-INSERT INTO respuesta_estudiante (id_intento, id_pregunta, id_opcion_que_eligio, texto_que_escribio, fue_correcta_su_respuesta, tiempo_que_tardo_en_responder_milisegundos) VALUES
+INSERT INTO respuesta_estudiante (id_intento_de_quiz, id_preguntas_del_quiz, id_opcion_que_eligio, texto_que_escribio, fue_correcta_su_respuesta, tiempo_que_tardo_en_responder_milisegundos) VALUES
 (1, 1, 1, NULL, 1, 15000),
 (1, 2, 5, NULL, 1, 12000),
 (1, 3, NULL, '1', 1, 20000),
-(1, 4, 7, NULL, 1, 18000),
-(1, 5, 11, NULL, 1, 22000),
 (2, 1, 2, NULL, 0, 25000),
 (2, 2, 5, NULL, 1, 14000),
 (2, 3, NULL, '0.5', 0, 30000),
-(2, 4, 8, NULL, 0, 20000),
 (3, 1, 1, NULL, 1, 10000),
 (3, 2, 6, NULL, 0, 8000),
-(3, 4, 7, NULL, 1, 12000),
-(4, 13, 31, NULL, 1, 20000),
-(4, 14, 34, NULL, 1, 18000),
-(4, 15, 35, NULL, 1, 22000),
-(5, 13, 32, NULL, 0, 25000),
-(5, 14, 34, NULL, 1, 20000),
-(5, 15, 36, NULL, 0, 30000),
-(6, 23, 51, NULL, 1, 15000),
-(6, 24, 54, NULL, 1, 12000),
-(6, 25, NULL, '0', 1, 18000),
-(7, 23, 52, NULL, 0, 20000),
-(7, 24, 54, NULL, 1, 15000),
-(8, 28, 61, NULL, 1, 10000),
-(8, 29, 63, NULL, 1, 12000),
-(8, 30, 65, NULL, 1, 8000),
-(9, 31, 67, NULL, 1, 18000),
-(9, 32, 69, NULL, 1, 15000),
-(9, 33, NULL, 'Calcula el limite', 0, 25000),
-(10, 31, 68, NULL, 0, 22000),
-(10, 32, 69, NULL, 1, 20000),
-(11, 34, 71, NULL, 1, 15000),
-(11, 35, 73, NULL, 1, 12000),
-(11, 36, NULL, 'la derivada es 2x', 1, 30000),
-(12, 46, 95, NULL, 1, 8000),
-(12, 47, 97, NULL, 1, 10000),
-(12, 48, NULL, 'distancia/tiempo', 1, 15000),
-(13, 46, 96, NULL, 0, 12000),
-(13, 47, 98, NULL, 0, 14000),
-(14, 49, 101, NULL, 1, 10000),
-(14, 50, 103, NULL, 1, 12000),
-(14, 51, NULL, 'v = d/t', 1, 18000),
-(15, 55, 113, NULL, 1, 8000),
-(15, 56, 115, NULL, 1, 10000),
-(15, 57, NULL, 'Menciona dos funciones', 0, 25000),
-(16, 55, 114, NULL, 0, 15000),
-(16, 56, 115, NULL, 1, 12000),
-(17, 58, 117, NULL, 1, 10000),
-(17, 59, 119, NULL, 1, 12000),
-(18, 58, 118, NULL, 0, 18000),
-(18, 59, 119, NULL, 1, 14000),
-(19, 61, 125, NULL, 1, 6000),
-(19, 62, 127, NULL, 1, 8000),
-(19, 63, NULL, 'unidimensional', 1, 10000),
-(20, 61, 126, NULL, 0, 10000),
-(20, 62, 127, NULL, 1, 9000),
-(21, 64, 131, NULL, 1, 8000),
-(21, 65, 133, NULL, 1, 10000),
-(21, 66, NULL, 'while condicion', 1, 12000),
-(22, 64, 132, NULL, 0, 12000),
-(22, 65, 133, NULL, 1, 11000),
-(23, 70, 141, NULL, 1, 12000),
-(23, 71, 145, NULL, 1, 14000),
-(23, 72, NULL, 'inorden, preorden, postorden', 1, 18000),
-(24, 70, 142, NULL, 0, 12000),
-(24, 71, 146, NULL, 0, 12000),
-(25, 73, 149, NULL, 1, 15000),
-(25, 74, 151, NULL, 1, 18000),
-(25, 75, NULL, 'BFS usa cola', 1, 20000),
-(26, 73, 150, NULL, 0, 18000),
-(26, 74, 151, NULL, 1, 16000),
-(27, 76, 155, NULL, 1, 8000),
-(27, 77, 157, NULL, 1, 10000),
-(27, 78, NULL, 'clave que referencia otra tabla', 1, 15000),
-(28, 76, 156, NULL, 0, 12000),
-(28, 77, 157, NULL, 1, 11000),
-(29, 79, 161, NULL, 1, 7000),
-(29, 80, 163, NULL, 1, 9000),
-(29, 81, NULL, 'SELECT * FROM tabla', 1, 12000),
-(30, 79, 162, NULL, 0, 10000),
-(30, 80, 163, NULL, 1, 8000),
-(31, 82, 165, NULL, 1, 6000),
-(31, 83, 169, NULL, 1, 8000),
-(31, 84, NULL, 'ejemplo de left join', 1, 15000),
-(32, 82, 166, NULL, 0, 9000),
-(32, 83, 169, NULL, 1, 7000),
-(33, 85, 173, NULL, 1, 10000),
-(33, 86, 175, NULL, 1, 12000),
-(33, 87, NULL, 'traduccion', 1, 15000),
-(34, 85, 174, NULL, 0, 12000),
-(34, 86, 175, NULL, 1, 14000),
-(35, 100, 201, NULL, 1, 8000),
-(35, 101, 203, NULL, 1, 10000),
-(35, 102, NULL, 'las siete capas', 1, 12000),
-(36, 100, 202, NULL, 0, 10000),
-(36, 101, 203, NULL, 1, 9000);
+(4, 4, 7, NULL, 1, 20000),
+(4, 5, 11, NULL, 1, 18000),
+(5, 4, 8, NULL, 0, 25000),
+(5, 5, 11, NULL, 1, 20000),
+(6, 9, 23, NULL, 1, 15000),
+(6, 10, 26, NULL, 1, 12000),
+(7, 9, 24, NULL, 0, 20000),
+(7, 10, 26, NULL, 1, 15000),
+(8, 11, 31, NULL, 1, 10000),
+(8, 12, 34, NULL, 1, 12000),
+(9, 13, 35, NULL, 1, 18000),
+(9, 14, 38, NULL, 1, 15000),
+(9, 15, 39, NULL, 1, 25000),
+(10, 13, 36, NULL, 0, 22000),
+(10, 14, 38, NULL, 1, 20000),
+(11, 16, 43, NULL, 1, 15000),
+(11, 17, 45, NULL, 1, 12000),
+(11, 18, NULL, '0', 1, 30000),
+(12, 19, 47, NULL, 1, 8000),
+(12, 20, 50, NULL, 1, 10000),
+(12, 21, NULL, 'distancia/tiempo', 1, 15000),
+(13, 19, 48, NULL, 0, 12000),
+(13, 20, 50, NULL, 1, 14000),
+(14, 22, 51, NULL, 1, 10000),
+(14, 23, 54, NULL, 1, 12000),
+(15, 24, 57, NULL, 1, 8000),
+(15, 25, 59, NULL, 1, 10000),
+(16, 24, 58, NULL, 0, 15000),
+(16, 25, 59, NULL, 1, 12000),
+(17, 26, 61, NULL, 1, 10000),
+(17, 27, 63, NULL, 1, 12000),
+(18, 26, 62, NULL, 0, 18000),
+(18, 27, 63, NULL, 1, 14000),
+(19, 28, 65, NULL, 1, 6000),
+(19, 29, 67, NULL, 1, 8000),
+(20, 28, 66, NULL, 0, 10000),
+(20, 29, 67, NULL, 1, 9000),
+(21, 30, 69, NULL, 1, 8000),
+(21, 31, 71, NULL, 1, 10000),
+(22, 30, 70, NULL, 0, 12000),
+(22, 31, 71, NULL, 1, 11000),
+(23, 32, 75, NULL, 1, 12000),
+(23, 33, 77, NULL, 1, 14000),
+(24, 32, 76, NULL, 0, 12000),
+(24, 33, 77, NULL, 1, 12000),
+(25, 34, 79, NULL, 1, 15000),
+(25, 35, 81, NULL, 1, 18000),
+(26, 34, 80, NULL, 0, 18000),
+(26, 35, 81, NULL, 1, 16000),
+(27, 36, 85, NULL, 1, 8000),
+(27, 37, 87, NULL, 1, 10000),
+(27, 38, NULL, 'inorden, preorden, postorden', 1, 15000),
+(28, 36, 86, NULL, 0, 12000),
+(28, 37, 87, NULL, 1, 11000),
+(29, 39, 93, NULL, 1, 7000),
+(29, 40, 95, NULL, 1, 9000),
+(29, 41, NULL, 'clave que referencia otra tabla', 1, 12000),
+(30, 39, 94, NULL, 0, 10000),
+(30, 40, 95, NULL, 1, 8000),
+(31, 42, 101, NULL, 1, 6000),
+(31, 43, 103, NULL, 1, 8000),
+(31, 44, NULL, 'ejemplo de left join', 1, 15000),
+(32, 42, 102, NULL, 0, 9000),
+(32, 43, 103, NULL, 1, 7000),
+(33, 45, 105, NULL, 1, 10000),
+(33, 46, 107, NULL, 1, 12000),
+(33, 47, NULL, 'traduccion', 1, 15000),
+(34, 45, 106, NULL, 0, 12000),
+(34, 46, 107, NULL, 1, 14000),
+(35, 51, 113, NULL, 1, 8000),
+(35, 52, 115, NULL, 1, 10000),
+(35, 53, NULL, 'las siete capas', 1, 12000),
+(36, 51, 114, NULL, 0, 10000),
+(36, 52, 115, NULL, 1, 9000);
 
 -- ============================================================
--- 16. RANKING_POR_TEMA
+-- 17. RANKING_POR_TEMA
 -- ============================================================
-
-INSERT INTO ranking_por_tema (id_tema, id_estudiante, mejor_puntaje_obtenido, mejor_tiempo_en_milisegundos, posicion_en_el_ranking) VALUES
+INSERT INTO ranking_por_tema (id_tema_conocimiento, id_usuario_estudiante, mejor_puntaje_obtenido, mejor_tiempo_en_milisegundos, posicion_en_el_ranking) VALUES
 (1, 10, 90.00, 465000, 1),
 (1, 8,  85.00, 510000, 2),
 (1, 9,  72.50, 550000, 3),
@@ -766,10 +829,9 @@ INSERT INTO ranking_por_tema (id_tema, id_estudiante, mejor_puntaje_obtenido, me
 (56, 28, 67.00, 750000, 2);
 
 -- ============================================================
--- 17. RESUMEN_ESTADISTICAS_MATERIA
+-- 18. RESUMEN_ESTADISTICAS_MATERIA
 -- ============================================================
-
-INSERT INTO resumen_estadisticas_materia (id_materia, total_de_estudiantes_inscritos, total_de_quices_realizados, promedio_general_de_notas, cantidad_de_aprobados, cantidad_de_reprobados) VALUES
+INSERT INTO resumen_estadisticas_materia (id_materia_asignatura, total_de_estudiantes_inscritos, total_de_quices_realizados, promedio_general_de_notas, cantidad_de_aprobados, cantidad_de_reprobados) VALUES
 (1, 7, 4, 81.88, 3, 1),
 (2, 4, 3, 80.50, 2, 1),
 (3, 4, 3, 78.33, 2, 1),
@@ -784,102 +846,98 @@ INSERT INTO resumen_estadisticas_materia (id_materia, total_de_estudiantes_inscr
 (12, 3, 2, 82.50, 2, 0);
 
 -- ============================================================
--- 18. PROGRESO_ACTUAL
+-- 19. PROGRESO_ACTUAL
 -- ============================================================
-
-INSERT INTO progreso_actual (id_estudiante, id_tema, nota_actual_del_tema, seguridad_del_sistema_en_su_nota, cantidad_de_intentos, estado_de_aprendizaje) VALUES
-(8, 1, 0.850, 0.800, 2, 'dominado'),
-(8, 2, 0.700, 0.600, 1, 'en_progreso'),
-(8, 3, 0.600, 0.500, 1, 'debil'),
-(8, 4, 0.900, 0.850, 2, 'dominado'),
-(9, 1, 0.725, 0.700, 1, 'en_progreso'),
-(9, 2, 0.500, 0.400, 1, 'debil'),
-(9, 3, 0.650, 0.600, 1, 'en_progreso'),
-(10, 1, 0.900, 0.850, 1, 'dominado'),
-(10, 2, 0.800, 0.750, 1, 'dominado'),
-(11, 4, 0.650, 0.550, 1, 'en_progreso'),
-(12, 1, 0.300, 0.200, 1, 'debil'),
-(13, 6, 0.880, 0.800, 1, 'dominado'),
-(13, 7, 0.740, 0.700, 1, 'en_progreso'),
-(14, 8, 0.815, 0.750, 1, 'dominado'),
-(15, 6, 0.450, 0.350, 1, 'debil'),
-(16, 11, 0.790, 0.700, 1, 'en_progreso'),
-(17, 13, 0.840, 0.800, 1, 'dominado'),
-(18, 11, 0.620, 0.500, 1, 'debil'),
-(19, 16, 0.920, 0.900, 1, 'dominado'),
-(20, 17, 0.580, 0.450, 1, 'debil'),
-(21, 16, 0.750, 0.650, 1, 'en_progreso'),
-(22, 21, 0.890, 0.850, 1, 'dominado'),
-(23, 23, 0.680, 0.600, 1, 'en_progreso'),
-(24, 21, 0.550, 0.400, 1, 'debil'),
-(25, 26, 0.940, 0.900, 1, 'dominado'),
-(26, 28, 0.820, 0.780, 1, 'dominado'),
-(27, 31, 0.670, 0.550, 1, 'en_progreso'),
-(28, 33, 0.700, 0.600, 1, 'en_progreso'),
-(29, 36, 0.730, 0.650, 1, 'en_progreso'),
-(30, 38, 0.800, 0.750, 1, 'en_progreso'),
-(37, 36, 0.860, 0.800, 1, 'dominado'),
-(38, 38, 0.600, 0.500, 1, 'debil'),
-(39, 41, 0.780, 0.700, 1, 'en_progreso'),
-(40, 46, 0.910, 0.880, 1, 'dominado');
-
--- ============================================================
--- 19. HISTORIAL_DE_PROGRESO
--- ============================================================
-
-INSERT INTO historial_de_progreso (id_estudiante, id_tema, nota_que_tenia, seguridad_del_sistema_en_su_nota, estado_de_aprendizaje, fecha_en_que_se_registro) VALUES
-(8, 1, 0.700, 0.650, 'en_progreso', '2025-01-05 08:00:00'),
-(8, 1, 0.850, 0.800, 'dominado', '2025-01-10 08:08:30'),
-(8, 2, 0.700, 0.600, 'en_progreso', '2025-01-10 09:00:00'),
-(8, 3, 0.600, 0.500, 'debil', '2025-01-11 08:00:00'),
-(8, 4, 0.900, 0.850, 'dominado', '2025-01-12 08:16:40'),
-(9, 1, 0.725, 0.700, 'en_progreso', '2025-01-10 09:09:10'),
-(9, 2, 0.500, 0.400, 'debil', '2025-01-11 09:00:00'),
-(10, 1, 0.900, 0.850, 'dominado', '2025-01-10 10:07:45'),
-(11, 4, 0.650, 0.550, 'en_progreso', '2025-01-11 09:14:10'),
-(12, 1, 0.300, 0.200, 'debil', '2025-02-01 08:00:00'),
-(13, 6, 0.880, 0.800, 'dominado', '2025-01-12 09:18:30'),
-(14, 8, 0.815, 0.750, 'dominado', '2025-01-13 08:13:20'),
-(15, 6, 0.450, 0.350, 'debil', '2025-01-11 10:00:00'),
-(16, 11, 0.790, 0.700, 'en_progreso', '2025-01-14 09:19:30'),
-(17, 13, 0.840, 0.800, 'dominado', '2025-01-15 08:18:20'),
-(18, 11, 0.620, 0.500, 'debil', '2025-02-02 08:00:00'),
-(19, 16, 0.920, 0.900, 'dominado', '2025-01-16 09:12:10'),
-(20, 17, 0.580, 0.450, 'debil', '2025-01-17 08:15:40'),
-(22, 21, 0.890, 0.850, 'dominado', '2025-01-18 09:11:10'),
-(23, 23, 0.680, 0.600, 'en_progreso', '2025-01-19 08:14:50'),
-(25, 26, 0.940, 0.900, 'dominado', '2025-01-20 09:10:40'),
-(26, 28, 0.820, 0.780, 'dominado', '2025-01-21 08:12:50'),
-(28, 33, 0.700, 0.600, 'en_progreso', '2025-01-22 09:12:30'),
-(29, 36, 0.730, 0.650, 'en_progreso', '2025-01-23 08:14:10'),
-(30, 38, 0.800, 0.750, 'en_progreso', '2025-01-23 09:15:20'),
-(37, 36, 0.860, 0.800, 'dominado', '2025-01-24 09:14:50'),
-(39, 41, 0.780, 0.700, 'en_progreso', '2025-01-25 08:00:00'),
-(40, 46, 0.910, 0.880, 'dominado', '2025-01-25 09:10:20');
+INSERT INTO progreso_actual (id_usuario_estudiante, id_tema_conocimiento, nota_actual_del_tema, seguridad_del_sistema_en_su_nota, cantidad_de_intentos, estado_de_aprendizaje) VALUES
+(8, 1, 85, 80, 2, 'dominado'),
+(8, 2, 70, 60, 1, 'en_progreso'),
+(8, 3, 60, 50, 1, 'debil'),
+(8, 4, 90, 85, 2, 'dominado'),
+(9, 1, 72, 70, 1, 'en_progreso'),
+(9, 2, 50, 40, 1, 'debil'),
+(9, 3, 65, 60, 1, 'en_progreso'),
+(10, 1, 90, 85, 1, 'dominado'),
+(10, 2, 80, 75, 1, 'dominado'),
+(11, 4, 65, 55, 1, 'en_progreso'),
+(12, 1, 30, 20, 1, 'debil'),
+(13, 6, 88, 80, 1, 'dominado'),
+(13, 7, 74, 70, 1, 'en_progreso'),
+(14, 8, 81, 75, 1, 'dominado'),
+(15, 6, 45, 35, 1, 'debil'),
+(16, 11, 79, 70, 1, 'en_progreso'),
+(17, 13, 84, 80, 1, 'dominado'),
+(18, 11, 62, 50, 1, 'debil'),
+(19, 16, 92, 90, 1, 'dominado'),
+(20, 17, 58, 45, 1, 'debil'),
+(21, 16, 75, 65, 1, 'en_progreso'),
+(22, 21, 89, 85, 1, 'dominado'),
+(23, 23, 68, 60, 1, 'en_progreso'),
+(24, 21, 55, 40, 1, 'debil'),
+(25, 26, 94, 90, 1, 'dominado'),
+(26, 28, 82, 78, 1, 'dominado'),
+(27, 31, 67, 55, 1, 'en_progreso'),
+(28, 33, 70, 60, 1, 'en_progreso'),
+(29, 36, 73, 65, 1, 'en_progreso'),
+(30, 38, 80, 75, 1, 'en_progreso'),
+(37, 36, 86, 80, 1, 'dominado'),
+(38, 38, 60, 50, 1, 'debil'),
+(39, 41, 78, 70, 1, 'en_progreso'),
+(40, 46, 91, 88, 1, 'dominado');
 
 -- ============================================================
--- 20. FALLA_ENCONTRADA
+-- 20. HISTORIAL_DE_PROGRESO
 -- ============================================================
-
-INSERT INTO falla_encontrada (id_estudiante, id_tema_que_le_falta, id_tema_donde_fallo_originalmente, seguridad_del_sistema_en_su_falla, tipo_de_falla) VALUES
-(8, 3, 1, 0.500, 'intermedia'),
-(9, 2, 1, 0.400, 'raiz'),
-(11, 4, 3, 0.350, 'intermedia'),
-(12, 1, NULL, 0.200, 'raiz'),
-(15, 6, NULL, 0.300, 'raiz'),
-(18, 11, NULL, 0.450, 'raiz'),
-(20, 17, 16, 0.400, 'intermedia'),
-(21, 16, 15, 0.500, 'intermedia'),
-(24, 21, NULL, 0.300, 'raiz'),
-(27, 31, NULL, 0.350, 'raiz'),
-(30, 38, 37, 0.450, 'intermedia'),
-(38, 38, 37, 0.400, 'intermedia');
+INSERT INTO historial_de_progreso (id_usuario_estudiante, id_tema_conocimiento, nota_que_tenia, seguridad_del_sistema_en_su_nota, estado_de_aprendizaje, fecha_en_que_se_registro) VALUES
+(8, 1, 70, 65, 'en_progreso', '2025-01-05 08:00:00'),
+(8, 1, 85, 80, 'dominado', '2025-01-10 08:08:30'),
+(8, 2, 70, 60, 'en_progreso', '2025-01-10 09:00:00'),
+(8, 3, 60, 50, 'debil', '2025-01-11 08:00:00'),
+(8, 4, 90, 85, 'dominado', '2025-01-12 08:16:40'),
+(9, 1, 72, 70, 'en_progreso', '2025-01-10 09:09:10'),
+(9, 2, 50, 40, 'debil', '2025-01-11 09:00:00'),
+(10, 1, 90, 85, 'dominado', '2025-01-10 10:07:45'),
+(11, 4, 65, 55, 'en_progreso', '2025-01-11 09:14:10'),
+(12, 1, 30, 20, 'debil', '2025-02-01 08:00:00'),
+(13, 6, 88, 80, 'dominado', '2025-01-12 09:18:30'),
+(14, 8, 81, 75, 'dominado', '2025-01-13 08:13:20'),
+(15, 6, 45, 35, 'debil', '2025-01-11 10:00:00'),
+(16, 11, 79, 70, 'en_progreso', '2025-01-14 09:19:30'),
+(17, 13, 84, 80, 'dominado', '2025-01-15 08:18:20'),
+(18, 11, 62, 50, 'debil', '2025-02-02 08:00:00'),
+(19, 16, 92, 90, 'dominado', '2025-01-16 09:12:10'),
+(20, 17, 58, 45, 'debil', '2025-01-17 08:15:40'),
+(22, 21, 89, 85, 'dominado', '2025-01-18 09:11:10'),
+(23, 23, 68, 60, 'en_progreso', '2025-01-19 08:14:50'),
+(25, 26, 94, 90, 'dominado', '2025-01-20 09:10:40'),
+(26, 28, 82, 78, 'dominado', '2025-01-21 08:12:50'),
+(28, 33, 70, 60, 'en_progreso', '2025-01-22 09:12:30'),
+(29, 36, 73, 65, 'en_progreso', '2025-01-23 08:14:10'),
+(30, 38, 80, 75, 'en_progreso', '2025-01-23 09:15:20'),
+(37, 36, 86, 80, 'dominado', '2025-01-24 09:14:50'),
+(39, 41, 78, 70, 'en_progreso', '2025-01-25 08:00:00'),
+(40, 46, 91, 88, 'dominado', '2025-01-25 09:10:20');
 
 -- ============================================================
--- 21. RUTAS_DE_APRENDIZAJE Y PASOS_DEL_CAMINO
+-- 21. FALLA_ENCONTRADA
 -- ============================================================
+INSERT INTO falla_encontrada (id_usuario_estudiante, id_tema_conocimiento_que_le_falta, id_tema_conocimiento_donde_fallo, seguridad_del_sistema_en_su_falla, tipo_de_falla) VALUES
+(8, 3, 1, 50, 'intermedia'),
+(9, 2, 1, 40, 'raiz'),
+(11, 4, 3, 35, 'intermedia'),
+(12, 1, NULL, 20, 'raiz'),
+(15, 6, NULL, 30, 'raiz'),
+(18, 11, NULL, 45, 'raiz'),
+(20, 17, 16, 40, 'intermedia'),
+(21, 16, 15, 50, 'intermedia'),
+(24, 21, NULL, 30, 'raiz'),
+(27, 31, NULL, 35, 'raiz'),
+(30, 38, 37, 45, 'intermedia'),
+(38, 38, 37, 40, 'intermedia');
 
-INSERT INTO rutas_de_aprendizaje (id_estudiante, id_materia, estado_de_la_ruta) VALUES
+-- ============================================================
+-- 22. RUTAS_DE_APRENDIZAJE Y PASOS_DEL_CAMINO
+-- ============================================================
+INSERT INTO rutas_de_aprendizaje (id_usuario_estudiante, id_materia_asignatura, estado_de_la_ruta) VALUES
 (8, 1, 'activa'),
 (9, 1, 'activa'),
 (10, 1, 'completada'),
@@ -911,7 +969,7 @@ INSERT INTO rutas_de_aprendizaje (id_estudiante, id_materia, estado_de_la_ruta) 
 (9, 9, 'activa'),
 (10, 10, 'activa');
 
-INSERT INTO pasos_del_camino (id_ruta, id_tema, numero_de_paso, estado_del_paso, fecha_en_que_lo_completo) VALUES
+INSERT INTO pasos_del_camino (id_rutas_de_aprendizaje, id_tema_conocimiento, numero_de_paso, estado_del_paso, fecha_en_que_lo_completo) VALUES
 (1, 1, 1, 'completado', '2025-01-10 08:08:30'),
 (1, 2, 2, 'en_progreso', NULL),
 (1, 3, 3, 'pendiente', NULL),
@@ -989,10 +1047,9 @@ INSERT INTO pasos_del_camino (id_ruta, id_tema, numero_de_paso, estado_del_paso,
 (30, 56, 1, 'en_progreso', NULL);
 
 -- ============================================================
--- 22. CONVERSACION_CHAT, MIEMBRO_CHAT Y MENSAJE_CHAT
+-- 23. CONVERSACION_CHAT, MIEMBRO_CHAT Y MENSAJE_CHAT
 -- ============================================================
-
-INSERT INTO conversacion_chat (asunto_del_chat, tipo_de_chat, id_del_creador, clave_de_seguridad_idempotencia, estado_del_chat) VALUES
+INSERT INTO conversacion_chat (asunto_del_chat, tipo_de_chat, id_usuario_creador, clave_de_idempotencia, estado_del_chat) VALUES
 ('Dudas sobre ecuaciones', 'directa', 8, '550e8400-e29b-41d4-a716-446655440001', 'activa'),
 ('Consulta de matrices', 'directa', 9, '550e8400-e29b-41d4-a716-446655440002', 'activa'),
 ('Grupo de estudio Calculo', 'grupal', 10, '550e8400-e29b-41d4-a716-446655440003', 'activa'),
@@ -1004,7 +1061,7 @@ INSERT INTO conversacion_chat (asunto_del_chat, tipo_de_chat, id_del_creador, cl
 ('Grupo de Estadistica', 'grupal', 17, '550e8400-e29b-41d4-a716-446655440009', 'activa'),
 ('Soporte tecnico', 'sistema', 1, '550e8400-e29b-41d4-a716-446655440010', 'activa');
 
-INSERT INTO miembro_chat (id_chat, id_usuario, ultima_vez_que_leyo) VALUES
+INSERT INTO miembro_chat (id_conversacion_chat, id_usuario, ultima_vez_que_leyo) VALUES
 (1, 8, '2025-01-10 10:00:00'), (1, 3, '2025-01-10 10:05:00'),
 (2, 9, '2025-01-11 09:00:00'), (2, 3, '2025-01-11 09:10:00'),
 (3, 10, '2025-01-12 08:00:00'), (3, 11, '2025-01-12 08:05:00'), (3, 12, '2025-01-12 08:10:00'), (3, 4, '2025-01-12 08:15:00'),
@@ -1016,7 +1073,7 @@ INSERT INTO miembro_chat (id_chat, id_usuario, ultima_vez_que_leyo) VALUES
 (9, 17, '2025-01-18 08:00:00'), (9, 18, '2025-01-18 08:05:00'), (9, 3, '2025-01-18 08:10:00'),
 (10, 1, '2025-01-19 08:00:00'), (10, 20, '2025-01-19 08:10:00');
 
-INSERT INTO mensaje_chat (id_chat, id_del_emisor, texto_del_mensaje, clave_de_seguridad_idempotencia) VALUES
+INSERT INTO mensaje_chat (id_conversacion_chat, id_usuario_emisor, texto_del_mensaje, clave_de_idempotencia) VALUES
 (1, 8, 'Hola profesor, tengo una duda con la ecuacion 2x+3=11', '660e8400-e29b-41d4-a716-446655440001'),
 (1, 3, 'Hola Juan, debes restar 3 a ambos lados y luego dividir entre 2', '660e8400-e29b-41d4-a716-446655440002'),
 (1, 8, 'Entendido, muchas gracias', '660e8400-e29b-41d4-a716-446655440003'),
@@ -1045,9 +1102,8 @@ INSERT INTO mensaje_chat (id_chat, id_del_emisor, texto_del_mensaje, clave_de_se
 (10, 1, 'Estamos revisando el problema, en breve estara disponible', '660e8400-e29b-41d4-a716-446655440026');
 
 -- ============================================================
--- 23. REGISTRO_AUDITORIA
+-- 24. REGISTRO_AUDITORIA
 -- ============================================================
-
 INSERT INTO registro_auditoria (id_usuario, accion_realizada, tabla_afectada, id_del_registro_afectado, fecha_de_la_accion) VALUES
 (1, 'INSERT', 'usuario', 1, '2025-01-01 08:00:00'),
 (1, 'INSERT', 'usuario', 2, '2025-01-01 08:05:00'),
@@ -1067,14 +1123,16 @@ INSERT INTO registro_auditoria (id_usuario, accion_realizada, tabla_afectada, id
 (6, 'INSERT', 'banco_preguntas', 46, '2025-01-05 10:00:00'),
 (3, 'INSERT', 'evaluacion_quiz', 1, '2025-01-06 08:00:00'),
 (4, 'INSERT', 'evaluacion_quiz', 7, '2025-01-06 09:00:00'),
-(3, 'INSERT', 'respuesta_oficial', 1, '2025-01-06 10:00:00'),
-(4, 'INSERT', 'respuesta_oficial', 23, '2025-01-06 10:05:00'),
+(3, 'INSERT', 'preguntas_del_quiz', 1, '2025-01-06 10:00:00'),
+(4, 'INSERT', 'preguntas_del_quiz', 4, '2025-01-06 10:05:00'),
+(3, 'INSERT', 'respuesta_oficial_quiz', 1, '2025-01-06 11:00:00'),
+(4, 'INSERT', 'respuesta_oficial_quiz', 4, '2025-01-06 11:05:00'),
 (8, 'INSERT', 'intento_de_quiz', 1, '2025-01-10 08:00:00'),
 (9, 'INSERT', 'intento_de_quiz', 2, '2025-01-10 09:00:00'),
 (10, 'INSERT', 'intento_de_quiz', 3, '2025-01-10 10:00:00'),
 (8, 'INSERT', 'respuesta_estudiante', 1, '2025-01-10 08:08:30'),
-(9, 'INSERT', 'respuesta_estudiante', 6, '2025-01-10 09:09:10'),
-(10, 'INSERT', 'respuesta_estudiante', 10, '2025-01-10 10:07:45'),
+(9, 'INSERT', 'respuesta_estudiante', 4, '2025-01-10 09:09:10'),
+(10, 'INSERT', 'respuesta_estudiante', 7, '2025-01-10 10:07:45'),
 (3, 'UPDATE', 'progreso_actual', 1, '2025-01-10 08:08:30'),
 (9, 'UPDATE', 'progreso_actual', 5, '2025-01-10 09:09:10'),
 (8, 'INSERT', 'conversacion_chat', 1, '2025-01-10 10:00:00'),
@@ -1090,16 +1148,11 @@ INSERT INTO registro_auditoria (id_usuario, accion_realizada, tabla_afectada, id
 (1, 'UPDATE', 'evaluacion_quiz', 1, '2025-01-16 08:00:00'),
 (3, 'UPDATE', 'material_estudio', 1, '2025-01-17 08:00:00'),
 (4, 'UPDATE', 'evaluacion_quiz', 7, '2025-01-18 08:00:00'),
-(1, 'INSERT', 'registro_auditoria', 1, '2025-01-01 08:00:00'),
-(1, 'INSERT', 'registro_auditoria', 2, '2025-01-01 08:05:00'),
 (8, 'UPDATE', 'progreso_actual', 2, '2025-01-11 08:00:00'),
 (9, 'UPDATE', 'progreso_actual', 6, '2025-01-11 09:00:00'),
 (10, 'UPDATE', 'progreso_actual', 8, '2025-01-11 10:00:00'),
 (11, 'INSERT', 'falla_encontrada', 1, '2025-01-11 09:20:00'),
 (12, 'INSERT', 'falla_encontrada', 4, '2025-02-01 08:05:00'),
-(1, 'INSERT', 'respuesta_oficial', 48, '2025-01-07 08:00:00'),
-(3, 'UPDATE', 'respuesta_oficial', 5, '2025-01-08 08:00:00'),
-(4, 'DELETE', 'respuesta_oficial', 99, '2025-01-09 08:00:00'),
 (8, 'INSERT', 'ranking_por_tema', 1, '2025-01-10 08:08:30'),
 (9, 'INSERT', 'ranking_por_tema', 2, '2025-01-10 09:09:10'),
 (10, 'INSERT', 'ranking_por_tema', 3, '2025-01-10 10:07:45'),
