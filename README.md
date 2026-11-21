@@ -1,20 +1,33 @@
-# Mapa de Conocimiento (Frontend Standalone)
+# Mapa de Conocimiento (Kmap Academy)
 
-Grafo de prerrequisitos que diagnostica por qué fallas: quiz adaptativo → tema raíz → ruta de recuperación, con mapa de calor para el docente.
+Grafo de prerrequisitos que diagnostica por qué fallas: quiz adaptativo → recomendaciones de temas previos → ruta de recuperación, con mapa de calor para el docente.
 
-> **Modo Standalone**: Funciona 100% en el cliente con **React + Vite**, sin requerir backend ni base de datos MySQL activa. El estado, grafos, diagnósticos y preguntas persisten en `LocalStorage`.
+> **Frontend Autónomo (Standalone):** Funciona al 100% en el cliente con **React + Vite** y persistencia local mediante `localStorage` (`front/src/lib/db.js`).
+
+---
+
+## Roles y Cuentas Demo
+
+| Rol | Usuario / Identificador | Contraseña | Capacidades |
+|---|---|---|---|
+| **Estudiante** | `202012345` (o `ale@est.umss.edu`) | `123456` | Mis asignaturas, unirse con código, ver mapa de temas, realizar quizes y recomendaciones. |
+| **Docente** | `Prof. Rivera` (o `1234567` / `rivera@umss.edu`) | `1234567` | Gestión de materias, editor de grafo interactivo, banco de preguntas con IA, mapa de calor grupal. |
+| **Admin** | `admin` | `admin123` | Panel de administración, asignación de docentes y creación de materias. |
+
+* **Código de matrícula demo:** `ALG8Q5` (Álgebra Lineal).
+
+---
 
 ## Puesta en marcha
 
 ### 1. Iniciar en modo desarrollo
-Desde la raíz del proyecto o dentro de `front/`:
 ```bash
 npm run dev
 ```
-Abre tu navegador en: **http://localhost:5173**
+Abre en el navegador: **http://localhost:5173**
 
 ### 2. Compilar para producción
-Todo se compila dentro de la carpeta `front/dist`:
+Genera la compilación lista para servir dentro de `front/dist`:
 ```bash
 npm run build
 ```
@@ -23,10 +36,3 @@ Para previsualizar la compilación:
 ```bash
 npm run preview
 ```
-
----
-
-## Cuentas Demo (Contraseña: `123456`)
-* **Docente**: `docente@demo.com` (Acceso a Mapa de Calor, Editor de Grafo y Banco de Preguntas)
-* **Estudiante**: `estudiante@demo.com` (Acceso a Mi Mapa y Quices adaptativos)
-* O crear una cuenta nueva directamente desde el formulario de registro.

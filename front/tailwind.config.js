@@ -1,4 +1,10 @@
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
-  theme: { extend: { fontFamily: { sans: ['"Segoe UI"', 'system-ui', 'sans-serif'] } } },
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Outfit"', '"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+    },
+  },
 };
