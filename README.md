@@ -1,54 +1,32 @@
-# Mapa de Conocimiento
+# Mapa de Conocimiento (Frontend Standalone)
 
 Grafo de prerrequisitos que diagnostica por qué fallas: quiz adaptativo → tema raíz → ruta de recuperación, con mapa de calor para el docente.
 
-## Stack
-- Front: React + Vite + Tailwind · React Flow (editor) · Cytoscape.js (visualización) · Framer Motion · SweetAlert2
-- Back: Node + Express · JWT con roles (docente / estudiante)
-- BD: MySQL/MariaDB (XAMPP)
+> **Modo Standalone**: Funciona 100% en el cliente con **React + Vite**, sin requerir backend ni base de datos MySQL activa. El estado, grafos, diagnósticos y preguntas persisten en `LocalStorage`.
 
-## Puesta en marcha (Windows + XAMPP)
-1. Inicia **MySQL** desde el panel de XAMPP.
-2. Desde la raíz del proyecto:
-   ```
-   npm run install:all        # instala raíz, back y front
-   copy back\.env.example back\.env   # ajusta DB_PASS si tu root tiene contraseña
-   npm run seed               # crea la BD "mapa_conocimiento" con datos demo
-   npm run dev                # back :4000 + front :5173 (proxy /api)
-   ```
-3. Abre http://localhost:5173. Cuentas demo (contraseña `123456`): `docente@demo.com` · `estudiante@demo.com`
+## Puesta en marcha
 
-### Compilar y ejecutar en producción
+### 1. Iniciar en modo desarrollo
+Desde la raíz del proyecto o dentro de `front/`:
+```bash
+npm run dev
 ```
-npm run build    # compila front/dist
-npm start        # el back sirve API + front en http://localhost:4000
-```
-> `npm run seed` borra y recrea la base de datos.
+Abre tu navegador en: **http://localhost:5173**
 
-## Cómo funciona el diagnóstico (`back/src/services/diagnosis.js`)
-1. El estudiante elige un tema objetivo (ej. Límites).
-2. Se evalúa con 2–3 preguntas; la dificultad sube/baja según acierta (1–3).
-3. Si reprueba (< 50 %), se encolan sus prerrequisitos y se repite hacia atrás; si aprueba, esa rama se corta.
-4. **Tema raíz** = tema reprobado cuyos prerrequisitos están todos aprobados.
-5. **Ruta** = camino más corto (BFS) del tema raíz al objetivo. El dominio se actualiza con media ponderada (40 % previo + 60 % nuevo).
-
-## API
-| Método | Ruta | Rol |
-|---|---|---|
-| POST | /api/auth/register, /login | público |
-| GET/POST | /api/subjects | todos / docente |
-| GET | /api/subjects/:id/graph | todos |
-| PUT | /api/subjects/:id/graph | docente (valida DAG) |
-| GET | /api/subjects/:id/diagnosis | todos |
-| GET | /api/subjects/:id/heatmap | docente |
-| GET/POST | /api/topics/:id/questions | docente |
-| DELETE | /api/questions/:id | docente |
-| POST | /api/quiz/start, /api/quiz/:id/answer | estudiante |
-
-## Estructura
+### 2. Compilar para producción
+Todo se compila dentro de la carpeta `front/dist`:
+```bash
+npm run build
 ```
-front/  React + Vite + Tailwind (src/pages, src/components)
-back/   Express (src/routes, src/services, src/middleware, src/seed.js)
-bd/     schema.sql
-package.json  scripts de raíz (install:all, dev, build, start, seed)
+
+Para previsualizar la compilación:
+```bash
+npm run preview
 ```
+
+---
+
+## Cuentas Demo (Contraseña: `123456`)
+* **Docente**: `docente@demo.com` (Acceso a Mapa de Calor, Editor de Grafo y Banco de Preguntas)
+* **Estudiante**: `estudiante@demo.com` (Acceso a Mi Mapa y Quices adaptativos)
+* O crear una cuenta nueva directamente desde el formulario de registro.
