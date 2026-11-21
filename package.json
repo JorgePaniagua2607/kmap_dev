@@ -1,0 +1,14 @@
+{
+  "name": "mapa-conocimiento",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mapa de Conocimiento: front (React+Vite), back (Node+Express), bd (MySQL)",
+  "scripts": {
+    "install:all": "npm install && npm --prefix back install && npm --prefix front install",
+    "seed": "npm --prefix back run seed",
+    "dev": "concurrently -n back,front -c cyan,magenta \"npm --prefix back run dev\" \"npm --prefix front run dev\"",
+    "build": "npm --prefix front run build",
+    "start": "npm --prefix back start"
+  },
+  "devDependencies": { "concurrently": "^9.1.0" }
+}
