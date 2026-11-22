@@ -11,12 +11,15 @@ import TeacherHome from './pages/TeacherHome.jsx';
 import TeacherSubject from './pages/TeacherSubject.jsx';
 import AdminHome from './pages/AdminHome.jsx';
 import LandingPage from './pages/LandingPage.jsx';
+import StudentSecurityGuard from './components/StudentSecurityGuard.jsx';
 
 export default function App() {
   const { user } = useAuth();
 
   return (
     <>
+      <StudentSecurityGuard active={user?.role === 'estudiante'} />
+
       {/* Luces ambientales de fondo */}
       <div className="aurora-top-left" aria-hidden="true" />
       <div className="aurora-bottom-right" aria-hidden="true" />
