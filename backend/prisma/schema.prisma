@@ -1,0 +1,499 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum EstadoInscripcion {
+  activo
+  completado
+  retirado
+}
+
+enum EstadoIntento {
+  en_curso
+  completado
+  abandonado
+}
+
+enum EstadoAprendizaje {
+  sin_evaluar
+  debil
+  en_progreso
+  dominado
+}
+
+enum TipoFalla {
+  raiz
+  intermedia
+  sin_evidencia
+}
+
+enum EstadoRuta {
+  activa
+  completada
+  abandonada
+}
+
+enum EstadoPaso {
+  pendiente
+  en_progreso
+  completado
+}
+
+enum TipoChat {
+  directa
+  grupal
+  sistema
+}
+
+enum EstadoChat {
+  activa
+  archivada
+  bloqueada
+}
+
+model CatalogoRol {
+  id_rol              Int      @id @default(autoincrement())
+  nombre_del_rol      String   @unique @db.VarChar(50)
+  descripcion_del_rol String?  @db.VarChar(200)
+  fecha_creacion      DateTime @default(now())
+
+  usuarios Usuario[]
+
+  @@map("catalogo_roles")
+}
+
+model Usuario {
+  id_usuario              Int      @id @default(autoincrement())
+  id_rol                  Int
+  nombre_completo         String   @db.VarChar(120)
+  correo_electronico      String   @unique @db.VarChar(254)
+  contrasena_encriptada   String   @db.VarChar(255)
+  enlace_a_su_foto        String?  @db.VarChar(500)
+  esta_habilitado         Boolean  @default(true)
+  // Campos extendidos para reglas de negocio Plan Kmap (Auth UMSS + Alta Docente)
+  codigo_sis              String?  @unique @db.VarChar(60)
+  carnet_identidad        String?  @unique @db.VarChar(30)
+  debe_cambiar_contrasena Boolean  @default(false)
+  fecha_registro          DateTime @default(now())
+  ultima_actualizacion    DateTime @default(now()) @updatedAt
+
+  rol                    CatalogoRol         @relation(fields: [id_rol], references: [id_rol], onDelete: Restrict, onUpdate: Cascade)
+  materias_dictadas      MateriaAsignatura[] @relation("DocenteMateria")
+  inscripciones          InscripcionMateria[]
+  materiales_subidos     MaterialEstudio[]
+  intentos_quiz          IntentoDeQuiz[]
+  rankings_tema          RankingPorTema[]
+  progresos_actuales     ProgresoActual[]
+  historiales_progreso   HistorialDeProgreso[]
+  fallas_encontradas     FallaEncontrada[]
+  rutas_aprendizaje      RutaDeAprendizaje[]
+  chats_creados          ConversacionChat[]
+  membresias_chat        MiembroChat[]
+  mensajes_enviados      MensajeChat[]
+  registros_auditoria    RegistroAuditoria[]
+
+  @@index([id_rol], map: "idx_usuario_rol")
+  @@index([codigo_sis], map: "idx_usuario_codigo_sis")
+  @@map("usuario")
+}
+
+model MateriaAsignatura {
+  id_materia           Int      @id @default(autoincrement())
+  nombre_de_la_materia String   @db.VarChar(120)
+  codigo_de_la_materia String?  @unique @db.VarChar(20)
+  descripcion_corta    String?  @db.VarChar(2000)
+  id_del_docente       Int?
+  enlace_al_icono      String?  @db.VarChar(500)
+  color_representativo String?  @db.VarChar(20)
+  // Campo extendido para matriculación estilo Classroom
+  codigo_matriculacion String?  @unique @db.VarChar(24)
+  esta_habilitada      Boolean  @default(true)
+  fecha_creacion       DateTime @default(now())
+
+  docente              Usuario?                    @relation("DocenteMateria", fields: [id_del_docente], references: [id_usuario], onDelete: SetNull, onUpdate: Cascade)
+  inscripciones        InscripcionMateria[]
+  temas                TemaConocimiento[]
+  materiales           MaterialEstudio[]
+  evaluaciones_quiz    EvaluacionQuiz[]
+  resumen_estadisticas ResumenEstadisticasMateria?
+  rutas_aprendizaje    RutaDeAprendizaje[]
+
+  @@index([id_del_docente], map: "idx_materia_docente")
+  @@map("materia_asignatura")
+}
+
+model InscripcionMateria {
+  id_inscripcion            Int               @id @default(autoincrement())
+  id_materia                Int
+  id_estudiante             Int
+  fecha_en_que_se_inscribio DateTime          @default(now())
+  estado_de_la_inscripcion  EstadoInscripcion @default(activo)
+
+  materia    MateriaAsignatura @relation(fields: [id_materia], references: [id_materia], onDelete: Cascade, onUpdate: Cascade)
+  estudiante Usuario           @relation(fields: [id_estudiante], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([id_materia, id_estudiante], map: "uq_materia_estudiante")
+  @@map("inscripcion_materia")
+}
+
+model TemaConocimiento {
+  id_tema                  Int      @id @default(autoincrement())
+  id_materia               Int
+  nombre_del_tema          String   @db.VarChar(160)
+  descripcion_del_tema     String?  @db.VarChar(2000)
+  nota_minima_para_aprobar Float    @default(80)
+  importancia_del_tema     Float    @default(1)
+  // Coordenadas para el Editor de Grafos (contrato React Flow)
+  posicion_x               Float    @default(0)
+  posicion_y               Float    @default(0)
+  esta_habilitado          Boolean  @default(true)
+  fecha_creacion           DateTime @default(now())
+
+  materia                MateriaAsignatura     @relation(fields: [id_materia], references: [id_materia], onDelete: Cascade, onUpdate: Cascade)
+  requisitos_necesarios  RequisitoEntreTemas[] @relation("TemaActual")
+  es_prerrequisito_de    RequisitoEntreTemas[] @relation("TemaPrerrequisito")
+  materiales             MaterialEstudio[]
+  preguntas              BancoPregunta[]
+  evaluaciones_quiz      EvaluacionQuiz[]
+  rankings               RankingPorTema[]
+  progresos_actuales     ProgresoActual[]
+  historiales_progreso   HistorialDeProgreso[]
+  fallas_como_faltante   FallaEncontrada[]     @relation("TemaFaltante")
+  fallas_como_origen     FallaEncontrada[]     @relation("TemaOrigenFalla")
+  pasos_camino           PasoDelCamino[]
+
+  @@unique([id_materia, nombre_del_tema], map: "uq_tema_materia_nombre")
+  @@map("tema_conocimiento")
+}
+
+model RequisitoEntreTemas {
+  id_requisito                        Int      @id @default(autoincrement())
+  id_tema                             Int
+  id_del_tema_que_se_necesita_primero Int
+  necesidad_de_saber_el_tema_anterior Float    @default(100)
+  fecha_creacion                      DateTime @default(now())
+
+  tema              TemaConocimiento @relation("TemaActual", fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+  tema_prerrequisito TemaConocimiento @relation("TemaPrerrequisito", fields: [id_del_tema_que_se_necesita_primero], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([id_tema, id_del_tema_que_se_necesita_primero], map: "uq_requisito_par")
+  @@map("requisito_entre_temas")
+}
+
+model CatalogoTipoArchivo {
+  id_tipo_archivo         Int     @id @default(autoincrement())
+  nombre_del_tipo         String  @unique @db.VarChar(50)
+  icono_que_lo_representa String? @db.VarChar(100)
+
+  materiales MaterialEstudio[]
+
+  @@map("catalogo_tipos_archivo")
+}
+
+model MaterialEstudio {
+  id_material                   Int      @id @default(autoincrement())
+  id_materia                    Int
+  id_tema                       Int
+  id_del_docente_que_lo_subio   Int
+  id_tipo_archivo               Int
+  titulo_del_material           String   @db.VarChar(200)
+  descripcion_del_material      String?  @db.VarChar(1000)
+  enlace_para_descargar         String   @db.VarChar(500)
+  esta_visible_para_estudiantes Boolean  @default(true)
+  fecha_en_que_se_subio         DateTime @default(now())
+
+  materia      MateriaAsignatura   @relation(fields: [id_materia], references: [id_materia], onDelete: Cascade, onUpdate: Cascade)
+  tema         TemaConocimiento    @relation(fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+  docente      Usuario             @relation(fields: [id_del_docente_que_lo_subio], references: [id_usuario], onDelete: Restrict, onUpdate: Cascade)
+  tipo_archivo CatalogoTipoArchivo @relation(fields: [id_tipo_archivo], references: [id_tipo_archivo], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([id_materia], map: "idx_material_materia")
+  @@index([id_tema], map: "idx_material_tema")
+  @@map("material_estudio")
+}
+
+model CatalogoTipoPregunta {
+  id_tipo_pregunta     Int     @id @default(autoincrement())
+  nombre_del_tipo      String  @unique @db.VarChar(50)
+  descripcion_del_tipo String? @db.VarChar(200)
+
+  preguntas BancoPregunta[]
+
+  @@map("catalogo_tipos_pregunta")
+}
+
+model BancoPregunta {
+  id_pregunta          Int      @id @default(autoincrement())
+  id_tema              Int
+  id_tipo_pregunta     Int
+  id_quiz              Int?
+  texto_de_la_pregunta String   @db.VarChar(5000)
+  explicacion          String?  @db.VarChar(2000)
+  nivel_de_dificultad  Float    @default(50)
+  generada_por_ia      Boolean  @default(false)
+  esta_habilitada      Boolean  @default(true)
+  fecha_creacion       DateTime @default(now())
+
+  tema                   TemaConocimiento     @relation(fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+  tipo_pregunta          CatalogoTipoPregunta @relation(fields: [id_tipo_pregunta], references: [id_tipo_pregunta], onDelete: Restrict, onUpdate: Cascade)
+  quiz                   EvaluacionQuiz?      @relation(fields: [id_quiz], references: [id_quiz], onDelete: SetNull, onUpdate: Cascade)
+  opciones               OpcionRespuesta[]
+  respuesta_oficial      RespuestaOficial?
+  respuestas_estudiantes RespuestaEstudiante[]
+
+  @@index([id_tema], map: "idx_pregunta_tema")
+  @@index([id_quiz], map: "idx_pregunta_quiz")
+  @@map("banco_preguntas")
+}
+
+model OpcionRespuesta {
+  id_opcion            Int    @id @default(autoincrement())
+  id_pregunta          Int
+  texto_de_la_opcion   String @db.VarChar(1000)
+  orden_en_que_aparece Int    @default(0)
+
+  pregunta               BancoPregunta         @relation(fields: [id_pregunta], references: [id_pregunta], onDelete: Cascade, onUpdate: Cascade)
+  respuestas_oficiales   RespuestaOficial[]
+  respuestas_estudiantes RespuestaEstudiante[]
+
+  @@unique([id_pregunta, orden_en_que_aparece], map: "uq_opcion_pregunta_orden")
+  @@map("opcion_respuesta")
+}
+
+model RespuestaOficial {
+  id_respuesta_oficial Int      @id @default(autoincrement())
+  id_pregunta          Int      @unique(map: "uq_respuesta_oficial_pregunta")
+  id_opcion_correcta   Int?
+  texto_correcto       String?  @db.VarChar(2000)
+  fecha_creacion       DateTime @default(now())
+
+  pregunta        BancoPregunta    @relation(fields: [id_pregunta], references: [id_pregunta], onDelete: Cascade, onUpdate: Cascade)
+  opcion_correcta OpcionRespuesta? @relation(fields: [id_opcion_correcta], references: [id_opcion], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("respuesta_oficial")
+}
+
+model EvaluacionQuiz {
+  id_quiz                       Int      @id @default(autoincrement())
+  id_materia                    Int
+  id_tema                       Int
+  titulo_del_quiz               String   @db.VarChar(200)
+  tiempo_limite_en_milisegundos Int      @default(600000)
+  generado_por_ia               Boolean  @default(false)
+  esta_habilitado               Boolean  @default(true)
+  fecha_creacion                DateTime @default(now())
+
+  materia   MateriaAsignatura @relation(fields: [id_materia], references: [id_materia], onDelete: Cascade, onUpdate: Cascade)
+  tema      TemaConocimiento  @relation(fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+  preguntas BancoPregunta[]
+  intentos  IntentoDeQuiz[]
+
+  @@map("evaluacion_quiz")
+}
+
+model IntentoDeQuiz {
+  id_intento                   Int           @id @default(autoincrement())
+  id_quiz                      Int
+  id_estudiante                Int
+  fecha_en_que_inicio          DateTime      @default(now())
+  fecha_en_que_termino         DateTime?
+  tiempo_total_en_milisegundos Int?
+  puntaje_que_obtuvo           Float         @default(0)
+  estado_del_intento           EstadoIntento @default(en_curso)
+
+  quiz       EvaluacionQuiz        @relation(fields: [id_quiz], references: [id_quiz], onDelete: Cascade, onUpdate: Cascade)
+  estudiante Usuario               @relation(fields: [id_estudiante], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+  respuestas RespuestaEstudiante[]
+
+  @@index([id_quiz], map: "idx_intento_quiz")
+  @@index([id_estudiante], map: "idx_intento_estudiante")
+  @@map("intento_de_quiz")
+}
+
+model RespuestaEstudiante {
+  id_respuesta                               Int      @id @default(autoincrement())
+  id_intento                                 Int
+  id_pregunta                                Int
+  id_opcion_que_eligio                       Int?
+  texto_que_escribio                         String?  @db.VarChar(2000)
+  fue_correcta_su_respuesta                  Boolean?
+  tiempo_que_tardo_en_responder_milisegundos Int?
+
+  intento        IntentoDeQuiz    @relation(fields: [id_intento], references: [id_intento], onDelete: Cascade, onUpdate: Cascade)
+  pregunta       BancoPregunta    @relation(fields: [id_pregunta], references: [id_pregunta], onDelete: Cascade, onUpdate: Cascade)
+  opcion_elegida OpcionRespuesta? @relation(fields: [id_opcion_que_eligio], references: [id_opcion], onDelete: SetNull, onUpdate: Cascade)
+
+  @@unique([id_intento, id_pregunta], map: "uq_respuesta_intento_pregunta")
+  @@map("respuesta_estudiante")
+}
+
+model RankingPorTema {
+  id_ranking                   Int      @id @default(autoincrement())
+  id_tema                      Int
+  id_estudiante                Int
+  mejor_puntaje_obtenido       Float    @default(0)
+  mejor_tiempo_en_milisegundos Int?
+  posicion_en_el_ranking       Int      @default(0)
+  fecha_actualizacion          DateTime @default(now()) @updatedAt
+
+  tema       TemaConocimiento @relation(fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+  estudiante Usuario          @relation(fields: [id_estudiante], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([id_tema, id_estudiante], map: "uq_ranking_tema_estudiante")
+  @@index([id_tema, mejor_puntaje_obtenido, mejor_tiempo_en_milisegundos], map: "idx_ranking_orden")
+  @@map("ranking_por_tema")
+}
+
+model ResumenEstadisticasMateria {
+  id_estadistica                 Int      @id @default(autoincrement())
+  id_materia                     Int      @unique(map: "uq_estadistica_materia")
+  total_de_estudiantes_inscritos Int      @default(0)
+  total_de_quices_realizados     Int      @default(0)
+  promedio_general_de_notas      Float    @default(0)
+  cantidad_de_aprobados          Int      @default(0)
+  cantidad_de_reprobados         Int      @default(0)
+  ultima_vez_que_se_actualizo    DateTime @default(now()) @updatedAt
+
+  materia MateriaAsignatura @relation(fields: [id_materia], references: [id_materia], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("resumen_estadisticas_materia")
+}
+
+model ProgresoActual {
+  id_progreso                      Int               @id @default(autoincrement())
+  id_estudiante                    Int
+  id_tema                          Int
+  nota_actual_del_tema             Float             @default(0)
+  seguridad_del_sistema_en_su_nota Float             @default(0)
+  cantidad_de_intentos             Int               @default(0)
+  estado_de_aprendizaje            EstadoAprendizaje @default(sin_evaluar)
+  ultima_vez_que_se_actualizo      DateTime          @default(now()) @updatedAt
+
+  estudiante Usuario          @relation(fields: [id_estudiante], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+  tema       TemaConocimiento @relation(fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([id_estudiante, id_tema], map: "uq_progreso_estudiante_tema")
+  @@map("progreso_actual")
+}
+
+model HistorialDeProgreso {
+  id_historial                     Int               @id @default(autoincrement())
+  id_estudiante                    Int
+  id_tema                          Int
+  nota_que_tenia                   Float
+  seguridad_del_sistema_en_su_nota Float
+  estado_de_aprendizaje            EstadoAprendizaje
+  fecha_en_que_se_registro         DateTime          @default(now())
+
+  estudiante Usuario          @relation(fields: [id_estudiante], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+  tema       TemaConocimiento @relation(fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([id_estudiante, id_tema], map: "idx_historial_estudiante")
+  @@map("historial_de_progreso")
+}
+
+model FallaEncontrada {
+  id_falla                          Int       @id @default(autoincrement())
+  id_estudiante                     Int
+  id_tema_que_le_falta              Int
+  id_tema_donde_fallo_originalmente Int?
+  seguridad_del_sistema_en_su_falla Float     @default(0)
+  tipo_de_falla                     TipoFalla @default(raiz)
+  fecha_en_que_se_detecto           DateTime  @default(now())
+
+  estudiante    Usuario           @relation(fields: [id_estudiante], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+  tema_faltante TemaConocimiento  @relation("TemaFaltante", fields: [id_tema_que_le_falta], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+  tema_origen   TemaConocimiento? @relation("TemaOrigenFalla", fields: [id_tema_donde_fallo_originalmente], references: [id_tema], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("falla_encontrada")
+}
+
+model RutaDeAprendizaje {
+  id_ruta           Int        @id @default(autoincrement())
+  id_estudiante     Int
+  id_materia        Int
+  estado_de_la_ruta EstadoRuta @default(activa)
+  fecha_creacion    DateTime   @default(now())
+
+  estudiante Usuario           @relation(fields: [id_estudiante], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+  materia    MateriaAsignatura @relation(fields: [id_materia], references: [id_materia], onDelete: Cascade, onUpdate: Cascade)
+  pasos      PasoDelCamino[]
+
+  @@map("rutas_de_aprendizaje")
+}
+
+model PasoDelCamino {
+  id_paso                  Int        @id @default(autoincrement())
+  id_ruta                  Int
+  id_tema                  Int
+  numero_de_paso           Int
+  estado_del_paso          EstadoPaso @default(pendiente)
+  fecha_en_que_lo_completo DateTime?
+
+  ruta RutaDeAprendizaje @relation(fields: [id_ruta], references: [id_ruta], onDelete: Cascade, onUpdate: Cascade)
+  tema TemaConocimiento  @relation(fields: [id_tema], references: [id_tema], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([id_ruta, numero_de_paso], map: "uq_ruta_paso_orden")
+  @@map("pasos_del_camino")
+}
+
+model ConversacionChat {
+  id_chat                         Int        @id @default(autoincrement())
+  asunto_del_chat                 String?    @db.VarChar(200)
+  tipo_de_chat                    TipoChat   @default(directa)
+  id_del_creador                  Int
+  clave_de_seguridad_idempotencia String     @unique(map: "uq_chat_idempotencia") @db.VarChar(36)
+  estado_del_chat                 EstadoChat @default(activa)
+  fecha_en_que_se_creo            DateTime   @default(now())
+
+  creador  Usuario       @relation(fields: [id_del_creador], references: [id_usuario], onDelete: Restrict, onUpdate: Cascade)
+  miembros MiembroChat[]
+  mensajes MensajeChat[]
+
+  @@map("conversacion_chat")
+}
+
+model MiembroChat {
+  id_miembro_chat     Int       @id @default(autoincrement())
+  id_chat             Int
+  id_usuario          Int
+  ultima_vez_que_leyo DateTime?
+
+  chat    ConversacionChat @relation(fields: [id_chat], references: [id_chat], onDelete: Cascade, onUpdate: Cascade)
+  usuario Usuario          @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([id_chat, id_usuario], map: "uq_chat_miembro")
+  @@map("miembro_chat")
+}
+
+model MensajeChat {
+  id_mensaje                      Int      @id @default(autoincrement())
+  id_chat                         Int
+  id_del_emisor                   Int
+  texto_del_mensaje               String   @db.VarChar(5000)
+  clave_de_seguridad_idempotencia String   @unique(map: "uq_mensaje_idempotencia") @db.VarChar(36)
+  fecha_en_que_se_envio           DateTime @default(now())
+
+  chat   ConversacionChat @relation(fields: [id_chat], references: [id_chat], onDelete: Cascade, onUpdate: Cascade)
+  emisor Usuario          @relation(fields: [id_del_emisor], references: [id_usuario], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("mensaje_chat")
+}
+
+model RegistroAuditoria {
+  id_auditoria             Int      @id @default(autoincrement())
+  id_usuario               Int?
+  accion_realizada         String   @db.VarChar(50)
+  tabla_afectada           String   @db.VarChar(60)
+  id_del_registro_afectado Int?
+  fecha_de_la_accion       DateTime @default(now())
+
+  usuario Usuario? @relation(fields: [id_usuario], references: [id_usuario], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("registro_auditoria")
+}
