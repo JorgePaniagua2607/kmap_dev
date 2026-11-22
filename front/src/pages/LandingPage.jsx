@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth.jsx';
 import './LandingPage.css';
 
 // Vive mientras la pestaña esté abierta: al terminar NO vuelve a escribir (solo con F5)
@@ -33,10 +33,155 @@ const FEATURES = [
   { icon: '🔥', title: 'Panel del Docente', text: 'Mapas de calor para ver qué nodo exacto está frenando a tu clase.' },
 ];
 
+let logoTyped = false;
+const mixAcad = (k) => `rgb(0, ${Math.round(242 - (123 * k) / 6)}, 254)`; // degradado cian → azul como el logo
+
+/* Letras que dan un saltito al pasar el cursor */
+const Hop = ({ text, kind, offset = 0 }) =>
+  text.split('').map((c, i) => (
+    <span className="hop" key={i}><span className={`lc ${kind}`} style={{ '--i': i + offset }}>{c}</span></span>
+  ));
+
+/* Línea con palabras que no se cortan a la mitad */
+const Line = ({ text, kind, base = 0 }) => {
+  let n = base;
+  return text.split(' ').map((w, wi) => {
+    const el = (<React.Fragment key={wi}>{wi > 0 && ' '}<span className="w"><Hop text={w} kind={kind} offset={n} /></span></React.Fragment>);
+    n += w.length + 1;
+    return el;
+  });
+};
+
+/* Typewriter: cada palabra reserva su ancho final, así el texto nunca salta de línea */
+const TypeLine = ({ text, typedLen, showErr, errAt, done }) => {
+  let start = 0;
+  return text.split(' ').map((word, wi) => {
+    const s = start; start += word.length + 1;
+    const n = Math.max(0, Math.min(word.length, typedLen - s));
+    const err = showErr && errAt >= s && errAt < s + word.length && typedLen === errAt;
+    const cursor = !done && typedLen >= s && typedLen <= s + word.length;
+    return (
+      <React.Fragment key={wi}>
+        {wi > 0 && ' '}
+        <span className="w">
+          <span className="w-ghost">{word}</span>
+          <span className="w-live">
+            <Hop text={word.slice(0, n)} kind="l-wave2" offset={s} />
+            {err && <span className="tw-error">{ERROR_CHAR}</span>}
+            {cursor && <span className="typewriter-cursor">|</span>}
+          </span>
+        </span>
+      </React.Fragment>
+    );
+  });
+};
+
+/* "BIT ACADEMY": se escribe letra por letra y cada letra salta al pasar el cursor */
+const LogoText = ({ len }) => {
+  const t = 'BIT ACADEMY';
+  return t.split('').map((c, i) => {
+    if (c === ' ') return <span className="logo-gap" key={i} />;
+    const acad = i >= 4;
+    return (
+      <React.Fragment key={i}>
+        <span className="hop"><span className={`lc ${acad ? '' : 'logo-white'} ${i >= len ? 'off' : ''}`} style={acad ? { color: mixAcad(i - 4) } : undefined}>{c}</span></span>
+        {i === len - 1 && len < t.length && <i className="logo-caret" />}
+      </React.Fragment>
+    );
+  });
+};
+
+/* Efectos del cursor: luz de fondo, rejilla que se enciende, estela, anillo y robotito que lo sigue */
+const CursorFX = () => {
+  const root = useRef(), spot = useRef(), grid = useRef(), cv = useRef(), ring = useRef(), dot = useRef(), bot = useRef(), botEyes = useRef();
+  useEffect(() => {
+    if (window.matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return;
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const m = { x: -300, y: -300 }, r = { ...m }, s = { ...m }, b = { ...m };
+    let raf, first = true; const pts = [];
+    const c = cv.current, ctx = c.getContext('2d');
+    const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+    resize();
+    const head = document.querySelector('.robot-head'), eyes = document.querySelector('.robot-eyes'), robot = document.querySelector('.robot-3d');
+
+    const onMove = (e) => {
+      m.x = e.clientX; m.y = e.clientY;
+      if (first) { first = false; r.x = s.x = b.x = m.x; r.y = s.y = b.y = m.y; }
+      root.current.classList.add('on');
+      const big = !!(e.target.closest && e.target.closest('button,a,.hop,.robot-hop,.feature-card,.evidence-card,.landing-logo,.slide'));
+      ring.current.classList.toggle('big', big);
+    };
+    const down = () => ring.current.classList.add('press');
+    const up = () => ring.current.classList.remove('press');
+    const leave = () => root.current.classList.remove('on');
+
+    const tick = (t) => {
+      r.x += (m.x - r.x) * 0.25; r.y += (m.y - r.y) * 0.25;
+      s.x += (m.x - s.x) * 0.08; s.y += (m.y - s.y) * 0.08;
+      const px = b.x; b.x += (m.x + 38 - b.x) * 0.1; b.y += (m.y + 32 - b.y) * 0.1;
+      const vx = b.x - px;
+      spot.current.style.transform = `translate3d(${s.x}px,${s.y}px,0)`;
+      grid.current.style.setProperty('--cx', `${s.x}px`); grid.current.style.setProperty('--cy', `${s.y}px`);
+      ring.current.style.transform = `translate3d(${r.x}px,${r.y}px,0)`;
+      dot.current.style.transform = `translate3d(${m.x}px,${m.y}px,0)`;
+      bot.current.style.transform = `translate3d(${b.x - 20}px,${b.y - 20}px,0) rotate(${clamp(vx * 2.5, -22, 22)}deg)`;
+      botEyes.current.style.transform = `translate(${clamp(vx, -2.5, 2.5)}px,0)`;
+      if (robot && head && eyes) { // el robot grande te mira
+        const q = robot.getBoundingClientRect();
+        const dx = m.x - (q.left + q.width / 2), dy = m.y - (q.top + q.height * 0.3);
+        eyes.style.transform = `translate(${clamp(dx / 70, -7, 7)}px,${clamp(dy / 90, -4, 4)}px)`;
+        head.style.transform = `rotate(${clamp(dx / 110, -7, 7)}deg)`;
+      }
+      const last = pts[pts.length - 1];
+      if (!last || last.x !== m.x || last.y !== m.y) pts.push({ x: m.x, y: m.y, t });
+      while (pts.length && t - pts[0].t > 500) pts.shift();
+      ctx.clearRect(0, 0, c.width, c.height); ctx.lineCap = 'round';
+      for (let i = 1; i < pts.length; i++) {
+        const k = 1 - (t - pts[i].t) / 500;
+        ctx.strokeStyle = `hsla(${185 + (1 - k) * 90},100%,62%,${k * 0.85})`; ctx.lineWidth = k * 6;
+        ctx.beginPath(); ctx.moveTo(pts[i - 1].x, pts[i - 1].y); ctx.lineTo(pts[i].x, pts[i].y); ctx.stroke();
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    window.addEventListener('mousemove', onMove); window.addEventListener('mousedown', down); window.addEventListener('mouseup', up);
+    window.addEventListener('resize', resize); document.addEventListener('mouseleave', leave);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', onMove); window.removeEventListener('mousedown', down); window.removeEventListener('mouseup', up);
+      window.removeEventListener('resize', resize); document.removeEventListener('mouseleave', leave);
+    };
+  }, []);
+
+  return createPortal(
+    <div className="fx" ref={root} aria-hidden="true">
+      <div className="fx-grid" ref={grid} />
+      <div className="fx-spot" ref={spot} />
+      <canvas className="fx-trail" ref={cv} />
+      <div className="fx-ring" ref={ring} />
+      <div className="fx-dot" ref={dot} />
+      <svg className="fx-bot" ref={bot} viewBox="0 0 40 40" fill="none">
+        <line x1="20" y1="8" x2="20" y2="3" stroke="#00f2fe" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="20" cy="3" r="2.4" fill="#9d50ff" />
+        <rect x="6" y="8" width="28" height="22" rx="9" fill="#152b47" stroke="#00f2fe" strokeWidth="2" />
+        <g ref={botEyes}><circle cx="15" cy="19" r="2.8" fill="#00f2fe" /><circle cx="25" cy="19" r="2.8" fill="#00f2fe" /></g>
+        <rect x="12" y="32" width="16" height="5" rx="2.5" fill="#1e3a5f" />
+      </svg>
+    </div>,
+    document.body
+  );
+};
+
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const rootRef = useRef(null);
+  const [jump, setJump] = useState(false);
+  const [logoLen, setLogoLen] = useState(logoTyped ? 11 : 0);
+  useEffect(() => {
+    if (logoTyped) return;
+    const t = setInterval(() => setLogoLen((n) => { if (n >= 11) { clearInterval(t); logoTyped = true; return n; } return n + 1; }), 110);
+    return () => clearInterval(t);
+  }, []);
 
   /* ---------- Typewriter ---------- */
   const [typed, setTyped] = useState(typingFinished ? FULL_TEXT : '');
@@ -105,36 +250,35 @@ const LandingPage = () => {
     <div className="landing-container" ref={rootRef}>
       <div className="bg-grid" />
       <div className="bg-watermark">BIT</div>
+      <CursorFX />
       <div className="bg-orb orb-cyan" /><div className="bg-orb orb-purple" /><div className="bg-orb orb-blue" />
 
       {/* NAVBAR */}
       <nav className="landing-navbar">
-        <div className="landing-logo" onClick={() => navigate('/')}>
-          <div className="logo-robot">
+        <div className="landing-logo" onClick={() => navigate('/')} aria-label="BIT ACADEMY">
+          <div className="logo-icon">
+            <span className="logo-ring" />
             <svg viewBox="0 0 100 100" fill="none">
-              <rect x="20" y="30" width="60" height="50" rx="20" fill="url(#gradLogo)" />
-              <path d="M35 55 Q40 45 45 55" stroke="#030d1e" strokeWidth="4" strokeLinecap="round" />
-              <path d="M55 55 Q60 45 65 55" stroke="#030d1e" strokeWidth="4" strokeLinecap="round" />
               <defs><linearGradient id="gradLogo" x1="20" y1="30" x2="80" y2="80"><stop stopColor="#00f2fe" /><stop offset="1" stopColor="#9d50ff" /></linearGradient></defs>
+              <line x1="50" y1="16" x2="50" y2="28" stroke="#00f2fe" strokeWidth="4" strokeLinecap="round" />
+              <circle cx="50" cy="12" r="6" fill="#9d50ff" className="logo-antenna" />
+              <rect x="14" y="28" width="72" height="58" rx="25" fill="url(#gradLogo)" />
+              <rect x="25" y="38" width="50" height="36" rx="15" fill="#030d1e" />
+              <g className="logo-eyes">
+                <path d="M34 58 Q40 47 46 58" stroke="#00f2fe" strokeWidth="5" strokeLinecap="round" />
+                <path d="M54 58 Q60 47 66 58" stroke="#00f2fe" strokeWidth="5" strokeLinecap="round" />
+              </g>
             </svg>
           </div>
-          <span className="logo-text">BIT <span className="text-gradient">ACADEMY</span></span>
+          <div className="logo-col">
+            <span className="logo-text"><LogoText len={logoLen} /></span>
+            <span className="logo-tag">Aprendizaje adaptativo</span>
+          </div>
         </div>
-        <div className="landing-nav-buttons">
-          {user ? (
-            <button className="btn-nav-register" onClick={() => navigate('/panel')}>
-              Ir a mi Panel ❯
-            </button>
-          ) : (
-            <>
-              <button className="btn-nav-login" onClick={() => navigate('/login')}>
-                Iniciar Sesión
-              </button>
-              <button className="btn-nav-register" onClick={() => navigate('/login')}>
-                Registrarse
-              </button>
-            </>
-          )}
+        
+<div className="landing-nav-buttons">
+          <button className="btn-nav-login" onClick={() => navigate('/login')}>Iniciar Sesión</button>
+          <button className="btn-nav-register" onClick={() => navigate('/login')}>Registrarse</button>
         </div>
       </nav>
 
@@ -149,15 +293,12 @@ const LandingPage = () => {
         <div className="hero-content">
           <div className="hero-badge enter" style={{ '--d': '0s' }}><span className="pulse-dot" />Nueva era del aprendizaje adaptativo</div>
 
-          <h1 className="hero-title">
-            <span className="title-solid enter" style={{ '--d': '0.15s' }}>NO ESTUDIES MÁS HORAS.</span>
-            <span className="hero-typewriter-container enter" style={{ '--d': '0.3s' }}>
-              <span className="tw-ghost" aria-hidden="true">{FULL_TEXT}</span>
-              <span className="tw-live" aria-label={FULL_TEXT}>
-                <span className="tw-text">{typed}</span>
-                {showError && <span className="tw-error">{ERROR_CHAR}</span>}
-                {!isTypingDone && <span className="typewriter-cursor">|</span>}
-              </span>
+          <h1 className="hero-title" aria-label="No estudies más horas. Evalúa el aprendizaje.">
+            <span className="title-solid enter" style={{ '--d': '0.15s' }} aria-hidden="true">
+              <Line text="NO ESTUDIES" kind="l-white" />{' '}<Line text="NO ESTUDIES MÁS HORAS." kind="l-wave" base={12} />
+            </span>
+            <span className="hero-typewriter-container enter" style={{ '--d': '0.3s' }} aria-hidden="true">
+              <TypeLine text={FULL_TEXT} typedLen={typed.length} showErr={showError} errAt={ERROR_AT} done={isTypingDone} />
             </span>
           </h1>
 
@@ -167,12 +308,7 @@ const LandingPage = () => {
           </p>
 
           <div className="hero-cta enter" style={{ '--d': '0.6s' }}>
-            <button
-              className="btn-primary"
-              onClick={() => navigate(user ? '/panel' : '/login')}
-            >
-              {user ? 'Ir a mi Panel ❯' : 'Empieza gratis ahora'}
-            </button>
+            <button className="btn-primary" onClick={() => navigate('/login')}>Empieza gratis ahora</button>
             <button className="btn-secondary" onClick={() => document.getElementById('como-funciona').scrollIntoView({ behavior: 'smooth' })}>Ver cómo funciona</button>
           </div>
 
@@ -193,32 +329,65 @@ const LandingPage = () => {
           <div className="robot-rings" aria-hidden="true"><i /><i /><i /></div>
           <div className="robot-speech-bubble" key={msgIdx}>{ROBOT_MSGS[msgIdx]}</div>
           <div className="robot-3d">
-            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="150" cy="275" rx="80" ry="15" fill="rgba(0,0,0,0.8)" />
-              <rect x="145" y="35" width="10" height="15" fill="#305070" />
-              <circle cx="150" cy="25" r="12" fill="#00f2fe" className="antenna-light" />
-              <rect x="65" y="100" width="15" height="45" rx="7" fill="#1e3a5f" stroke="#00f2fe" strokeWidth="2" />
-              <rect x="220" y="100" width="15" height="45" rx="7" fill="#1e3a5f" stroke="#00f2fe" strokeWidth="2" />
-              <rect x="75" y="50" width="150" height="110" rx="35" fill="#152b47" stroke="#2a5580" strokeWidth="4" />
-              <rect x="90" y="65" width="120" height="80" rx="25" fill="#030d1e" stroke="#0f2b4c" strokeWidth="2" />
-              <g className="robot-eyes">
-                <path d="M115 105 Q125 95 135 105" stroke="#00f2fe" strokeWidth="7" strokeLinecap="round" fill="none" className="eye" />
-                <path d="M165 105 Q175 95 185 105" stroke="#00f2fe" strokeWidth="7" strokeLinecap="round" fill="none" className="eye" />
-              </g>
-              <rect x="100" y="170" width="100" height="80" rx="25" fill="#152b47" stroke="#2a5580" strokeWidth="4" />
-              <rect x="130" y="185" width="40" height="10" rx="5" fill="#00f2fe" opacity="0.8" className="chest-led" />
-              <rect x="70" y="180" width="20" height="55" rx="10" fill="#1e3a5f" />
-              <circle cx="80" cy="240" r="12" fill="#152b47" stroke="#2a5580" strokeWidth="3" />
-              <g className="robot-arm-pointing">
-                <rect x="210" y="170" width="20" height="55" rx="10" fill="#1e3a5f" transform="rotate(-40 220 170)" />
-                <circle cx="255" cy="140" r="12" fill="#152b47" stroke="#00f2fe" strokeWidth="3" />
-                <rect x="260" y="135" width="18" height="10" rx="5" fill="#00f2fe" />
-              </g>
-              <rect x="110" y="250" width="30" height="15" rx="7" fill="#1e3a5f" />
-              <rect x="160" y="250" width="30" height="15" rx="7" fill="#1e3a5f" />
-            </svg>
+            <div className={`robot-hop ${jump ? 'jump' : ''}`}
+              onMouseEnter={() => setJump(true)}
+              onClick={() => { setJump(true); setMsgIdx((i) => (i + 1) % ROBOT_MSGS.length); }}
+              onAnimationEnd={(e) => { if (e.animationName === 'robot-jump') setJump(false); }}>
+              <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="rMetal" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#33649b" /><stop offset="1" stopColor="#10264a" /></linearGradient>
+                  <linearGradient id="rVisor" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#08203f" /><stop offset="1" stopColor="#020914" /></linearGradient>
+                  <linearGradient id="rNeon" x1="0" y1="0" x2="1" y2="0"><stop stopColor="#00f2fe" /><stop offset="1" stopColor="#9d50ff" /></linearGradient>
+                  <radialGradient id="rGlow"><stop stopColor="#00f2fe" stopOpacity=".55" /><stop offset="1" stopColor="#00f2fe" stopOpacity="0" /></radialGradient>
+                </defs>
+                <ellipse cx="150" cy="280" rx="84" ry="11" fill="rgba(0,0,0,.75)" />
+                <ellipse cx="150" cy="277" rx="62" ry="6" fill="url(#rGlow)" />
+                {/* piernas */}
+                <rect x="114" y="244" width="26" height="22" rx="8" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" />
+                <rect x="160" y="244" width="26" height="22" rx="8" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" />
+                <rect x="106" y="262" width="40" height="10" rx="5" fill="#0f2b4c" stroke="#00f2fe" strokeWidth="1.5" />
+                <rect x="154" y="262" width="40" height="10" rx="5" fill="#0f2b4c" stroke="#00f2fe" strokeWidth="1.5" />
+                {/* brazo izquierdo */}
+                <rect x="66" y="184" width="20" height="50" rx="10" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" />
+                <circle cx="76" cy="241" r="12" fill="#12294a" stroke="url(#rNeon)" strokeWidth="2.5" />
+                {/* cuerpo + pantalla */}
+                <rect x="96" y="168" width="108" height="84" rx="28" fill="url(#rMetal)" stroke="#3a6aa0" strokeWidth="3" />
+                <path d="M112 179 Q150 168 188 179" stroke="#fff" strokeOpacity=".2" strokeWidth="3" strokeLinecap="round" />
+                <rect x="116" y="190" width="68" height="40" rx="12" fill="url(#rVisor)" stroke="#0f2b4c" strokeWidth="2" />
+                <rect className="cbar" x="126" y="204" width="8" height="18" rx="3" fill="url(#rNeon)" />
+                <rect className="cbar b2" x="140" y="198" width="8" height="24" rx="3" fill="url(#rNeon)" />
+                <rect className="cbar b3" x="154" y="208" width="8" height="14" rx="3" fill="url(#rNeon)" />
+                <circle className="chest-led" cx="173" cy="200" r="3.5" fill="#ff3366" />
+                {/* brazo derecho señalando */}
+                <g className="robot-arm-pointing">
+                  <rect x="210" y="170" width="20" height="55" rx="10" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" transform="rotate(-40 220 170)" />
+                  <circle cx="255" cy="140" r="12" fill="#12294a" stroke="#00f2fe" strokeWidth="3" />
+                  <rect x="260" y="135" width="18" height="10" rx="5" fill="#00f2fe" />
+                </g>
+                {/* cabeza (se inclina hacia el cursor) */}
+                <g className="robot-head">
+                  <rect x="147" y="34" width="6" height="18" fill="#3a6aa0" />
+                  <circle cx="150" cy="26" r="22" fill="url(#rGlow)" className="antenna-halo" />
+                  <circle cx="150" cy="26" r="11" fill="#00f2fe" className="antenna-light" />
+                  <rect x="58" y="98" width="17" height="46" rx="8" fill="#12294a" stroke="url(#rNeon)" strokeWidth="2.5" />
+                  <rect x="225" y="98" width="17" height="46" rx="8" fill="#12294a" stroke="url(#rNeon)" strokeWidth="2.5" />
+                  <rect x="72" y="48" width="156" height="116" rx="38" fill="url(#rMetal)" stroke="#3a6aa0" strokeWidth="4" />
+                  <path d="M96 60 Q150 46 204 60" stroke="#fff" strokeOpacity=".22" strokeWidth="4" strokeLinecap="round" />
+                  <rect x="88" y="64" width="124" height="84" rx="28" fill="url(#rVisor)" stroke="#0f2b4c" strokeWidth="2" />
+                  <path d="M102 72 L142 72 L118 142 L102 142Z" fill="#fff" fillOpacity=".05" />
+                  <g className="robot-eyes">
+                    <path className="eye" d="M115 104 Q125 93 135 104" stroke="#00f2fe" strokeWidth="7" strokeLinecap="round" fill="none" />
+                    <path className="eye" d="M165 104 Q175 93 185 104" stroke="#00f2fe" strokeWidth="7" strokeLinecap="round" fill="none" />
+                    <ellipse cx="108" cy="122" rx="8" ry="4.5" fill="#ff3366" opacity=".3" />
+                    <ellipse cx="192" cy="122" rx="8" ry="4.5" fill="#ff3366" opacity=".3" />
+                    <path d="M138 123 Q150 135 162 123" stroke="#00f2fe" strokeWidth="4" strokeLinecap="round" fill="none" />
+                  </g>
+                </g>
+              </svg>
+            </div>
           </div>
         </div>
+      
       </header>
 
       {/* CINTA DE MATERIAS */}
@@ -341,12 +510,7 @@ const LandingPage = () => {
         <div className="cta-box reveal">
           <h2 className="section-title-gradient">TU TIEMPO ES VALIOSO. NO LO DESPERDICIES.</h2>
           <p>Empieza por un diagnóstico y descubre qué tema te está frenando.</p>
-          <button
-            className="btn-primary"
-            onClick={() => navigate(user ? '/panel' : '/login')}
-          >
-            {user ? 'Ir a mi Panel ❯' : 'Crear mi cuenta gratis'}
-          </button>
+          <button className="btn-primary" onClick={() => navigate('/login')}>Crear mi cuenta gratis</button>
         </div>
       </section>
 

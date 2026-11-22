@@ -220,3 +220,83 @@ button{font-family:inherit}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .reveal{opacity:1;transform:none}
 }
+
+
+/* =====================================================================
+   V3 · Logo animado, título con color, letras que saltan, cursor y robot
+   ===================================================================== */
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+
+/* ---------- Letras que saltan (amigable) ---------- */
+.w{display:inline-block;white-space:nowrap;position:relative}
+.hop{display:inline-block}
+.hop:hover{animation:hop .6s var(--ease)}
+.hop:hover .lc{color:#fff!important;text-shadow:0 0 18px #00f2fe}
+@keyframes hop{0%{transform:none}30%{transform:translateY(-.3em) scale(1.12,.94)}60%{transform:translateY(.04em) scale(.96,1.06)}100%{transform:none}}
+.lc{display:inline-block;transition:opacity .3s,transform .4s var(--ease),color .2s}
+.lc.off{opacity:0;transform:translateY(.5em) scale(.5)}
+
+/* ---------- Título coloreado como el logo ---------- */
+.title-solid{background:none;filter:none;-webkit-background-clip:border-box;background-clip:border-box;color:inherit}
+.l-white{color:#eaf6ff;text-shadow:0 0 30px rgba(159,216,255,.35)}
+.l-wave{animation:wave 3.2s ease-in-out infinite;animation-delay:calc(var(--i)*-.18s);text-shadow:0 0 28px rgba(0,200,255,.45)}
+@keyframes wave{0%,100%{color:#00f2fe}50%{color:#0077fe}}
+.l-wave2{animation:wave2 6s linear infinite;animation-delay:calc(var(--i)*-.22s);text-shadow:0 0 26px rgba(157,80,255,.35)}
+@keyframes wave2{0%,100%{color:#00f2fe}33%{color:#9d50ff}66%{color:#ff3366}}
+.w-ghost{visibility:hidden}
+.w-live{position:absolute;left:0;top:0;white-space:nowrap}
+.tw-error{display:inline-block;background:none;-webkit-text-fill-color:var(--pink);animation:shake .25s ease}
+
+/* ---------- Logo BIT ACADEMY ---------- */
+.landing-logo{gap:14px}
+.logo-icon{position:relative;width:54px;height:54px;border-radius:17px;display:grid;place-items:center;padding:6px;
+  background:radial-gradient(circle at 30% 25%,rgba(0,242,254,.3),rgba(2,9,20,.9) 70%);box-shadow:0 0 24px rgba(0,242,254,.35),inset 0 0 12px rgba(0,242,254,.15)}
+.logo-icon svg{width:100%;height:100%;overflow:visible}
+.logo-ring{position:absolute;inset:-2px;border-radius:19px;padding:2px;background:conic-gradient(from var(--a),#00f2fe,#9d50ff,#0077fe,#00f2fe);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:ring-spin 4s linear infinite}
+@keyframes ring-spin{to{--a:360deg}}
+.logo-antenna{animation:pulse-antenna 2s infinite alternate}
+.logo-eyes{transform-box:fill-box;transform-origin:center;animation:blink-eyes 4s infinite}
+.landing-logo:hover .logo-icon{animation:hop-big .7s var(--ease)}
+@keyframes hop-big{0%{transform:none}30%{transform:translateY(-10px) rotate(-8deg) scale(1.1)}60%{transform:translateY(0) rotate(5deg) scale(.96)}100%{transform:none}}
+.logo-col{display:flex;flex-direction:column;gap:5px}
+.logo-text{display:flex;align-items:baseline;font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;line-height:1;letter-spacing:-.01em}
+.logo-white{color:#fff;text-shadow:0 0 18px rgba(255,255,255,.25)}
+.logo-gap{display:inline-block;width:.38em}
+.logo-caret{display:inline-block;width:0;height:1em;position:relative}
+.logo-caret::after{content:'';position:absolute;left:2px;top:-.05em;width:3px;height:1.05em;background:var(--cyan);border-radius:2px;box-shadow:0 0 10px var(--cyan);animation:blink .7s infinite}
+.logo-tag{font-size:.72rem;font-weight:600;color:var(--text-muted);letter-spacing:.04em;position:relative;padding-top:5px}
+.logo-tag::before{content:'';position:absolute;left:0;top:0;height:2px;width:100%;border-radius:2px;background:linear-gradient(90deg,var(--cyan),var(--purple),transparent);transform-origin:left;animation:underline-in 1.4s var(--ease) .4s both}
+@keyframes underline-in{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ---------- Robot rediseñado ---------- */
+.robot-3d svg{width:100%;height:100%;overflow:visible}
+.robot-hop{width:100%;height:100%;cursor:pointer}
+.robot-hop.jump{animation:robot-jump .7s var(--ease)}
+@keyframes robot-jump{0%{transform:none}30%{transform:translateY(-36px) scale(.96,1.06)}55%{transform:translateY(0) scale(1.06,.93)}75%{transform:translateY(-9px)}100%{transform:none}}
+.robot-head{transform-origin:150px 165px;transition:transform .15s linear}
+.robot-eyes{transition:transform .12s linear}
+.antenna-halo{animation:halo 2s ease-in-out infinite alternate}
+@keyframes halo{from{opacity:.35}to{opacity:1}}
+.cbar{transform-box:fill-box;transform-origin:bottom;animation:cbar 1.4s ease-in-out infinite}
+.cbar.b2{animation-delay:-.4s}.cbar.b3{animation-delay:-.9s}
+@keyframes cbar{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+
+/* ---------- Cursor: luz, rejilla, estela, anillo y robotito ---------- */
+.fx{position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0;transition:opacity .5s;overflow:hidden}
+.fx.on{opacity:1}
+.fx-spot{position:absolute;left:0;top:0;width:640px;height:640px;margin:-320px 0 0 -320px;will-change:transform;mix-blend-mode:screen;
+  background:radial-gradient(circle,rgba(0,242,254,.14),rgba(157,80,255,.07) 40%,transparent 68%)}
+.fx-grid{position:absolute;inset:0;background-size:50px 50px;
+  background-image:linear-gradient(rgba(0,242,254,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(0,242,254,.28) 1px,transparent 1px);
+  -webkit-mask-image:radial-gradient(200px circle at var(--cx,-999px) var(--cy,-999px),#000,transparent);mask-image:radial-gradient(200px circle at var(--cx,-999px) var(--cy,-999px),#000,transparent)}
+.fx-trail{position:absolute;inset:0}
+.fx-ring{position:absolute;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:2px solid rgba(0,242,254,.85);
+  box-shadow:0 0 18px rgba(0,242,254,.5),inset 0 0 12px rgba(0,242,254,.25);will-change:transform;
+  transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),border-color .3s,background .3s,border-width .15s}
+.fx-ring.big{width:76px;height:76px;margin:-38px 0 0 -38px;border-color:rgba(157,80,255,.9);background:rgba(157,80,255,.08)}
+.fx-ring.press{border-width:6px}
+.fx-dot{position:absolute;left:0;top:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff;box-shadow:0 0 12px var(--cyan),0 0 4px #fff;will-change:transform}
+.fx-bot{position:absolute;left:0;top:0;width:40px;height:40px;will-change:transform;filter:drop-shadow(0 0 8px rgba(0,242,254,.6))}
+@media (hover:none){.fx{display:none}}
+@media (max-width:768px){.logo-tag{display:none}.logo-text{font-size:1.3rem}.logo-icon{width:46px;height:46px}}
