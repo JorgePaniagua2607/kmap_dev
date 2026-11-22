@@ -1026,6 +1026,25 @@ const kmapSyncService = {
     return syncStateToMySQL(newState);
   },
 
+  async resetState() {
+    // Limpiar tablas transaccionales y restaurar únicamente los datos oficiales en MySQL
+    await prisma.respuestaEstudiante.deleteMany({});
+    await prisma.intentoDeQuiz.deleteMany({});
+    await prisma.progresoActual.deleteMany({});
+    await prisma.rankingPorTema.deleteMany({});
+    await prisma.respuestaOficial.deleteMany({});
+    await prisma.opcionRespuesta.deleteMany({});
+    await prisma.bancoPregunta.deleteMany({});
+    await prisma.evaluacionQuiz.deleteMany({});
+    await prisma.materialEstudio.deleteMany({});
+    await prisma.requisitoEntreTemas.deleteMany({});
+    await prisma.temaConocimiento.deleteMany({});
+    await prisma.inscripcionMateria.deleteMany({});
+    await prisma.materiaAsignatura.deleteMany({});
+    await prisma.usuario.deleteMany({});
+    return readStateFromMySQL();
+  },
+
   async generateQuestionsAI(input = {}, legacyCount = 5) {
     const isObj = typeof input === 'object' && input !== null;
     const topicName = isObj ? input.topicName : input;
@@ -1062,10 +1081,7 @@ const kmapSyncService = {
 
     const aiResult = await aiService.generateStructuredQuiz({
       topicTitle: topicName || dbTopic?.nombre_del_tema || 'Tema Académico',
-      topicDescription:
-        frontendDesc ||
-        dbTopic?.descripcion_del_tema ||
-        `Conceptos fundamentales, aplicaciones y propiedades de ${topicName}.`,
+      topicDescription: frontendDesc || dbTopic?.descripcion_del_tema || '',
       materials: combinedMaterials,
       numQuestions: n,
     });

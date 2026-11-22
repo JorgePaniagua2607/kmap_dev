@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { useDb } from '../lib/db.js';
-import { PASS, best, fmtDate, recommendations } from '../lib/logic.js';
+import { PASS, best, fmtDate, nextNodesInGraph, recommendations } from '../lib/logic.js';
 import { info } from '../alerts.js';
 import Page from '../components/Page.jsx';
 import { Empty } from '../components/ui.jsx';
@@ -27,9 +27,10 @@ export default function StudentTopic() {
     .filter((a) => a.userId === user.id && a.topicId === tid)
     .sort((a, c) => c.date.localeCompare(a.date));
   const nq = db.questions.filter((q) => q.topicId === tid).length;
-  const recs = b === null || b < PASS ? recommendations(db, user.id, tid) : [];
+  const recs = b === null || b < PASS ? recommendations(db, user.id, tid, b !== null && b < PASS) : [];
+  const nextRecs = b !== null && b >= PASS ? nextNodesInGraph(db, user.id, tid) : [];
   const open = (m) =>
-    m.url?.startsWith('http')
+    m.url?.startsWith('http') || m.url?.startsWith('/uploads')
       ? window.open(m.url, '_blank')
       : info(m.title, 'Recurso académico disponible en la versión demostrativa.');
 
@@ -155,6 +156,21 @@ export default function StudentTopic() {
                   className="w-full text-left mt-2 px-3 py-2.5 rounded-xl bg-[#041022]/80 border border-[#16497a] hover:border-cyan-400/60 text-sm transition"
                 >
                   {i + 1}. {r.name}
+                </button>
+              ))}
+            </div>
+          )}
+          {nextRecs.length > 0 && (
+            <div className="card">
+              <b className="text-amber-300">💡 Siguiente nodo recomendado:</b>
+              {nextRecs.map((r, i) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => nav(`/materia/${id}/tema/${r.id}`)}
+                  className="w-full text-left mt-2 px-3 py-2.5 rounded-xl bg-[#041022]/80 border border-[#16497a] hover:border-cyan-400/60 text-sm transition"
+                >
+                  {i + 1}. {r.name} →
                 </button>
               ))}
             </div>

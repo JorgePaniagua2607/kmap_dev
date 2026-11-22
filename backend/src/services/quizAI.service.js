@@ -54,8 +54,14 @@ async function readMaterials(materials = []) {
   for (const m of materials) {
     const title = m.titulo_del_material || m.title || 'Material';
     const url = m.enlace_para_descargar || m.url || '';
+    const isExternal = /^https?:\/\//i.test(url);
+    if (isExternal) continue;
+
     const abs = resolveUploadPath(url);
-    if (!abs) continue;
+    if (!abs) {
+      unreadable.push(`${title} (archivo no encontrado en el servidor; vuelve a subirlo)`);
+      continue;
+    }
 
     const ext = path.extname(abs).toLowerCase();
     const buf = fs.readFileSync(abs);
@@ -138,7 +144,7 @@ async function listFlashModels() {
     .sort((a, b) => isLite(b) - isLite(a) || versionOf(b) - versionOf(a));
 }
 
-async function callGemini({ prompt, pdfs, hasExtractedText = false }) {
+async function callGemini({ prompt, pdfs = [], hasExtractedText = false, responseSchema = null }) {
   const buildParts = (includePdfs) => {
     const parts = [{ text: prompt }];
     if (includePdfs) {
@@ -151,6 +157,9 @@ async function callGemini({ prompt, pdfs, hasExtractedText = false }) {
   };
 
   let includePdfs = pdfs.length > 0;
+  const generationConfig = { responseMimeType: 'application/json', temperature: 0.35 };
+  if (responseSchema) generationConfig.responseSchema = responseSchema;
+
   const request = (model) =>
     fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.AI_API_KEY}`, {
       method: 'POST',
@@ -158,7 +167,7 @@ async function callGemini({ prompt, pdfs, hasExtractedText = false }) {
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       body: JSON.stringify({
         contents: [{ role: 'user', parts: buildParts(includePdfs) }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.4 },
+        generationConfig,
       }),
     });
 
@@ -253,6 +262,33 @@ async function callGemini({ prompt, pdfs, hasExtractedText = false }) {
   return { data: safeParseJson(raw), model: usedModel };
 }
 
+const QUIZ_RESPONSE_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    questions: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          texto_de_la_pregunta: { type: 'STRING' },
+          opciones: { type: 'ARRAY', items: { type: 'STRING' } },
+          indice_opcion_correcta: { type: 'INTEGER' },
+          nivel_de_dificultad: { type: 'INTEGER' },
+          explicacion: { type: 'STRING' },
+        },
+        required: [
+          'texto_de_la_pregunta',
+          'opciones',
+          'indice_opcion_correcta',
+          'nivel_de_dificultad',
+          'explicacion',
+        ],
+      },
+    },
+  },
+  required: ['questions'],
+};
+
 function hasGeminiKey() {
   return Boolean(env.AI_MODE === 'gemini' && env.AI_API_KEY && !/^tu_api_key/i.test(env.AI_API_KEY));
 }
@@ -270,9 +306,15 @@ async function generateQuizWithLLM({ topicTitle, topicDescription, materials = [
   }
 
   const { texts, pdfs, unreadable } = await readMaterials(materials);
+  if (texts.length === 0 && pdfs.length === 0 && unreadable.length > 0) {
+    throw new AppError(
+      `No se pudo leer el material adjunto (${unreadable.join(', ')}). Quítalo y vuelve a subir el PDF/DOCX/TXT para que la IA pueda analizar su contenido real.`,
+      422
+    );
+  }
   if (texts.length === 0 && pdfs.length === 0 && !(topicDescription || '').trim()) {
     throw new AppError(
-      `No se pudo leer ningún archivo del tema${unreadable.length ? ` (${unreadable.join(', ')})` : ''} y el tema no tiene descripción. Sube un PDF/DOCX/TXT con contenido o escribe la descripción del tema.`,
+      'Este tema no tiene archivos legibles ni descripción. Sube un PDF/DOCX/TXT con contenido o escribe la descripción del tema.',
       422
     );
   }
@@ -290,9 +332,10 @@ async function generateQuizWithLLM({ topicTitle, topicDescription, materials = [
     topicDescription ? `Descripción del tema dada por el docente: ${topicDescription}` : '',
     '',
     'REGLAS OBLIGATORIAS:',
-    '- Basa cada pregunta ÚNICAMENTE en el contenido real del material del docente (texto y/o PDFs adjuntos). No inventes datos que no estén en el material.',
-    '- Cada pregunta debe evaluar comprensión de un concepto concreto, no frases genéricas ni meta-preguntas sobre "el material" o "el tema".',
-    '- Exactamente 4 opciones por pregunta, todas plausibles, sin repetirse; solo UNA es correcta según el material.',
+    '- Basa cada pregunta Y cada una de sus 4 opciones ÚNICAMENTE en datos, conceptos, pasos o definiciones reales del material del docente (texto y/o PDFs adjuntos). No inventes datos externos.',
+    '- PROHIBIDO generar preguntas genéricas o plantillas como "¿Cuál afirmación describe correctamente un concepto clave?" o respuestas vagas como "Definición correcta del concepto" / "Ninguna de las anteriores".',
+    '- Cada pregunta debe evaluar comprensión de un concepto concreto del documento (terminología, procedimiento, causa-efecto, aplicación práctica).',
+    '- Exactamente 4 opciones por pregunta, concretas, plausibles y redactadas con el vocabulario real del documento, sin repetirse; solo UNA es correcta según el material.',
     '- Distribuye la posición de la opción correcta de forma variada (índices 0, 1, 2, 3).',
     '- Incluye una explicación breve (1-2 oraciones) que justifique la respuesta correcta citando la idea del material.',
     `- Dificultad aproximada: ${difficulty}/100.`,
@@ -306,13 +349,24 @@ async function generateQuizWithLLM({ topicTitle, topicDescription, materials = [
     .join('\n');
 
   const hasExtractedText = texts.length > 0;
-  let { data: parsed, model: usedModel } = await callGemini({ prompt, pdfs, hasExtractedText });
-  let questions = validateQuestions(parsed.questions, numQuestions);
+  let parsed = { questions: [] };
+  let usedModel = env.AI_MODEL;
+  let questions = [];
 
-  if (questions.length < Math.min(numQuestions, 2)) {
-    // Un reintento si la IA devolvió preguntas inválidas
-    ({ data: parsed, model: usedModel } = await callGemini({ prompt, pdfs, hasExtractedText }));
-    questions = validateQuestions(parsed.questions, numQuestions);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      ({ data: parsed, model: usedModel } = await callGemini({
+        prompt,
+        pdfs,
+        hasExtractedText,
+        responseSchema: QUIZ_RESPONSE_SCHEMA,
+      }));
+      questions = validateQuestions(parsed.questions, numQuestions);
+      if (questions.length >= Math.min(numQuestions, 2)) break;
+    } catch (err) {
+      if (attempt === 1) throw err;
+      console.warn('[AI] Reintentando generación por respuesta inválida:', err.message);
+    }
   }
   if (questions.length === 0) {
     throw new AppError('La IA no pudo generar preguntas válidas con este material. Intenta de nuevo o sube un archivo con más contenido.', 502);

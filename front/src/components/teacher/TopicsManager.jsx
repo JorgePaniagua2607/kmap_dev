@@ -32,10 +32,27 @@ export default function TopicsManager({ subjectId }) {
     edit((x) => x.materials.push({ id: uid(), title: v.title, kind: 'Enlace', url: v.url }));
     ok('Material agregado');
   };
-  // Demo: solo se guarda el nombre del archivo; la subida real requiere el back
-  const onFile = (e) => {
+  // Subida al backend (/api/kmap/upload) y actualización en el estado
+  const onFile = async (e) => {
     const file = e.target.files[0];
-    if (file) { edit((x) => x.materials.push({ id: uid(), title: file.name, kind: 'Archivo', url: '' })); ok('Material agregado', file.name); }
+    if (file) {
+      let uploadedUrl = '';
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch('/api/kmap/upload', { method: 'POST', body: fd });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) uploadedUrl = data.url;
+        }
+      } catch {}
+      if (!uploadedUrl) {
+        e.target.value = '';
+        return fail('No se pudo subir el archivo al servidor. Verifica que el backend esté corriendo.');
+      }
+      edit((x) => x.materials.push({ id: uid(), title: file.name, kind: 'Archivo', url: uploadedUrl }));
+      ok('Material agregado', file.name);
+    }
     e.target.value = '';
   };
   const delMat = async (id) => { if (await ask('Quitar material', 'Los estudiantes ya no lo verán.', 'Quitar')) edit((x) => { x.materials = x.materials.filter((m) => m.id !== id); }); };
@@ -52,9 +69,21 @@ export default function TopicsManager({ subjectId }) {
     const r = await Swal.fire({ ...base, title: 'Generar quiz con IA', text: `Tema: ${t.name}`, input: 'select', inputOptions: { 3: '3 preguntas', 5: '5 preguntas', 10: '10 preguntas' }, inputValue: 5, showCancelButton: true, confirmButtonText: 'Generar', cancelButtonText: 'Cancelar' });
     if (!r.isConfirmed) return;
     Swal.fire({ ...base, title: 'Generando preguntas…', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() });
-    const out = await generateQuizAI(t.name, Number(r.value));
-    update((d) => out.forEach((q) => d.questions.push({ id: uid(), topicId: t.id, ...q, source: 'ia' })));
-    ok('Preguntas generadas', `${out.length} preguntas agregadas`);
+    try {
+      const out = await generateQuizAI(
+        {
+          topicId: t.id,
+          topicName: t.name,
+          topicDesc: desc || t.desc || '',
+          materials: t.materials || [],
+        },
+        Number(r.value)
+      );
+      update((d) => out.forEach((q) => d.questions.push({ id: uid(), topicId: t.id, ...q, source: 'ia' })));
+      ok('Preguntas generadas', `${out.length} preguntas agregadas`);
+    } catch (err) {
+      fail(err.message);
+    }
   };
 
   return (
