@@ -14,7 +14,7 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
   const showNotifs = () => {
     info(
       'Notificaciones (3)',
-      '<div class="text-left text-sm space-y-2 text-cyan-100"><p>1. 🚀 <b>Nueva tarea en Programación:</b> Revisa el grafo de conocimiento.</p><p>2. ⭐ <b>Recompensa de XP desbloqueada:</b> Has subido tu progreso en BIT ACADEMY.</p><p>3. 🏆 <b>Calificación de Quiz publicada:</b> Revisa tu posición en el Leaderboard.</p></div>'
+      '<div class="text-left text-sm space-y-2 text-cyan-100"><p>1. 🚀 <b>Nueva tarea en Programación:</b> Revisa el grafo de conocimiento.</p><p>2. ⭐ <b>Recompensa de XP desbloqueada:</b> Has subido tu progreso en BIT ACADEMY.</p><p>3. 🏆 <b>Calificación de Quiz publicada:</b> Revisa tu posición en la Clasificación.</p></div>'
     );
   };
 
@@ -42,7 +42,7 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
     }
   };
 
-  const crumbParts = crumb ? crumb.split(/›|❯/).map((c) => c.trim()) : ['Academy', 'Inicio'];
+  const crumbParts = crumb ? crumb.split(/›|❯/).map((c) => c.trim()) : ['Academia', 'Inicio'];
 
   return (
     <motion.div

@@ -499,13 +499,6 @@ export function update(fn) {
   } catch {}
   emit();
 }
-export function resetDb() {
-  state = seed();
-  try {
-    localStorage.setItem(KEY, JSON.stringify(state));
-  } catch {}
-  emit();
-}
 export const useDb = () =>
   useSyncExternalStore(
     (f) => {
