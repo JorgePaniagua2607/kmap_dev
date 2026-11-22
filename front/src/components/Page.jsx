@@ -30,9 +30,9 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
 
   const handleViewCourses = () => {
     if (user?.role === 'estudiante') {
-      nav('/?vista=materias');
+      nav('/panel?vista=materias');
     } else {
-      nav('/');
+      nav('/panel');
     }
   };
 
@@ -60,7 +60,7 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
             </div>
             <div
               className="header-logo-box cursor-pointer"
-              onClick={() => nav('/')}
+              onClick={() => nav('/panel')}
               title="BIT ACADEMY · Ir al Inicio"
             >
               <img

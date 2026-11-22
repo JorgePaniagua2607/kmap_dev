@@ -45,7 +45,7 @@ export default function TeacherSubject() {
   return (
     <Page
       crumb={`Docente › ${s.name}`}
-      backTo="/"
+      backTo="/panel"
       icon={s.icon}
       title={s.name}
       subtitle={s.desc}

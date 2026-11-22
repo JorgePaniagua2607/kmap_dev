@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth.jsx';
 import './LandingPage.css';
 
 // Vive mientras la pestaña esté abierta: al terminar NO vuelve a escribir (solo con F5)
@@ -34,6 +35,7 @@ const FEATURES = [
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const rootRef = useRef(null);
 
   /* ---------- Typewriter ---------- */
@@ -119,8 +121,20 @@ const LandingPage = () => {
           <span className="logo-text">BIT <span className="text-gradient">ACADEMY</span></span>
         </div>
         <div className="landing-nav-buttons">
-          <button className="btn-nav-login" onClick={() => navigate('/login')}>Iniciar Sesión</button>
-          <button className="btn-nav-register" onClick={() => navigate('/login')}>Registrarse</button>
+          {user ? (
+            <button className="btn-nav-register" onClick={() => navigate('/panel')}>
+              Ir a mi Panel ❯
+            </button>
+          ) : (
+            <>
+              <button className="btn-nav-login" onClick={() => navigate('/login')}>
+                Iniciar Sesión
+              </button>
+              <button className="btn-nav-register" onClick={() => navigate('/login')}>
+                Registrarse
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -153,7 +167,12 @@ const LandingPage = () => {
           </p>
 
           <div className="hero-cta enter" style={{ '--d': '0.6s' }}>
-            <button className="btn-primary" onClick={() => navigate('/login')}>Empieza gratis ahora</button>
+            <button
+              className="btn-primary"
+              onClick={() => navigate(user ? '/panel' : '/login')}
+            >
+              {user ? 'Ir a mi Panel ❯' : 'Empieza gratis ahora'}
+            </button>
             <button className="btn-secondary" onClick={() => document.getElementById('como-funciona').scrollIntoView({ behavior: 'smooth' })}>Ver cómo funciona</button>
           </div>
 
@@ -322,7 +341,12 @@ const LandingPage = () => {
         <div className="cta-box reveal">
           <h2 className="section-title-gradient">TU TIEMPO ES VALIOSO. NO LO DESPERDICIES.</h2>
           <p>Empieza por un diagnóstico y descubre qué tema te está frenando.</p>
-          <button className="btn-primary" onClick={() => navigate('/login')}>Crear mi cuenta gratis</button>
+          <button
+            className="btn-primary"
+            onClick={() => navigate(user ? '/panel' : '/login')}
+          >
+            {user ? 'Ir a mi Panel ❯' : 'Crear mi cuenta gratis'}
+          </button>
         </div>
       </section>
 

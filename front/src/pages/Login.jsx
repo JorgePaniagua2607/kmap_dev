@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../auth.jsx';
 import { fail, info } from '../alerts.js';
@@ -8,6 +9,7 @@ import './Login.css';
 
 export default function Login() {
   const { login, register } = useAuth();
+  const nav = useNavigate();
   const [role, setRole] = useState('estudiante');
   const [mode, setMode] = useState('login');
   const [passFocus, setPassFocus] = useState(false);
@@ -31,6 +33,7 @@ export default function Login() {
           'Contraseña por defecto',
           'Tu contraseña inicial es tu carnet. Cámbiala desde <b>Mi Perfil</b>.'
         );
+      nav('/panel');
     } catch (err) {
       fail(err.message);
     }
@@ -42,6 +45,7 @@ export default function Login() {
     setF((prev) => ({ ...prev, ident, password: pass }));
     try {
       login(r, ident, pass);
+      nav('/panel');
     } catch (err) {
       fail(err.message);
     }
@@ -76,11 +80,18 @@ export default function Login() {
               <img
                 src="/assets/images/logo.svg"
                 alt="BIT ACADEMY Logo"
-                className="h-12 w-auto drop-shadow-[0_0_12px_rgba(0,210,255,0.45)]"
+                className="h-12 w-auto drop-shadow-[0_0_12px_rgba(0,210,255,0.45)] cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => nav('/')}
+                title="Volver a la portada"
               />
-              <span className="text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-[#00d2ff]/15 border border-[#00d2ff]/40 text-[#00f2fe]">
-                KMAP
-              </span>
+              <button
+                type="button"
+                onClick={() => nav('/')}
+                className="text-xs text-cyan-300 hover:text-white flex items-center gap-1 transition-colors cursor-pointer bg-transparent border-none p-0"
+                title="Volver a la página principal"
+              >
+                ← Volver al inicio
+              </button>
             </div>
 
             <p className="text-[#8ca5c9] text-sm">
