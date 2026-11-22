@@ -45,16 +45,11 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
       transition={{ duration: 0.25 }}
       className="flex flex-col flex-1 w-full"
     >
-      {/* Top Header Bar (BIT ACADEMY aesthetic from univalle_bot) */}
+      {/* Top Header Bar (Persistente / Sticky con estética BIT ACADEMY) */}
       <header className="top-header">
         {/* Left Breadcrumbs & Quick Actions Pill Card */}
         <div className="header-breadcrumbs-card">
-          <div className="header-academy-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
-            </svg>
-          </div>
-          <div className="header-title-box">
+          <div className="header-brand-content">
             <div className="breadcrumbs">
               {crumbParts.map((part, idx) => (
                 <span key={idx} className="inline-flex items-center gap-1.5">
@@ -63,8 +58,22 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
                 </span>
               ))}
             </div>
-            <h1 className="header-main-title">{title || 'BIT ACADEMY'}</h1>
+            <div
+              className="header-logo-box cursor-pointer"
+              onClick={() => nav('/')}
+              title="BIT ACADEMY · Ir al Inicio"
+            >
+              <img
+                src="/assets/images/logo.svg"
+                alt="BIT ACADEMY"
+                className="header-card-logo"
+              />
+              {title && title !== 'BIT ACADEMY' && (
+                <span className="header-title-addon">· {title}</span>
+              )}
+            </div>
           </div>
+
           <div className="header-actions">
             {actions}
             {user?.role === 'estudiante' && (

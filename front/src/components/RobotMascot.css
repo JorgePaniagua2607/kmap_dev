@@ -138,3 +138,11 @@
     transform: translate(3px, 0) rotate(-10deg);
   }
 }
+
+/* Ocultar mascota automáticamente cuando la pantalla sea pequeña / tablet / móvil */
+@media (max-width: 1024px) {
+  #pet-2d,
+  .pet-snow-layer {
+    display: none !important;
+  }
+}

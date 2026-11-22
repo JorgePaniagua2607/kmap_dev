@@ -1,42 +1,39 @@
 /* =========================================================
-   BIT ACADEMY · PAGE LAYOUT (HEADER) · CSS PREMIUM V2
-   Corregido: Botones sin transparencia, textos en una sola línea
+   BIT ACADEMY · PAGE LAYOUT (HEADER) · CSS MODULAR
+   Header persistente (sticky) con Logo integrado y sin desbordes
    ========================================================= */
 
-/* ---------- CONTENEDOR PRINCIPAL DEL HEADER ---------- */
+/* ---------- CONTENEDOR PRINCIPAL DEL HEADER (STICKY / PERSISTENTE) ---------- */
 .top-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
   width: 100%;
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 10;
+  padding: 0.65rem 0.2rem;
+  margin-bottom: 1.25rem;
+  background: transparent;
+  transition: all 0.2s ease;
 }
 
-@media (max-width: 1024px) {
-  .top-header { 
-    flex-direction: column; 
-    align-items: stretch; 
-    gap: 1rem;
-  }
-}
-
-/* ---------- TARJETA IZQUIERDA (BREADCRUMBS Y ACCIONES) ---------- */
+/* ---------- TARJETA IZQUIERDA (BREADCRUMBS, LOGO Y ACCIONES) ---------- */
 .header-breadcrumbs-card {
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: linear-gradient(180deg, rgba(5, 22, 46, 0.85) 0%, rgba(3, 13, 30, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(5, 22, 46, 0.9) 0%, rgba(3, 13, 30, 0.98) 100%);
   border: 1px solid var(--border-soft, rgba(0, 210, 255, 0.22));
   border-radius: 16px;
-  padding: 0.6rem 1rem;
+  padding: 0.55rem 1.1rem;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.05);
+  box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.05), 0 4px 20px rgba(0, 8, 24, 0.4);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   flex: 1;
+  min-width: 0;
 }
 
 /* Línea brillante superior */
@@ -50,48 +47,27 @@
 
 .header-breadcrumbs-card:hover {
   border-color: rgba(0, 242, 254, 0.4);
-  box-shadow: inset 0 0 30px rgba(0, 210, 255, 0.1), 0 0 22px rgba(0, 210, 255, 0.4);
+  box-shadow: inset 0 0 30px rgba(0, 210, 255, 0.1), 0 0 22px rgba(0, 210, 255, 0.35);
 }
 
-/* Icono de la Academia (Birrete) */
-.header-academy-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(0, 119, 254, 0.2));
-  border: 1px solid rgba(0, 242, 254, 0.4);
-  color: var(--cyan, #00f2fe);
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
-  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-}
-
-.header-breadcrumbs-card:hover .header-academy-icon {
-  transform: scale(1.1) rotate(-5deg);
-  box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
-}
-
-.header-academy-icon svg { 
-  width: 24px; 
-  height: 24px; 
-}
-
-/* Títulos y Migas de pan */
-.header-title-box {
+/* Contenedor Interno: Ruta y Logo de Marca */
+.header-brand-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  flex-shrink: 0;
 }
 
+/* Ruta (Breadcrumbs) mantenida en la parte superior */
 .breadcrumbs {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #8ca5c9;
   font-weight: 600;
-  margin-bottom: 0.15rem;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .breadcrumbs .separator {
@@ -101,13 +77,36 @@
   opacity: 0.7;
 }
 
-.header-main-title {
-  font-size: 1.2rem;
+/* Logo integrado en reemplazo del icono y texto anterior */
+.header-logo-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.header-logo-box:hover {
+  transform: scale(1.02);
+}
+
+.header-card-logo {
+  height: 36px;
+  width: auto;
+  filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.5));
+  transition: filter 0.25s ease;
+}
+
+.header-logo-box:hover .header-card-logo {
+  filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.85));
+}
+
+.header-title-addon {
+  font-size: 1.05rem;
   font-weight: 800;
   color: #ffffff;
-  margin: 0;
-  line-height: 1.1;
-  letter-spacing: 0.5px;
+  white-space: nowrap;
+  letter-spacing: 0.4px;
   text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
 }
 
@@ -115,15 +114,14 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.75rem;
   margin-left: auto;
-  padding-left: 1rem;
+  padding-left: 0.8rem;
 }
 
-/* EL FIX PARA LOS BOTONES: Evitamos que el texto se parta y forzamos colores */
 .header-actions button {
   white-space: nowrap !important;
-  height: 38px !important;
+  height: 36px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -133,11 +131,11 @@
   cursor: pointer !important;
   transition: all 0.2s ease !important;
   border: none !important;
-  padding: 0 1.1rem !important;
+  padding: 0 1rem !important;
   gap: 0.5rem !important;
 }
 
-/* Botón "Unirme con código" (El que viene por props) */
+/* Botón "Unirme con código" / cursos secundarios */
 .header-actions button.btn-courses {
   background: rgba(0, 210, 255, 0.08) !important;
   color: var(--cyan, #00f2fe) !important;
@@ -151,7 +149,7 @@
   transform: translateY(-2px) !important;
 }
 
-/* Botón Quiz (Play) - FORZADO PARA QUE NO SE OPACUE */
+/* Botón Quiz (Play) */
 .header-actions button.btn-quiz {
   background: linear-gradient(135deg, #00f2fe 0%, #0077fe 100%) !important;
   color: #021019 !important;
@@ -160,8 +158,8 @@
 
 .header-actions button.btn-quiz svg {
   fill: #021019 !important;
-  width: 16px !important;
-  height: 16px !important;
+  width: 15px !important;
+  height: 15px !important;
 }
 
 .header-actions button.btn-quiz:hover {
@@ -223,20 +221,33 @@
   transform: scale(0.9);
 }
 
-/* ---------- RESPONSIVE PARA MÓVILES ---------- */
-@media (max-width: 768px) {
-  .header-breadcrumbs-card { 
-    flex-wrap: wrap; 
+/* ---------- RESPONSIVE PARA TABLETS Y MÓVILES ---------- */
+@media (max-width: 900px) {
+  .header-breadcrumbs-card {
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
   .header-actions {
     width: 100%;
+    margin-left: 0;
     padding-left: 0;
-    margin-top: 0.8rem;
     justify-content: flex-start;
     flex-wrap: wrap;
   }
-  .header-user-controls {
-    align-self: flex-end;
-    margin-top: -3.5rem;
+}
+
+@media (max-width: 640px) {
+  .top-header {
+    gap: 0.5rem;
+    padding: 0.45rem 0;
+  }
+  .header-breadcrumbs-card {
+    padding: 0.5rem 0.75rem;
+  }
+  .header-card-logo {
+    height: 30px;
+  }
+  .header-title-addon {
+    font-size: 0.85rem;
   }
 }
