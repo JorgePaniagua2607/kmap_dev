@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '../auth.jsx';
 import { getDb, uid, update } from '../lib/db.js';
-import { PASS, ranking, recommendations, topicsOf } from '../lib/logic.js';
+import { PASS, nextNodesInGraph, ranking, recommendations, topicsOf } from '../lib/logic.js';
 import { ask, fail, ok } from '../alerts.js';
 import Page from '../components/Page.jsx';
 import { Avatar } from '../components/ui.jsx';
@@ -36,6 +36,7 @@ export default function Quiz() {
   const [i, setI] = useState(0);
   const [hits, setHits] = useState(0);
   const [selectedOpt, setSelectedOpt] = useState(null);
+  const [answers, setAnswers] = useState([]);
   const [res, setRes] = useState(null);
 
   if (!isEnrolled) {
@@ -58,11 +59,24 @@ export default function Quiz() {
       fail('Selecciona una opción antes de continuar');
       return;
     }
-    const isCorrect = qs[i].opts[selectedOpt]?.c;
+    const chosen = qs[i].opts[selectedOpt];
+    const correctOpt = qs[i].opts.find((o) => o.c);
+    const isCorrect = Boolean(chosen?.c);
     const h = hits + (isCorrect ? 1 : 0);
+    const nextAnswers = [
+      ...answers,
+      {
+        questionId: qs[i].id,
+        text: qs[i].text,
+        selectedOption: chosen?.o || '',
+        correctOption: correctOpt?.o || '',
+        isCorrect,
+      },
+    ];
 
     if (i + 1 < qs.length) {
       setHits(h);
+      setAnswers(nextAnswers);
       setSelectedOpt(null);
       setI(i + 1);
       return;
@@ -84,6 +98,9 @@ export default function Quiz() {
     const totalTopics = Math.max(1, topicsOf(db, id).length);
     const myRankIdx = ranks.findIndex((r) => r.user.id === user.id);
     const rankPos = myRankIdx >= 0 ? myRankIdx + 1 : 1;
+    const passed = score >= PASS;
+    const prevRecs = recommendations(db, user.id, tid, !passed);
+    const nextRecs = nextNodesInGraph(db, user.id, tid);
 
     setRes({
       score,
@@ -94,8 +111,54 @@ export default function Quiz() {
         ...r,
         pct: Math.min(100, Math.round(r.points / totalTopics)),
       })),
-      recs: recommendations(db, user.id, tid),
+      recs: prevRecs,
+      nextNodes: nextRecs,
+      aiLoading: true,
+      aiMessage: null,
+      aiAnalysis: null,
     });
+
+    // Consultar al motor de grafos con IA del Backend enviando las preguntas, respuestas y grafo de la materia
+    const subjectTopics = topicsOf(db, id);
+    const subjectTopicIds = new Set(subjectTopics.map((t) => t.id));
+    fetch('/api/kmap/recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        subjectId: id,
+        topicId: tid,
+        score,
+        answers: nextAnswers,
+        graph: {
+          subjects: subject ? [subject] : [],
+          topics: subjectTopics,
+          edges: db.edges.filter((e) => e.subjectId === id),
+          questions: db.questions.filter((q) => subjectTopicIds.has(q.topicId)),
+          attempts: db.attempts.filter((a) => a.userId === user.id && subjectTopicIds.has(a.topicId)),
+        },
+      }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const rec = data?.recommendation;
+        setRes((prev) => {
+          if (!prev) return prev;
+          if (!rec) return { ...prev, aiLoading: false };
+          const aiTopics = Array.isArray(rec.recommendedTopics) ? rec.recommendedTopics : [];
+          return {
+            ...prev,
+            aiLoading: false,
+            aiMessage: rec.message || prev.aiMessage,
+            aiAnalysis: rec.analysis || null,
+            recs: !passed && aiTopics.length > 0 ? aiTopics : prev.recs,
+            nextNodes: passed && aiTopics.length > 0 ? aiTopics : prev.nextNodes,
+          };
+        });
+      })
+      .catch(() => {
+        setRes((prev) => (prev ? { ...prev, aiLoading: false } : prev));
+      });
 
     ok(score >= PASS ? '¡Excelente trabajo!' : 'Quiz finalizado', `Tu nota: ${score}%`);
   };
@@ -172,29 +235,86 @@ export default function Quiz() {
                 <span>💡</span>
                 <span>Recomendaciones</span>
               </div>
-              {primaryRec ? (
-                <>
-                  <p className="text-sm text-blue-100 leading-relaxed">
-                    Repasa el tema de <b className="text-cyan-300">{primaryRec.name}</b>, ya que es
-                    un área donde puedes mejorar para dominar <b>{topic.name}</b>.
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {res.recs.map((r) => (
+              {res.score < PASS ? (
+                primaryRec ? (
+                  <>
+                    <p className="text-sm text-blue-100 leading-relaxed">
+                      {res.aiMessage ? (
+                        res.aiMessage
+                      ) : res.aiLoading ? (
+                        <>Analizando tus respuestas y escaneando el grafo de conocimiento con IA...</>
+                      ) : (
+                        <>
+                          Deberías estudiar el nodo anterior <b className="text-cyan-300">{primaryRec.name}</b>, ya que según el grafo de conocimiento es prerrequisito para dominar <b>{topic.name}</b>.
+                        </>
+                      )}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {res.recs.map((r) => (
+                        <button
+                          key={r.id}
+                          type="button"
+                          onClick={() => nav(`/materia/${id}/tema/${r.id}`)}
+                          className="btn-pill px-3.5 py-1.5 text-xs"
+                        >
+                          Ir a {r.name}
+                          {typeof r.failedCount === 'number' && r.failedCount > 0
+                            ? ` (${r.failedCount} ${r.failedCount === 1 ? 'fallo' : 'fallos'})`
+                            : ''}{' '}
+                          →
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm text-blue-100 leading-relaxed">
+                      {res.aiMessage || (
+                        <>
+                          Obtuviste <b>{res.score}%</b> en el nodo base <b className="text-cyan-300">{topic.name}</b>. Revisa nuevamente su material de estudio antes de volver a intentar el quiz.
+                        </>
+                      )}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-3">
                       <button
-                        key={r.id}
                         type="button"
-                        onClick={() => nav(`/materia/${id}/tema/${r.id}`)}
+                        onClick={() => nav(`/materia/${id}/tema/${topic.id}`)}
                         className="btn-pill px-3.5 py-1.5 text-xs"
                       >
-                        Ir a {r.name} →
+                        Repasar {topic.name} →
+                      </button>
+                    </div>
+                  </>
+                )
+              ) : res.nextNodes?.length > 0 ? (
+                <>
+                  <p className="text-sm text-blue-100 leading-relaxed">
+                    {res.aiMessage || (
+                      <>
+                        ¡Aprobaste <b>{topic.name}</b> con <b className="text-cyan-300">{res.score}%</b>! Según el grafo de conocimiento, tu siguiente nodo recomendado es <b className="text-cyan-300">{res.nextNodes[0].name}</b>.
+                      </>
+                    )}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {res.nextNodes.map((n) => (
+                      <button
+                        key={n.id}
+                        type="button"
+                        onClick={() => nav(`/materia/${id}/tema/${n.id}`)}
+                        className="btn-pill px-3.5 py-1.5 text-xs"
+                      >
+                        Ir a {n.name} →
                       </button>
                     ))}
                   </div>
                 </>
               ) : (
                 <p className="text-sm text-blue-100 leading-relaxed">
-                  ¡Dominas los prerrequisitos de <b>{topic.name}</b>! Continúa avanzando por los
-                  siguientes nodos del grafo de conocimiento.
+                  {res.aiMessage || (
+                    <>
+                      ¡Dominas <b>{topic.name}</b> y todos los nodos conectados en el grafo de conocimiento de esta materia!
+                    </>
+                  )}
                 </p>
               )}
             </div>
