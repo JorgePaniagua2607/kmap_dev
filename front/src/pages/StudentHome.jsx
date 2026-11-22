@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { update, useDb } from '../lib/db.js';
-import { best, levelOf, progress, ranking, topicsOf, xpOf } from '../lib/logic.js';
+import { best, progress, ranking, topicsOf } from '../lib/logic.js';
 import { askText, fail, info, ok } from '../alerts.js';
 import Page from '../components/Page.jsx';
 import { Avatar, Empty, ProgressBar } from '../components/ui.jsx';
@@ -158,7 +158,7 @@ export default function StudentHome() {
     (s) => !db.enrollments.some((e) => e.userId === user.id && e.subjectId === s.id)
   );
 
-  // Estadísticas y XP
+  // Estadísticas
   const myAttempts = db.attempts.filter((a) => a.userId === user.id);
   const attemptedTopicIds = [...new Set(myAttempts.map((a) => a.topicId))];
   const bestScores = attemptedTopicIds
@@ -167,13 +167,6 @@ export default function StudentHome() {
   const avgScore = bestScores.length
     ? (bestScores.reduce((a, b) => a + b, 0) / bestScores.length).toFixed(1)
     : '87.5';
-
-  const totalXp = xpOf(db, user.id);
-  const lvl = levelOf(totalXp);
-  const displayLevel = Math.max(8, lvl.level + 5);
-  const displayCurXp = totalXp || 750;
-  const displayMaxXp = Math.max(1200, Math.ceil((displayCurXp + 250) / 300) * 300);
-  const xpPct = Math.min(100, Math.round((displayCurXp / displayMaxXp) * 100));
 
   // Ranking global
   const primarySubjectId = mine[0]?.id || 'sub-bd';
@@ -207,17 +200,6 @@ export default function StudentHome() {
       'Tarjeta de Acceso · BIT ACADEMY',
       'Tu suscripción actual es válida hasta el <b>30/12/2026</b>. La opción de renovación anticipada está habilitada.'
     );
-  };
-
-  const handleRobotGotoCourse = () => {
-    if (mine[0]) {
-      nav(`/materia/${mine[0].id}`);
-    } else {
-      info(
-        '¡Bienvenido a BIT ACADEMY!',
-        'El robot tutor ha preparado tu ruta de estudio personalizada. Matricúlate en una asignatura para comenzar.'
-      );
-    }
   };
 
   return (
@@ -483,27 +465,7 @@ export default function StudentHome() {
             3. RIGHT COLUMN WIDGETS (from univalle_bot)
             ================================================================== */}
         <aside className="widgets-column">
-          {/* Widget 1: Level & XP */}
-          <div className="widget-card level-widget">
-            <div className="level-top-row">
-              <div className="level-badge">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                </svg>
-              </div>
-              <div className="level-info-box">
-                <h3 className="level-title">Nivel {displayLevel}</h3>
-                <span className="level-xp-text">
-                  {displayCurXp} / {displayMaxXp} XP
-                </span>
-              </div>
-            </div>
-            <div className="level-progress-bar">
-              <div className="level-progress-fill" style={{ width: `${xpPct}%` }} />
-            </div>
-          </div>
-
-          {/* Widget 2: Tarjeta de acceso (con formato de fecha dd/mm/yyyy) */}
+          {/* Widget: Tarjeta de acceso (con formato de fecha dd/mm/yyyy) */}
           <div className="widget-card access-card-widget">
             <svg className="card-graphic-bg" viewBox="0 0 120 80" fill="none">
               <rect
@@ -556,9 +518,6 @@ export default function StudentHome() {
               <span>Válido hasta: 30/12/2026</span>
             </div>
           </div>
-
-          
-        
         </aside>
       </div>
     </Page>
