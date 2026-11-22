@@ -29,7 +29,7 @@ const SLIDES = [
 const FEATURES = [
   { icon: '🕸️', title: 'Grafos de Conocimiento', text: 'Visualiza tu materia como un mapa y detecta qué prerrequisitos reforzar.' },
   { icon: '⚡', title: 'Evaluaciones Inteligentes', text: 'La dificultad se ajusta mientras respondes, con feedback instantáneo sobre tus errores.' },
-  { icon: '🤖', title: 'BITSIBOOT IA (Gemini)', text: 'Un tutor 24/7 que guía con preguntas socráticas para que razones, no solo memorices.' },
+  { icon: '🤖', title: 'BITSIBOOT IA (Gemini)', text: 'Un asistente 24/7 que guía con preguntas socráticas para que razones, no solo memorices.' },
   { icon: '🔥', title: 'Panel del Docente', text: 'Mapas de calor para ver qué nodo exacto está frenando a tu clase.' },
 ];
 
@@ -323,7 +323,7 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-      
+
       </header>
 
       {/* CINTA DE MATERIAS */}
