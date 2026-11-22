@@ -4,6 +4,7 @@ import { useAuth } from '../auth.jsx';
 import { info } from '../alerts.js';
 import RobotMascot from './RobotMascot.jsx';
 import UserMenu from './UserMenu.jsx';
+import './Layout.css';
 
 export default function Layout() {
   const { user } = useAuth();

@@ -7,6 +7,7 @@ import { best, progress, ranking, topicsOf } from '../lib/logic.js';
 import { askText, fail, info, ok } from '../alerts.js';
 import Page from '../components/Page.jsx';
 import { Avatar, Empty, ProgressBar } from '../components/ui.jsx';
+import './StudentHome.css';
 
 function SubjectWatermark({ type }) {
   if (type === 'code' || type === 'blue') {

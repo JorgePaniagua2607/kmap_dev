@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { ask, info, ok } from '../alerts.js';
+import './UserMenu.css';
 
 export default function UserMenu({ size = 'md', className = '' }) {
   const { user, logout } = useAuth();

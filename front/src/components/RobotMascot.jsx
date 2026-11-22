@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import './RobotMascot.css';
 
 const MESSAGE_TRIGGER_CLICK = 3;
 const CUSTOM_MESSAGE = '¡Chupalo Paniagua!';

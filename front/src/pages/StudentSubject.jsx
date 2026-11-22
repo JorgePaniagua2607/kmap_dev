@@ -7,7 +7,7 @@ import { info } from '../alerts.js';
 import Page from '../components/Page.jsx';
 import KnowledgeGraph, { Legend } from '../components/KnowledgeGraph.jsx';
 import { Empty } from '../components/ui.jsx';
-import '../styles/studentHome.css';
+import './StudentSubject.css';
 
 export default function StudentSubject() {
   const { id } = useParams();

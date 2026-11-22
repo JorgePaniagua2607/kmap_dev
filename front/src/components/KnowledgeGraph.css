@@ -1,0 +1,9 @@
+/* ==========================================================================
+   Knowledge Graph Visualizer Styles
+   Componente: front/src/components/KnowledgeGraph.jsx
+   ========================================================================== */
+
+.react-flow__node-topic {
+  background: none;
+  border: 0;
+}

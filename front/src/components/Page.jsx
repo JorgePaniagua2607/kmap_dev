@@ -5,6 +5,7 @@ import { useDb } from '../lib/db.js';
 import { topicsOf } from '../lib/logic.js';
 import { info } from '../alerts.js';
 import UserMenu from './UserMenu.jsx';
+import './Page.css';
 
 export default function Page({ title, subtitle, crumb, backTo, icon, actions, children }) {
   const { user } = useAuth();

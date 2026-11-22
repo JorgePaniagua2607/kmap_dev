@@ -1,0 +1,140 @@
+/* ==========================================================================
+   Robot Mascot (robot-mascota.js) 2D Interactive Pet & Snow
+   Componente: front/src/components/RobotMascot.jsx
+   ========================================================================== */
+
+#pet-2d {
+  position: fixed;
+  bottom: 18px;
+  right: 20px;
+  width: 165px;
+  height: 230px;
+  z-index: 99999;
+  user-select: none;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.pet-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.35));
+}
+
+.pet-bubble {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 6px;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1.5px solid #38bdf8;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font: 600 12px/1.2 var(--font-main);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.22s ease;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+}
+
+.pet-bubble.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pet-snow-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99998;
+  overflow: hidden;
+}
+
+.pet-snow-flake {
+  position: fixed;
+  top: -16px;
+  color: #e0f2fe;
+  text-shadow: 0 0 6px rgba(186, 230, 253, 0.85);
+  pointer-events: none;
+  user-select: none;
+  animation: petSnowFall linear forwards;
+}
+
+@keyframes petSnowFall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.95;
+  }
+
+  50% {
+    transform: translate3d(var(--drift, 14px), 50vh, 0) rotate(180deg);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translate3d(calc(var(--drift, 14px) * -0.5), 105vh, 0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+#rig-root {
+  transform-origin: 100px 214px;
+  animation: idleFloat2D 3.4s ease-in-out infinite;
+}
+
+#rig-arm-right {
+  transform-origin: 64px 119px;
+  transform: translate(-3px, 0) rotate(-14deg);
+}
+
+#rig-arm-left {
+  transform-origin: 136px 119px;
+  transform: translate(3px, 0) rotate(14deg);
+}
+
+.eye-arc {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.12s ease;
+}
+
+#pet-2d.blinking .eye-arc {
+  transform: scaleY(0.12);
+}
+
+#pet-2d.saluting #rig-arm-left {
+  animation: lightWaveLeft 1.5s ease-in-out 1 forwards;
+}
+
+@keyframes idleFloat2D {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+
+  50% {
+    transform: translateY(-2px) scaleY(1.008);
+  }
+}
+
+@keyframes lightWaveLeft {
+  0%,
+  100% {
+    transform: translate(3px, 0) rotate(14deg);
+  }
+
+  25% {
+    transform: translate(3px, 0) rotate(-12deg);
+  }
+
+  50% {
+    transform: translate(3px, 0) rotate(2deg);
+  }
+
+  75% {
+    transform: translate(3px, 0) rotate(-10deg);
+  }
+}

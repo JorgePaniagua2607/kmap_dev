@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import cytoscape from 'cytoscape';
+import './KnowledgeGraph.css';
 
 export const masteryColor = (v) =>
   v == null ? '#1e3a5f' : v < 51 ? '#7f1d1d' : v < 71 ? '#78350f' : '#0c4a6e';

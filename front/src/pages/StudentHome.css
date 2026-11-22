@@ -1,0 +1,667 @@
+/* ==========================================================================
+   BIT ACADEMY - Student Home Styles
+   Componente: front/src/pages/StudentHome.jsx
+   ========================================================================== */
+
+/* ---------- Layout de Contenido Grid ---------- */
+.dashboard-content-grid {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+}
+
+.center-content-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.widgets-column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 320px;
+  flex-shrink: 0;
+}
+
+/* ---------- Sección de Materias ---------- */
+.subjects-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(0, 210, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-primary);
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.3);
+}
+
+.section-header-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.btn-view-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #00d2ff;
+  background: rgba(6, 22, 48, 0.6);
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  border-radius: var(--radius-pill);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.btn-view-all:hover {
+  background: rgba(0, 210, 255, 0.15);
+  border-color: #00f2fe;
+  box-shadow: 0 0 14px rgba(0, 210, 255, 0.3);
+  transform: translateX(2px);
+}
+
+/* ---------- Grilla de Materias y Tarjetas ---------- */
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.subject-card {
+  position: relative;
+  background: linear-gradient(160deg, #05162e 0%, #030d1e 100%);
+  border: 1px solid rgba(0, 210, 255, 0.22);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(0, 10, 28, 0.5), inset 0 0 1px rgba(0, 229, 255, 0.3);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.subject-card::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(from 0deg, transparent 0%, rgba(0, 242, 254, 0.15) 25%, rgba(0, 119, 254, 0.15) 50%, transparent 75%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: spinGlow 10s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.subject-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes spinGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.subject-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(0, 242, 254, 0.6);
+  box-shadow: 0 12px 32px rgba(0, 10, 32, 0.7), 0 0 24px rgba(0, 210, 255, 0.45);
+}
+
+.subject-card:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+.card-watermark {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 90px;
+  height: 90px;
+  pointer-events: none;
+  opacity: 0.18;
+  z-index: 1;
+  transition: var(--transition-smooth);
+}
+
+.subject-card:hover .card-watermark {
+  opacity: 0.28;
+  transform: scale(1.05);
+}
+
+.watermark-art {
+  opacity: 0.75 !important;
+  right: 5px;
+  top: 15px;
+  width: 100px;
+  height: 95px;
+}
+
+.card-icon-badge {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.18) 0%, rgba(0, 100, 255, 0.12) 100%);
+  border: 1px solid rgba(0, 229, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00f2fe;
+  margin-bottom: 14px;
+  box-shadow: 0 0 16px rgba(0, 210, 255, 0.35);
+  position: relative;
+  z-index: 2;
+  animation: floatBadge 4s ease-in-out infinite;
+  transition: transform 0.3s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+@keyframes floatBadge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.subject-card:hover .card-icon-badge {
+  animation: none;
+  transform: translateY(-4px) scale(1.1);
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.35), rgba(0, 119, 254, 0.35));
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.6);
+  border-color: #00f2fe;
+}
+
+.subject-card:active .card-icon-badge {
+  animation: smallJump 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes smallJump {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-6px) scale(1.05); }
+  70% { transform: translateY(2px) scale(0.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.card-icon-badge svg {
+  width: 28px;
+  height: 28px;
+}
+
+.card-title {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 5px;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.3px;
+}
+
+.card-subtitle {
+  font-size: 12px;
+  color: #8da6c9;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  min-height: 34px;
+  position: relative;
+  z-index: 2;
+  max-width: 210px;
+}
+
+.card-progress-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.progress-track {
+  flex-grow: 1;
+  height: 6px;
+  background: rgba(0, 30, 70, 0.8);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  border: 1px solid rgba(0, 210, 255, 0.15);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0099ff 0%, #00f2fe 100%);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-percent {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #00d2ff;
+  min-width: 32px;
+  text-align: right;
+}
+
+.btn-card-action {
+  width: 100%;
+  padding: 8px 16px;
+  background: rgba(0, 210, 255, 0.08);
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  border-radius: var(--radius-pill);
+  color: #00d2ff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-card-action::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, #0088ff 0%, #00d2ff 100%);
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: -1;
+}
+
+.btn-card-action:hover {
+  color: #021226;
+  font-weight: 700;
+  border-color: transparent;
+  box-shadow: 0 0 18px rgba(0, 210, 255, 0.45);
+}
+
+.btn-card-action:hover::before {
+  transform: translateX(0);
+}
+
+.btn-card-action:active {
+  transform: scale(0.96);
+}
+
+/* ---------- Widgets de la Columna Derecha ---------- */
+.widget-card {
+  background: rgba(6, 22, 48, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 210, 255, 0.22);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: 0 6px 25px rgba(0, 10, 28, 0.5), inset 0 0 1px rgba(0, 229, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.widget-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, #00f2fe, #0077fe, #00f2fe, transparent);
+  background-size: 200% 100%;
+  animation: slideGradient 4s linear infinite;
+}
+
+@keyframes slideGradient {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.widget-card:hover {
+  border-color: rgba(0, 229, 255, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 10, 32, 0.65), 0 0 15px rgba(0, 210, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Nivel */
+.level-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.level-top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.level-badge {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00d2ff 0%, #0066cc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(0, 210, 255, 0.7);
+  border: 2px solid #ffffff;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.level-badge::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 210, 255, 0.35);
+  pointer-events: none;
+}
+
+.level-badge svg {
+  width: 24px;
+  height: 24px;
+  fill: #ffffff;
+}
+
+.level-info-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.level-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.level-xp-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #9db7da;
+}
+
+.level-progress-bar {
+  width: 100%;
+  height: 9px;
+  background: rgba(0, 25, 60, 0.85);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  overflow: hidden;
+  padding: 1px;
+}
+
+.level-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00b4d8 0%, #00f2fe 100%);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.8);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tarjeta de Acceso */
+.access-card-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.access-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.access-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.access-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(0, 210, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00f2fe;
+  transition: transform 0.3s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.widget-card:hover .access-icon-box {
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.35), rgba(0, 119, 254, 0.35));
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.5);
+}
+
+.widget-card:active .access-icon-box {
+  animation: smallJump 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.access-icon-box svg {
+  width: 18px;
+  height: 18px;
+}
+
+.access-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.access-renew-link {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #00d2ff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.access-renew-link:hover {
+  color: #00f2fe;
+  text-shadow: 0 0 8px rgba(0, 242, 254, 0.6);
+  transform: translateX(2px);
+}
+
+.access-info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #a0bbde;
+  position: relative;
+  z-index: 2;
+}
+
+.access-info-row svg {
+  width: 14px;
+  height: 14px;
+  color: #00d2ff;
+  flex-shrink: 0;
+}
+
+.access-validity-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: #8da7c9;
+  position: relative;
+  z-index: 2;
+}
+
+.status-dot-green {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00e676;
+  box-shadow: 0 0 8px #00e676;
+  flex-shrink: 0;
+  animation: pulseGreen 2s ease-in-out infinite;
+}
+
+@keyframes pulseGreen {
+  0%, 100% { box-shadow: 0 0 6px rgba(0, 230, 118, 0.6); transform: scale(1); }
+  50% { box-shadow: 0 0 16px rgba(0, 230, 118, 0.9); transform: scale(1.25); }
+}
+
+.card-graphic-bg {
+  position: absolute;
+  right: -10px;
+  bottom: -15px;
+  width: 105px;
+  height: 85px;
+  opacity: 0.18;
+  transform: rotate(-15deg);
+  pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.widget-card:hover .card-graphic-bg {
+  transform: scale(1.08) rotate(-10deg);
+  opacity: 0.28;
+}
+
+/* Banner de Bienvenida */
+.welcome-banner-card {
+  background: linear-gradient(135deg, rgba(0, 110, 220, 0.45) 0%, rgba(3, 30, 75, 0.8) 100%);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 20, 60, 0.6), inset 0 0 25px rgba(0, 160, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  min-height: 195px;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 3;
+  max-width: 65%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.welcome-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 12px rgba(0, 210, 255, 0.35);
+}
+
+.welcome-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #a4c6ec;
+  margin-bottom: 6px;
+}
+
+.btn-goto-course {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #00d2ff;
+  color: #021226;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 18px rgba(0, 210, 255, 0.5);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.btn-goto-course:hover {
+  background: #00f2fe;
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.75);
+  transform: translateY(-1px);
+}
+
+.robot-mascot-wrapper {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 138px;
+  height: 158px;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.4));
+}
+
+.robot-mascot-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Responsividad de StudentHome */
+@media (max-width: 1280px) {
+  .dashboard-content-grid {
+    flex-direction: column;
+  }
+
+  .widgets-column {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .subjects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .subjects-grid {
+    grid-template-columns: 1fr;
+  }
+}
