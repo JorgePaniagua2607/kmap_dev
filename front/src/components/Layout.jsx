@@ -16,13 +16,13 @@ export default function Layout() {
     if (to === '/perfil') return pathname === '/perfil';
     if (to.includes('?vista=')) {
       const v = to.split('?vista=')[1];
-      return pathname === '/' && search === `?vista=${v}`;
+      return pathname === '/panel' && search === `?vista=${v}`;
     }
-    if (to === '/') {
+    if (to === '/panel') {
       if (user.role === 'estudiante') {
-        return (pathname === '/' && !search) || pathname.startsWith('/materia');
+        return (pathname === '/panel' && !search) || pathname.startsWith('/materia');
       }
-      return pathname === '/' || pathname.startsWith('/materia');
+      return pathname === '/panel' || pathname.startsWith('/materia');
     }
     return pathname === to;
   };
@@ -52,7 +52,7 @@ export default function Layout() {
               src="/assets/images/logo.svg"
               alt="BIT ACADEMY"
               className="h-10 w-auto cursor-pointer"
-              onClick={() => nav('/')}
+              onClick={() => nav('/panel')}
             />
             <UserMenu size="sm" />
           </div>
@@ -73,7 +73,7 @@ export default function Layout() {
               className="sidebar-logo"
               onClick={() => {
                 setMobileOpen(false);
-                nav('/');
+                nav('/panel');
               }}
             >
               <img src="/assets/images/logo.svg" alt="BIT ACADEMY Logo" />
@@ -83,8 +83,8 @@ export default function Layout() {
               <div className="nav-section">
                 <div className="section-label">Gestión Docente</div>
                 <ul className="nav-list">
-                  <li className={`nav-item ${isItemActive('/') ? 'active' : ''}`}>
-                    <NavLink to="/" onClick={() => setMobileOpen(false)} className="nav-link">
+                  <li className={`nav-item ${isItemActive('/panel') ? 'active' : ''}`}>
+                    <NavLink to="/panel" onClick={() => setMobileOpen(false)} className="nav-link">
                       <span className="nav-icon">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                           <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
@@ -112,8 +112,8 @@ export default function Layout() {
               <div className="nav-section">
                 <div className="section-label">Administración</div>
                 <ul className="nav-list">
-                  <li className={`nav-item ${isItemActive('/') ? 'active' : ''}`}>
-                    <NavLink to="/" onClick={() => setMobileOpen(false)} className="nav-link">
+                  <li className={`nav-item ${isItemActive('/panel') ? 'active' : ''}`}>
+                    <NavLink to="/panel" onClick={() => setMobileOpen(false)} className="nav-link">
                       <span className="nav-icon icon-gold">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
