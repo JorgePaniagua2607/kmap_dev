@@ -4,45 +4,30 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { update, useDb } from '../lib/db.js';
 import { best, progress, ranking, topicsOf } from '../lib/logic.js';
-import { askText, fail, info, ok } from '../alerts.js';
+import { fail, info, ok } from '../alerts.js'; // Quitamos askText
 import Page from '../components/Page.jsx';
 import { Avatar, Empty, ProgressBar } from '../components/ui.jsx';
+import JoinSubjectModal from '../components/JoinSubjectModal.jsx'; // Importamos el nuevo modal
 import './StudentHome.css';
 
 function SubjectWatermark({ type }) {
+  // ... (Mantén tu código de SubjectWatermark exactamente igual)
   if (type === 'code' || type === 'blue') {
     return (
       <svg className="card-watermark" viewBox="0 0 100 100" fill="none">
-        <path
-          d="M 20 20 L 70 20 M 30 35 L 85 35 M 20 50 L 60 50 M 40 65 L 80 65 M 20 80 L 50 80"
-          stroke="#00d2ff"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <text x="35" y="45" fill="#00d2ff" fontFamily="monospace" fontSize="28" fontWeight="bold">
-          {'{ ; }'}
-        </text>
+        <path d="M 20 20 L 70 20 M 30 35 L 85 35 M 20 50 L 60 50 M 40 65 L 80 65 M 20 80 L 50 80" stroke="#00d2ff" strokeWidth="3" strokeLinecap="round" />
+        <text x="35" y="45" fill="#00d2ff" fontFamily="monospace" fontSize="28" fontWeight="bold">{'{ ; }'}</text>
       </svg>
     );
   }
   if (type === 'math' || type === 'green') {
     return (
       <svg className="card-watermark" viewBox="0 0 100 100" fill="none">
-        <text x="50" y="30" fill="#00d2ff" fontSize="22" fontWeight="bold" textAnchor="middle">
-          +
-        </text>
-        <text x="75" y="55" fill="#00d2ff" fontSize="24" fontWeight="bold" textAnchor="middle">
-          ×
-        </text>
-        <text x="50" y="80" fill="#00d2ff" fontSize="22" fontWeight="bold" textAnchor="middle">
-          ÷
-        </text>
-        <text x="25" y="55" fill="#00d2ff" fontSize="22" fontWeight="bold" textAnchor="middle">
-          %
-        </text>
-        <text x="75" y="25" fill="#00d2ff" fontSize="20" fontWeight="bold" textAnchor="middle">
-          π
-        </text>
+        <text x="50" y="30" fill="#00d2ff" fontSize="22" fontWeight="bold" textAnchor="middle">+</text>
+        <text x="75" y="55" fill="#00d2ff" fontSize="24" fontWeight="bold" textAnchor="middle">×</text>
+        <text x="50" y="80" fill="#00d2ff" fontSize="22" fontWeight="bold" textAnchor="middle">÷</text>
+        <text x="25" y="55" fill="#00d2ff" fontSize="22" fontWeight="bold" textAnchor="middle">%</text>
+        <text x="75" y="25" fill="#00d2ff" fontSize="20" fontWeight="bold" textAnchor="middle">π</text>
       </svg>
     );
   }
@@ -62,11 +47,7 @@ function SubjectWatermark({ type }) {
   if (type === 'art') {
     return (
       <svg className="card-watermark watermark-art" viewBox="0 0 100 100" fill="none">
-        <path
-          d="M 65 30 C 50 15, 30 25, 40 45 C 20 40, 15 65, 35 70 C 25 85, 55 95, 65 80 C 80 90, 95 70, 85 50 C 95 30, 80 15, 65 30 Z"
-          fill="#ff007f"
-          opacity="0.45"
-        />
+        <path d="M 65 30 C 50 15, 30 25, 40 45 C 20 40, 15 65, 35 70 C 25 85, 55 95, 65 80 C 80 90, 95 70, 85 50 C 95 30, 80 15, 65 30 Z" fill="#ff007f" opacity="0.45" />
         <circle cx="85" cy="20" r="5" fill="#ff007f" opacity="0.6" />
         <circle cx="20" cy="30" r="4" fill="#00d2ff" opacity="0.5" />
         <circle cx="80" cy="85" r="3" fill="#ffbe0b" opacity="0.7" />
@@ -87,16 +68,10 @@ function SubjectWatermark({ type }) {
 }
 
 function SubjectIcon({ type }) {
+  // ... (Mantén tu código de SubjectIcon exactamente igual)
   if (type === 'code' || type === 'blue') {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="16 18 22 12 16 6" />
         <polyline points="8 6 2 12 8 18" />
       </svg>
@@ -111,14 +86,7 @@ function SubjectIcon({ type }) {
   }
   if (type === 'science' || type === 'cyan') {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" fill="currentColor" />
         <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(30 12 12)" />
         <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(90 12 12)" />
@@ -127,14 +95,7 @@ function SubjectIcon({ type }) {
     );
   }
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <ellipse cx="12" cy="5" rx="9" ry="3" />
       <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
       <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
@@ -147,6 +108,10 @@ export default function StudentHome() {
   const [sp, setSp] = useSearchParams();
   const vista = sp.get('vista') || 'inicio';
   const [showAllCatalog, setShowAllCatalog] = useState(false);
+  
+  // Nuevo estado para controlar el modal
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+
   const { user } = useAuth();
   const db = useDb();
 
@@ -174,13 +139,16 @@ export default function StudentHome() {
   const ranks = ranking(db, primarySubjectId);
   const myRankPos = ranks.findIndex((r) => r.user.id === user.id) + 1 || 1;
 
-  const join = async () => {
-    const code = (await askText('Código de la materia (ej. ALG8Q5)'))?.toUpperCase();
-    if (!code) return;
+  // Modificada para recibir el código directo del modal
+  const handleJoinWithCode = (code) => {
+    setIsJoinModalOpen(false); // Cerramos el modal primero
+    
     const s = db.subjects.find((x) => x.code === code);
     if (!s) return fail('No existe una materia con ese código');
+    
     if (db.enrollments.some((e) => e.userId === user.id && e.subjectId === s.id))
       return fail('Ya estás matriculado en esa materia');
+      
     update((d) => {
       d.enrollments.push({ userId: user.id, subjectId: s.id });
     });
@@ -208,23 +176,28 @@ export default function StudentHome() {
       crumb="Academia ❯ Inicio"
       title="BIT ACADEMY"
       actions={
-        <button type="button" className="btn-courses text-xs sm:text-sm" onClick={join}>
+        <button 
+          type="button" 
+          className="btn-courses text-xs sm:text-sm" 
+          onClick={() => setIsJoinModalOpen(true)} // Abre el nuevo modal
+        >
           <span>＋</span>
           <span>Unirme con código</span>
         </button>
       }
     >
-      {/* Dashboard Grid: Main Content (Left/Center) + Right Widgets (univalle_bot layout) */}
+      {/* Modal renderizado condicionalmente */}
+      <JoinSubjectModal 
+        isOpen={isJoinModalOpen} 
+        onClose={() => setIsJoinModalOpen(false)} 
+        onJoin={handleJoinWithCode} 
+      />
+
       <div className="dashboard-content-grid">
-        {/* Left / Center: Mis Asignaturas + Vistas Kmap */}
         <section className="center-content-column subjects-section">
-          {/* KPIs rápidos de Kmap con estética BIT ACADEMY */}
+          
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
-            <button
-              type="button"
-              onClick={() => setSp({ vista: 'materias' })}
-              className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer"
-            >
+            <button type="button" onClick={() => setSp({ vista: 'materias' })} className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer">
               <div className="access-icon-box !w-10 !h-10 shrink-0">🎓</div>
               <div>
                 <div className="text-[11px] text-[#8ca5c9] font-semibold">Asignaturas</div>
@@ -232,11 +205,7 @@ export default function StudentHome() {
               </div>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setSp({ vista: 'progreso' })}
-              className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer"
-            >
+            <button type="button" onClick={() => setSp({ vista: 'progreso' })} className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer">
               <div className="access-icon-box !w-10 !h-10 shrink-0">⭐</div>
               <div>
                 <div className="text-[11px] text-[#8ca5c9] font-semibold">Promedio</div>
@@ -244,11 +213,7 @@ export default function StudentHome() {
               </div>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setSp({ vista: 'rank' })}
-              className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer"
-            >
+            <button type="button" onClick={() => setSp({ vista: 'rank' })} className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer">
               <div className="access-icon-box !w-10 !h-10 shrink-0">🏆</div>
               <div>
                 <div className="text-[11px] text-[#8ca5c9] font-semibold">Clasificación</div>
@@ -256,11 +221,7 @@ export default function StudentHome() {
               </div>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setSp({ vista: 'progreso' })}
-              className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer"
-            >
+            <button type="button" onClick={() => setSp({ vista: 'progreso' })} className="widget-card !p-3.5 flex items-center gap-3 text-left cursor-pointer">
               <div className="access-icon-box !w-10 !h-10 shrink-0">✅</div>
               <div>
                 <div className="text-[11px] text-[#8ca5c9] font-semibold">Cuestionarios</div>
@@ -271,18 +232,13 @@ export default function StudentHome() {
             </button>
           </div>
 
-          {/* Vista de Ranking general (Leaderboard) */}
           {vista === 'rank' && (
             <div className="card-glow mb-2">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <b className="text-lg flex items-center gap-2 text-white">
                   👑 Clasificación · Ranking General
                 </b>
-                <button
-                  type="button"
-                  onClick={() => setSp({})}
-                  className="btn-ghost text-xs py-1.5 px-3"
-                >
+                <button type="button" onClick={() => setSp({})} className="btn-ghost text-xs py-1.5 px-3">
                   Cerrar vista ✕
                 </button>
               </div>
@@ -313,18 +269,13 @@ export default function StudentHome() {
             </div>
           )}
 
-          {/* Vista de Mi Progreso */}
           {vista === 'progreso' && (
             <div className="card-glow mb-2">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <b className="text-lg flex items-center gap-2 text-white">
                   📊 Detalle de Mi Progreso
                 </b>
-                <button
-                  type="button"
-                  onClick={() => setSp({})}
-                  className="btn-ghost text-xs py-1.5 px-3"
-                >
+                <button type="button" onClick={() => setSp({})} className="btn-ghost text-xs py-1.5 px-3">
                   Cerrar vista ✕
                 </button>
               </div>
@@ -353,7 +304,6 @@ export default function StudentHome() {
             </div>
           )}
 
-          {/* Section Title Row (univalle_bot style) */}
           <div className="section-header-row">
             <div className="section-title-wrap">
               <div className="section-header-icon">
@@ -363,11 +313,7 @@ export default function StudentHome() {
               </div>
               <h2 className="section-title">Mis Asignaturas</h2>
             </div>
-            <button
-              className="btn-view-all"
-              type="button"
-              onClick={() => setShowAllCatalog((prev) => !prev)}
-            >
+            <button className="btn-view-all" type="button" onClick={() => setShowAllCatalog((prev) => !prev)}>
               <span>
                 {showAllCatalog
                   ? 'Ver solo matriculadas'
@@ -379,7 +325,6 @@ export default function StudentHome() {
             </button>
           </div>
 
-          {/* Cards Grid (univalle_bot subject-card design) */}
           {mine.length === 0 ? (
             <Empty>Aún no tienes asignaturas. Haz clic en «Unirme con código» para empezar.</Empty>
           ) : (
@@ -387,7 +332,6 @@ export default function StudentHome() {
               {mine.map((s, i) => {
                 const ts = topicsOf(db, s.id);
                 const p = progress(db, user.id, s.id);
-                const completedQuizzes = ts.filter((t) => best(db, user.id, t.id) !== null).length;
 
                 return (
                   <motion.div
@@ -406,7 +350,7 @@ export default function StudentHome() {
 
                     <h3 className="card-title">{s.name}</h3>
                     <p className="card-subtitle">
-                      {s.desc || `${ts.length} temas • ${completedQuizzes} quizzes`}
+                      {s.desc || `${ts.length} temas`}
                     </p>
 
                     <div className="card-progress-wrapper">
@@ -448,11 +392,7 @@ export default function StudentHome() {
                     </span>
                     <h3 className="card-title">{s.name}</h3>
                     <p className="card-subtitle">{s.desc}</p>
-                    <button
-                      type="button"
-                      onClick={() => enrollDirect(s)}
-                      className="btn-card-action mt-auto"
-                    >
+                    <button type="button" onClick={() => enrollDirect(s)} className="btn-card-action mt-auto">
                       <span>＋ Matricularme</span>
                       <span>❯</span>
                     </button>
@@ -462,34 +402,14 @@ export default function StudentHome() {
           )}
         </section>
 
-        {/* ==================================================================
-            3. RIGHT COLUMN WIDGETS (from univalle_bot)
-            ================================================================== */}
         <aside className="widgets-column">
-          {/* Widget: Tarjeta de acceso (con formato de fecha dd/mm/yyyy) */}
           <div className="widget-card access-card-widget">
             <svg className="card-graphic-bg" viewBox="0 0 120 80" fill="none">
-              <rect
-                x="5"
-                y="5"
-                width="110"
-                height="70"
-                rx="8"
-                stroke="#00d2ff"
-                strokeWidth="2"
-                opacity="0.7"
-              />
+              <rect x="5" y="5" width="110" height="70" rx="8" stroke="#00d2ff" strokeWidth="2" opacity="0.7" />
               <rect x="15" y="20" width="25" height="20" rx="4" fill="#00d2ff" opacity="0.5" />
               <line x1="15" y1="55" x2="65" y2="55" stroke="#00d2ff" strokeWidth="3" opacity="0.7" />
               <line x1="15" y1="62" x2="45" y2="62" stroke="#00d2ff" strokeWidth="2" opacity="0.5" />
-              <circle
-                cx="95"
-                cy="55"
-                r="10"
-                stroke="#00d2ff"
-                strokeWidth="2"
-                opacity="0.6"
-              />
+              <circle cx="95" cy="55" r="10" stroke="#00d2ff" strokeWidth="2" opacity="0.6" />
             </svg>
 
             <div className="access-header-row">
