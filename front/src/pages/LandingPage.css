@@ -282,4 +282,72 @@ button{font-family:inherit}
 .cbar.b2{animation-delay:-.4s}.cbar.b3{animation-delay:-.9s}
 @keyframes cbar{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
 
-@media (max-width:768px){.logo-tag{display:none}.logo-text{font-size:1.3rem}.logo-icon{width:46px;height:46px}}
+@media (max-width:768px){.logo-tag{display:none}.logo-text{font-size:1.3rem}.logo-icon{width:46px;height:46px}}/* =====================================
+   ROBOT BITSIBOOT - POSICIÓN EN EL HERO
+===================================== */
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: start;
+  gap: 1rem;
+  overflow: visible;
+}
+
+.hero-robot-static {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: -25px;
+  overflow: visible;
+}
+
+/* Tamaño y desplazamiento del robot */
+.hero-robot-static #pet-2d.pet-inline {
+  position: relative !important;
+  inset: auto !important;
+  width: 560px !important;
+  height: 620px !important;
+  max-width: 100%;
+  margin: 0 auto;
+  transform: translateY(-80px);
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+.hero-robot-static .pet-svg {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible;
+}
+
+/* TABLETS */
+@media (max-width: 900px) {
+  .landing-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-robot-static {
+    margin-top: 0;
+    min-height: 400px;
+  }
+
+  .hero-robot-static #pet-2d.pet-inline {
+    width: 380px !important;
+    height: 430px !important;
+    transform: translateY(0);
+  }
+}
+
+/* CELULARES */
+@media (max-width: 600px) {
+  .hero-robot-static #pet-2d.pet-inline {
+    width: 290px !important;
+    height: 350px !important;
+  }
+}
