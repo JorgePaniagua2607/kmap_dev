@@ -262,13 +262,9 @@ const LandingPage = () => {
           </p>
         </div>
 
-       <div className="hero-content">
-  {/* Todo el contenido del Landing */}
-</div>
-
-<div className="hero-robot-static">
-  <RobotMascotStatic size="xl" />
-</div>
+        <div className="hero-robot-static enter" style={{ '--d': '0.3s' }}>
+          <RobotMascotStatic size="xl" />
+        </div>
 
       </header>
 
