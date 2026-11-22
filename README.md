@@ -50,7 +50,7 @@ Grafo de prerrequisitos que diagnostica por qué fallas: quiz adaptativo con IA 
 
    AI_MODE="gemini"
    AI_API_KEY="TU_CLAVE_DE_GOOGLE_AI_STUDIO"
-   AI_MODEL="gemini-3.5-flash-lite"
+   AI_MODEL="gemini-3.8-flash"
    ```
 
 3. **Preparar la base de datos (Prisma + Seed):**
