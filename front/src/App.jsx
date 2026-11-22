@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
 import Layout from './components/Layout.jsx';
+import BackgroundWatermarks from './components/BackgroundWatermarks.jsx';
 import Login from './pages/Login.jsx';
 import Profile from './pages/Profile.jsx';
 import StudentHome from './pages/StudentHome.jsx';
@@ -24,8 +25,11 @@ export default function App() {
       <div className="aurora-top-left" aria-hidden="true" />
       <div className="aurora-bottom-right" aria-hidden="true" />
 
+      {/* Marcas de agua: BIT, Σ, π, { }, √x, A, 01 + marcos y órbitas */}
+      <BackgroundWatermarks />
+
       <Routes>
-        {/* 1. La LandingPage SIEMPRE se muestra primero en la raíz '/' antes del login o paneles */}
+        {/* 1. La LandingPage SIEMPRE se muestra primero en la raíz '/' */}
         <Route path="/" element={<LandingPage />} />
 
         {/* 2. Login: si el usuario ya está autenticado, va directo a /panel */}

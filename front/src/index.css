@@ -55,13 +55,24 @@
   box-sizing: border-box;
 }
 
-html,
-body {
+/*
+  IMPORTANTE: el fondo (color + degradado) va SOLO en <html>.
+  <body> queda transparente; si el body tuviera fondo propio, taparía
+  la cuadrícula (::before), los polígonos (::after), las auroras y las
+  marcas de agua, que están detrás con z-index negativo.
+*/
+html {
   width: 100%;
   min-height: 100vh;
   background-color: var(--bg-dark);
   background-image: var(--bg-gradient);
   background-attachment: fixed;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  background: transparent;
   color: var(--text-white);
   font-family: var(--font-main);
   font-size: 15px;
@@ -70,6 +81,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+}
+
+#root {
+  background: transparent;
 }
 
 /* ==========================================================================
@@ -94,7 +109,7 @@ body::before {
 }
 
 /* 2. Estructuras Geométricas (Polígonos y Nodos en las esquinas) */
-/* Usamos un SVG codificado en base64 para dibujar líneas y círculos brillantes */
+/* Usamos un SVG codificado para dibujar líneas y círculos brillantes */
 body::after {
   content: '';
   position: fixed;
@@ -356,5 +371,163 @@ body::after {
 
   .interactive-row:active {
     transform: scale(0.99);
+  }
+}
+
+/* ==========================================================================
+   MARCAS DE AGUA (BIT, Σ, π, { }, √x, A, 01) + marcos y órbitas
+   Se renderizan con <BackgroundWatermarks /> (ver App.jsx).
+   Van FUERA de @layer components a propósito.
+   ========================================================================== */
+
+.watermarks {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Base de todo símbolo / letra */
+.wm {
+  position: absolute;
+  font-family: var(--font-main);
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  color: rgba(0, 210, 255, 0.05);
+  animation: wmFloat 14s ease-in-out infinite alternate;
+}
+
+/* "BIT" gigante: solo contorno, detrás del título */
+.wm-bit {
+  top: 6%;
+  left: 20%;
+  font-size: clamp(260px, 42vw, 780px);
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(0, 210, 255, 0.08);
+  animation: none;
+}
+
+.wm-sigma {
+  top: 14%;
+  left: 8%;
+  font-size: clamp(120px, 16vw, 300px);
+  color: rgba(131, 56, 236, 0.07);
+  animation-duration: 16s;
+}
+
+.wm-pi {
+  top: 18%;
+  left: 46%;
+  font-size: clamp(70px, 9vw, 170px);
+  color: rgba(0, 210, 255, 0.09);
+  animation-duration: 12s;
+}
+
+.wm-braces {
+  top: 6%;
+  right: 6%;
+  font-size: clamp(90px, 11vw, 210px);
+  color: rgba(0, 210, 255, 0.07);
+  animation-duration: 18s;
+}
+
+.wm-sqrt {
+  bottom: 6%;
+  left: 8%;
+  font-size: clamp(100px, 13vw, 250px);
+  color: rgba(0, 119, 254, 0.08);
+  animation-duration: 15s;
+}
+
+.wm-delta {
+  top: 52%;
+  left: 50%;
+  font-size: clamp(110px, 12vw, 230px);
+  color: rgba(0, 210, 255, 0.07);
+  animation-duration: 13s;
+}
+
+.wm-binary {
+  bottom: -2%;
+  right: 3%;
+  font-size: clamp(150px, 20vw, 380px);
+  color: rgba(131, 56, 236, 0.09);
+  animation-duration: 20s;
+}
+
+/* Marcos rectangulares estilo blueprint */
+.wm-frame {
+  position: absolute;
+  border: 1px solid rgba(0, 210, 255, 0.07);
+}
+
+.wm-frame-1 {
+  top: 11%;
+  left: 55%;
+  width: 28vw;
+  height: 12vw;
+}
+
+.wm-frame-2 {
+  top: 20%;
+  left: 62%;
+  width: 14vw;
+  height: 14vw;
+}
+
+/* Círculos orbitales alrededor del robot / hero */
+.wm-orbit {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 210, 255, 0.1);
+}
+
+.wm-orbit-1 {
+  top: 28%;
+  right: 4%;
+  width: 34vw;
+  height: 34vw;
+  max-width: 640px;
+  max-height: 640px;
+}
+
+.wm-orbit-2 {
+  top: 34%;
+  right: 8%;
+  width: 24vw;
+  height: 24vw;
+  max-width: 450px;
+  max-height: 450px;
+  border-color: rgba(131, 56, 236, 0.12);
+}
+
+@keyframes wmFloat {
+  0%   { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-18px) rotate(2deg); }
+}
+
+/* Responsive: en móvil dejamos solo lo esencial */
+@media (max-width: 768px) {
+  .wm-frame,
+  .wm-orbit,
+  .wm-pi,
+  .wm-delta,
+  .wm-braces {
+    display: none;
+  }
+
+  .wm-bit {
+    left: -4%;
+    font-size: 70vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm {
+    animation: none;
   }
 }
