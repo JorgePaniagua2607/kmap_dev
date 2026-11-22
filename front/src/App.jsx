@@ -11,6 +11,9 @@ import TeacherHome from './pages/TeacherHome.jsx';
 import TeacherSubject from './pages/TeacherSubject.jsx';
 import AdminHome from './pages/AdminHome.jsx';
 
+// 1. IMPORTAMOS LA LANDING PAGE
+import LandingPage from './pages/LandingPage.jsx';
+
 export default function App() {
   const { user } = useAuth();
 
@@ -22,7 +25,14 @@ export default function App() {
 
       {!user ? (
         <Routes>
-          <Route path="*" element={<Login />} />
+          {/* 2. LA RUTA PRINCIPAL AHORA ES LA LANDING PAGE */}
+          <Route path="/" element={<LandingPage />} />
+          
+          {/* 3. LA RUTA DE LOGIN SE MANTIENE */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* Cualquier otra ruta sin loguear manda a la landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       ) : (
         <Routes>
