@@ -13,31 +13,54 @@
   user-select: none;
   pointer-events: auto;
   cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+/* Modo Inline (por ejemplo en el panel de Login) */
+#pet-2d.pet-inline {
+  position: relative !important;
+  bottom: auto !important;
+  right: auto !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: 20;
+}
+
+/* Variaciones de Tamaño */
+#pet-2d.pet-lg {
+  width: 200px;
+  height: 280px;
+}
+
+#pet-2d.pet-xl {
+  width: 250px;
+  height: 340px;
 }
 
 .pet-svg {
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
 }
 
 .pet-bubble {
   position: absolute;
   bottom: 100%;
   right: 0;
-  margin-bottom: 6px;
-  background: #0f172a;
+  margin-bottom: 8px;
+  background: #061429;
   color: #f8fafc;
-  border: 1.5px solid #38bdf8;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font: 600 12px/1.2 var(--font-main);
+  border: 1.5px solid #00f2fe;
+  padding: 8px 14px;
+  border-radius: 14px;
+  font: 700 13px/1.2 var(--font-main);
   white-space: nowrap;
   opacity: 0;
   transform: translateY(8px);
-  transition: all 0.22s ease;
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 18px rgba(0, 242, 254, 0.45);
+  pointer-events: none;
 }
 
 .pet-bubble.show {
@@ -88,21 +111,57 @@
 #rig-arm-right {
   transform-origin: 64px 119px;
   transform: translate(-3px, 0) rotate(-14deg);
+  transition: transform 0.35s cubic-bezier(0.34, 1.25, 0.64, 1);
 }
 
 #rig-arm-left {
   transform-origin: 136px 119px;
   transform: translate(3px, 0) rotate(14deg);
+  transition: transform 0.35s cubic-bezier(0.34, 1.25, 0.64, 1);
 }
 
 .eye-arc {
   transform-box: fill-box;
   transform-origin: center;
-  transition: transform 0.12s ease;
+  transition: transform 0.15s ease, stroke 0.2s ease, opacity 0.2s ease;
 }
 
 #pet-2d.blinking .eye-arc {
   transform: scaleY(0.12);
+}
+
+/* ==========================================================================
+   BRAZOS Y GESTOS (NORMAL, SALUDO Y TAPARSE LA CARA)
+   ========================================================================== */
+#rig-arms-normal {
+  transition: opacity 0.22s ease, transform 0.25s ease;
+  transform-origin: 100px 120px;
+}
+
+#rig-arms-covering {
+  opacity: 0;
+  transform: translateY(28px) scale(0.9);
+  transform-origin: 100px 80px;
+  transition: opacity 0.28s cubic-bezier(0.34, 1.35, 0.64, 1),
+              transform 0.32s cubic-bezier(0.34, 1.35, 0.64, 1);
+  pointer-events: none;
+}
+
+#pet-2d.covering-eyes #rig-arms-normal {
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  pointer-events: none;
+}
+
+#pet-2d.covering-eyes #rig-arms-covering {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+#pet-2d.covering-eyes .eye-arc {
+  transform: scaleY(0.06) translateY(2px) !important;
+  stroke: #0284c7 !important;
+  opacity: 0.55 !important;
 }
 
 #pet-2d.saluting #rig-arm-left {
@@ -139,10 +198,18 @@
   }
 }
 
-/* Ocultar mascota automáticamente cuando la pantalla sea pequeña / tablet / móvil */
+/* Ocultar mascota flotante automáticamente en pantallas pequeñas */
 @media (max-width: 1024px) {
-  #pet-2d,
+  #pet-2d:not(.pet-inline),
   .pet-snow-layer {
     display: none !important;
+  }
+}
+
+/* Adaptación del modo inline en móvil */
+@media (max-width: 860px) {
+  #pet-2d.pet-xl {
+    width: 190px;
+    height: 260px;
   }
 }
