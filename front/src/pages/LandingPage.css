@@ -60,7 +60,7 @@ button{font-family:inherit}
 .btn-nav-register:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,242,254,.5)}
 
 /* ---------- Hero ---------- */
-.landing-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:3rem;max-width:1280px;margin:0 auto;padding:5rem 6% 4rem}
+.landing-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);align-items:center;gap:2rem;max-width:1280px;margin:0 auto;padding:5rem 6% 4rem;overflow:visible}
 .hero-symbols{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .hero-symbols span{position:absolute;font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(3rem,7vw,6.5rem);color:rgba(0,242,254,.05);animation:drift 14s ease-in-out infinite alternate}
 .hero-symbols span:nth-child(even){color:rgba(157,80,255,.07);animation-duration:18s}
@@ -282,4 +282,53 @@ button{font-family:inherit}
 .cbar.b2{animation-delay:-.4s}.cbar.b3{animation-delay:-.9s}
 @keyframes cbar{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
 
-@media (max-width:768px){.logo-tag{display:none}.logo-text{font-size:1.3rem}.logo-icon{width:46px;height:46px}}
+@media (max-width:768px){.logo-tag{display:none}.logo-text{font-size:1.3rem}.logo-icon{width:46px;height:46px}}/* =====================================
+   ROBOT BITSIBOOT - POSICIÓN EN EL HERO
+===================================== */
+
+.hero-robot-static {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.hero-robot-static #pet-2d.pet-inline {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: clamp(500px, 65vw, 900px) !important;
+  max-width: 100%;
+  margin: 0 auto;
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+.hero-robot-static .pet-svg {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible;
+}
+
+/* TABLETS */
+@media (max-width: 900px) {
+  .hero-robot-static {
+    min-height: 300px;
+  }
+
+  .hero-robot-static #pet-2d.pet-inline {
+    width: 300px !important;
+    height: 360px !important;
+  }
+}
+
+/* CELULARES */
+@media (max-width: 600px) {
+  .hero-robot-static #pet-2d.pet-inline {
+    width: 220px !important;
+    height: 265px !important;
+  }
+}

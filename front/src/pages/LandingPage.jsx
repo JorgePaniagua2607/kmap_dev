@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import './LandingPage.css';
+import RobotMascotStatic from '../components/RobotMascotStatic';
 
 // Vive mientras la pestaña esté abierta: al terminar NO vuelve a escribir (solo con F5)
 let typingFinished = false;
@@ -261,67 +262,8 @@ const LandingPage = () => {
           </p>
         </div>
 
-        <div className="hero-robot-container enter-robot">
-          <div className="robot-rings" aria-hidden="true"><i /><i /><i /></div>
-          <div className="robot-speech-bubble" key={msgIdx}>{ROBOT_MSGS[msgIdx]}</div>
-          <div className="robot-3d">
-            <div className={`robot-hop ${jump ? 'jump' : ''}`}
-              onMouseEnter={() => setJump(true)}
-              onClick={() => { setJump(true); setMsgIdx((i) => (i + 1) % ROBOT_MSGS.length); }}
-              onAnimationEnd={(e) => { if (e.animationName === 'robot-jump') setJump(false); }}>
-              <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="rMetal" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#33649b" /><stop offset="1" stopColor="#10264a" /></linearGradient>
-                  <linearGradient id="rVisor" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#08203f" /><stop offset="1" stopColor="#020914" /></linearGradient>
-                  <linearGradient id="rNeon" x1="0" y1="0" x2="1" y2="0"><stop stopColor="#00f2fe" /><stop offset="1" stopColor="#9d50ff" /></linearGradient>
-                  <radialGradient id="rGlow"><stop stopColor="#00f2fe" stopOpacity=".55" /><stop offset="1" stopColor="#00f2fe" stopOpacity="0" /></radialGradient>
-                </defs>
-                <ellipse cx="150" cy="280" rx="84" ry="11" fill="rgba(0,0,0,.75)" />
-                <ellipse cx="150" cy="277" rx="62" ry="6" fill="url(#rGlow)" />
-                {/* piernas */}
-                <rect x="114" y="244" width="26" height="22" rx="8" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" />
-                <rect x="160" y="244" width="26" height="22" rx="8" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" />
-                <rect x="106" y="262" width="40" height="10" rx="5" fill="#0f2b4c" stroke="#00f2fe" strokeWidth="1.5" />
-                <rect x="154" y="262" width="40" height="10" rx="5" fill="#0f2b4c" stroke="#00f2fe" strokeWidth="1.5" />
-                {/* brazo izquierdo */}
-                <rect x="66" y="184" width="20" height="50" rx="10" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" />
-                <circle cx="76" cy="241" r="12" fill="#12294a" stroke="url(#rNeon)" strokeWidth="2.5" />
-                {/* cuerpo + pantalla */}
-                <rect x="96" y="168" width="108" height="84" rx="28" fill="url(#rMetal)" stroke="#3a6aa0" strokeWidth="3" />
-                <path d="M112 179 Q150 168 188 179" stroke="#fff" strokeOpacity=".2" strokeWidth="3" strokeLinecap="round" />
-                <rect x="116" y="190" width="68" height="40" rx="12" fill="url(#rVisor)" stroke="#0f2b4c" strokeWidth="2" />
-                <rect className="cbar" x="126" y="204" width="8" height="18" rx="3" fill="url(#rNeon)" />
-                <rect className="cbar b2" x="140" y="198" width="8" height="24" rx="3" fill="url(#rNeon)" />
-                <rect className="cbar b3" x="154" y="208" width="8" height="14" rx="3" fill="url(#rNeon)" />
-                <circle className="chest-led" cx="173" cy="200" r="3.5" fill="#ff3366" />
-                {/* brazo derecho señalando */}
-                <g className="robot-arm-pointing">
-                  <rect x="210" y="170" width="20" height="55" rx="10" fill="url(#rMetal)" stroke="#2a5580" strokeWidth="2" transform="rotate(-40 220 170)" />
-                  <circle cx="255" cy="140" r="12" fill="#12294a" stroke="#00f2fe" strokeWidth="3" />
-                  <rect x="260" y="135" width="18" height="10" rx="5" fill="#00f2fe" />
-                </g>
-                {/* cabeza (se inclina hacia el cursor) */}
-                <g className="robot-head">
-                  <rect x="147" y="34" width="6" height="18" fill="#3a6aa0" />
-                  <circle cx="150" cy="26" r="22" fill="url(#rGlow)" className="antenna-halo" />
-                  <circle cx="150" cy="26" r="11" fill="#00f2fe" className="antenna-light" />
-                  <rect x="58" y="98" width="17" height="46" rx="8" fill="#12294a" stroke="url(#rNeon)" strokeWidth="2.5" />
-                  <rect x="225" y="98" width="17" height="46" rx="8" fill="#12294a" stroke="url(#rNeon)" strokeWidth="2.5" />
-                  <rect x="72" y="48" width="156" height="116" rx="38" fill="url(#rMetal)" stroke="#3a6aa0" strokeWidth="4" />
-                  <path d="M96 60 Q150 46 204 60" stroke="#fff" strokeOpacity=".22" strokeWidth="4" strokeLinecap="round" />
-                  <rect x="88" y="64" width="124" height="84" rx="28" fill="url(#rVisor)" stroke="#0f2b4c" strokeWidth="2" />
-                  <path d="M102 72 L142 72 L118 142 L102 142Z" fill="#fff" fillOpacity=".05" />
-                  <g className="robot-eyes">
-                    <path className="eye" d="M115 104 Q125 93 135 104" stroke="#00f2fe" strokeWidth="7" strokeLinecap="round" fill="none" />
-                    <path className="eye" d="M165 104 Q175 93 185 104" stroke="#00f2fe" strokeWidth="7" strokeLinecap="round" fill="none" />
-                    <ellipse cx="108" cy="122" rx="8" ry="4.5" fill="#ff3366" opacity=".3" />
-                    <ellipse cx="192" cy="122" rx="8" ry="4.5" fill="#ff3366" opacity=".3" />
-                    <path d="M138 123 Q150 135 162 123" stroke="#00f2fe" strokeWidth="4" strokeLinecap="round" fill="none" />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
+        <div className="hero-robot-static enter" style={{ '--d': '0.3s' }}>
+          <RobotMascotStatic size="xl" />
         </div>
 
       </header>
