@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth.jsx';
 import './LandingPage.css';
 
 // Vive mientras la pestaña esté abierta: al terminar NO vuelve a escribir (solo con F5)
@@ -91,89 +91,9 @@ const LogoText = ({ len }) => {
   });
 };
 
-/* Efectos del cursor: luz de fondo, rejilla que se enciende, estela, anillo y robotito que lo sigue */
-const CursorFX = () => {
-  const root = useRef(), spot = useRef(), grid = useRef(), cv = useRef(), ring = useRef(), dot = useRef(), bot = useRef(), botEyes = useRef();
-  useEffect(() => {
-    if (window.matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return;
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const m = { x: -300, y: -300 }, r = { ...m }, s = { ...m }, b = { ...m };
-    let raf, first = true; const pts = [];
-    const c = cv.current, ctx = c.getContext('2d');
-    const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
-    resize();
-    const head = document.querySelector('.robot-head'), eyes = document.querySelector('.robot-eyes'), robot = document.querySelector('.robot-3d');
-
-    const onMove = (e) => {
-      m.x = e.clientX; m.y = e.clientY;
-      if (first) { first = false; r.x = s.x = b.x = m.x; r.y = s.y = b.y = m.y; }
-      root.current.classList.add('on');
-      const big = !!(e.target.closest && e.target.closest('button,a,.hop,.robot-hop,.feature-card,.evidence-card,.landing-logo,.slide'));
-      ring.current.classList.toggle('big', big);
-    };
-    const down = () => ring.current.classList.add('press');
-    const up = () => ring.current.classList.remove('press');
-    const leave = () => root.current.classList.remove('on');
-
-    const tick = (t) => {
-      r.x += (m.x - r.x) * 0.25; r.y += (m.y - r.y) * 0.25;
-      s.x += (m.x - s.x) * 0.08; s.y += (m.y - s.y) * 0.08;
-      const px = b.x; b.x += (m.x + 38 - b.x) * 0.1; b.y += (m.y + 32 - b.y) * 0.1;
-      const vx = b.x - px;
-      spot.current.style.transform = `translate3d(${s.x}px,${s.y}px,0)`;
-      grid.current.style.setProperty('--cx', `${s.x}px`); grid.current.style.setProperty('--cy', `${s.y}px`);
-      ring.current.style.transform = `translate3d(${r.x}px,${r.y}px,0)`;
-      dot.current.style.transform = `translate3d(${m.x}px,${m.y}px,0)`;
-      bot.current.style.transform = `translate3d(${b.x - 20}px,${b.y - 20}px,0) rotate(${clamp(vx * 2.5, -22, 22)}deg)`;
-      botEyes.current.style.transform = `translate(${clamp(vx, -2.5, 2.5)}px,0)`;
-      if (robot && head && eyes) { // el robot grande te mira
-        const q = robot.getBoundingClientRect();
-        const dx = m.x - (q.left + q.width / 2), dy = m.y - (q.top + q.height * 0.3);
-        eyes.style.transform = `translate(${clamp(dx / 70, -7, 7)}px,${clamp(dy / 90, -4, 4)}px)`;
-        head.style.transform = `rotate(${clamp(dx / 110, -7, 7)}deg)`;
-      }
-      const last = pts[pts.length - 1];
-      if (!last || last.x !== m.x || last.y !== m.y) pts.push({ x: m.x, y: m.y, t });
-      while (pts.length && t - pts[0].t > 500) pts.shift();
-      ctx.clearRect(0, 0, c.width, c.height); ctx.lineCap = 'round';
-      for (let i = 1; i < pts.length; i++) {
-        const k = 1 - (t - pts[i].t) / 500;
-        ctx.strokeStyle = `hsla(${185 + (1 - k) * 90},100%,62%,${k * 0.85})`; ctx.lineWidth = k * 6;
-        ctx.beginPath(); ctx.moveTo(pts[i - 1].x, pts[i - 1].y); ctx.lineTo(pts[i].x, pts[i].y); ctx.stroke();
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    window.addEventListener('mousemove', onMove); window.addEventListener('mousedown', down); window.addEventListener('mouseup', up);
-    window.addEventListener('resize', resize); document.addEventListener('mouseleave', leave);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('mousemove', onMove); window.removeEventListener('mousedown', down); window.removeEventListener('mouseup', up);
-      window.removeEventListener('resize', resize); document.removeEventListener('mouseleave', leave);
-    };
-  }, []);
-
-  return createPortal(
-    <div className="fx" ref={root} aria-hidden="true">
-      <div className="fx-grid" ref={grid} />
-      <div className="fx-spot" ref={spot} />
-      <canvas className="fx-trail" ref={cv} />
-      <div className="fx-ring" ref={ring} />
-      <div className="fx-dot" ref={dot} />
-      <svg className="fx-bot" ref={bot} viewBox="0 0 40 40" fill="none">
-        <line x1="20" y1="8" x2="20" y2="3" stroke="#00f2fe" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="20" cy="3" r="2.4" fill="#9d50ff" />
-        <rect x="6" y="8" width="28" height="22" rx="9" fill="#152b47" stroke="#00f2fe" strokeWidth="2" />
-        <g ref={botEyes}><circle cx="15" cy="19" r="2.8" fill="#00f2fe" /><circle cx="25" cy="19" r="2.8" fill="#00f2fe" /></g>
-        <rect x="12" y="32" width="16" height="5" rx="2.5" fill="#1e3a5f" />
-      </svg>
-    </div>,
-    document.body
-  );
-};
-
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const rootRef = useRef(null);
   const [jump, setJump] = useState(false);
   const [logoLen, setLogoLen] = useState(logoTyped ? 11 : 0);
@@ -250,7 +170,6 @@ const LandingPage = () => {
     <div className="landing-container" ref={rootRef}>
       <div className="bg-grid" />
       <div className="bg-watermark">BIT</div>
-      <CursorFX />
       <div className="bg-orb orb-cyan" /><div className="bg-orb orb-purple" /><div className="bg-orb orb-blue" />
 
       {/* NAVBAR */}
@@ -275,10 +194,22 @@ const LandingPage = () => {
             <span className="logo-tag">Aprendizaje adaptativo</span>
           </div>
         </div>
-        
-<div className="landing-nav-buttons">
-          <button className="btn-nav-login" onClick={() => navigate('/login')}>Iniciar Sesión</button>
-          <button className="btn-nav-register" onClick={() => navigate('/login')}>Registrarse</button>
+
+        <div className="landing-nav-buttons">
+          {user ? (
+            <button className="btn-nav-register" onClick={() => navigate('/panel')}>
+              Ir a mi Panel ❯
+            </button>
+          ) : (
+            <>
+              <button className="btn-nav-login" onClick={() => navigate('/login')}>
+                Iniciar Sesión
+              </button>
+              <button className="btn-nav-register" onClick={() => navigate('/login')}>
+                Registrarse
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -295,7 +226,7 @@ const LandingPage = () => {
 
           <h1 className="hero-title" aria-label="No estudies más horas. Evalúa el aprendizaje.">
             <span className="title-solid enter" style={{ '--d': '0.15s' }} aria-hidden="true">
-              <Line text="NO ESTUDIES" kind="l-white" />{' '}<Line text="NO ESTUDIES MÁS HORAS." kind="l-wave" base={12} />
+              <Line text="NO ESTUDIES MÁS HORAS." kind="l-wave2" base={0} />
             </span>
             <span className="hero-typewriter-container enter" style={{ '--d': '0.3s' }} aria-hidden="true">
               <TypeLine text={FULL_TEXT} typedLen={typed.length} showErr={showError} errAt={ERROR_AT} done={isTypingDone} />
@@ -308,7 +239,12 @@ const LandingPage = () => {
           </p>
 
           <div className="hero-cta enter" style={{ '--d': '0.6s' }}>
-            <button className="btn-primary" onClick={() => navigate('/login')}>Empieza gratis ahora</button>
+            <button
+              className="btn-primary"
+              onClick={() => navigate(user ? '/panel' : '/login')}
+            >
+              {user ? 'Ir a mi Panel ❯' : 'Empieza gratis ahora'}
+            </button>
             <button className="btn-secondary" onClick={() => document.getElementById('como-funciona').scrollIntoView({ behavior: 'smooth' })}>Ver cómo funciona</button>
           </div>
 
@@ -510,7 +446,12 @@ const LandingPage = () => {
         <div className="cta-box reveal">
           <h2 className="section-title-gradient">TU TIEMPO ES VALIOSO. NO LO DESPERDICIES.</h2>
           <p>Empieza por un diagnóstico y descubre qué tema te está frenando.</p>
-          <button className="btn-primary" onClick={() => navigate('/login')}>Crear mi cuenta gratis</button>
+          <button
+            className="btn-primary"
+            onClick={() => navigate(user ? '/panel' : '/login')}
+          >
+            {user ? 'Ir a mi Panel ❯' : 'Crear mi cuenta gratis'}
+          </button>
         </div>
       </section>
 
