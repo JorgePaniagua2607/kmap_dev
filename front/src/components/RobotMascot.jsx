@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import './RobotMascot.css';
 
 const MESSAGE_TRIGGER_CLICK = 3;
 const CUSTOM_MESSAGE = '¡Chupalo Paniagua!';
 
-export default function RobotMascot() {
+export default function RobotMascot({
+  mode = 'floating',
+  size = 'md',
+  coveringEyes = false,
+  className = '',
+}) {
   const [bubbleText, setBubbleText] = useState('¡Saludos!');
   const [showBubble, setShowBubble] = useState(false);
   const [saluting, setSaluting] = useState(false);
@@ -27,6 +33,13 @@ export default function RobotMascot() {
   const clickCountRef = useRef(0);
   const bubbleTimerRef = useRef(null);
   const saluteTimerRef = useRef(null);
+
+  // Reacción interactiva cuando se selecciona el campo de contraseña
+  useEffect(() => {
+    if (coveringEyes) {
+      triggerBubble('¡No miro! 🙈', 3000);
+    }
+  }, [coveringEyes]);
 
   const triggerBubble = (text, duration = 2200) => {
     setBubbleText(text);
@@ -205,8 +218,8 @@ export default function RobotMascot() {
         ))}
       </div>
 
-      {/* Ícono flotante para mostrar la mascota cuando está escondida */}
-      {hidden ? (
+      {/* Ícono flotante para mostrar la mascota cuando está escondida (solo en modo floating) */}
+      {hidden && mode === 'floating' ? (
         <button
           type="button"
           onClick={handleShow}
@@ -222,58 +235,69 @@ export default function RobotMascot() {
         <div
           id="pet-2d"
           ref={petRef}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
+          onPointerDown={mode === 'floating' ? handlePointerDown : undefined}
+          onPointerMove={mode === 'floating' ? handlePointerMove : undefined}
+          onPointerUp={mode === 'floating' ? handlePointerUp : undefined}
+          onPointerCancel={mode === 'floating' ? handlePointerUp : undefined}
+          onClick={mode === 'inline' ? handleInteractionClick : undefined}
           style={
-            pos
-              ? {
-                  left: `${pos.x}px`,
-                  top: `${pos.y}px`,
-                  right: 'auto',
-                  bottom: 'auto',
-                  cursor: dragging ? 'grabbing' : 'grab',
-                  touchAction: 'none',
-                }
-              : {
-                  cursor: dragging ? 'grabbing' : 'grab',
-                  touchAction: 'none',
-                }
+            mode === 'floating'
+              ? pos
+                ? {
+                    left: `${pos.x}px`,
+                    top: `${pos.y}px`,
+                    right: 'auto',
+                    bottom: 'auto',
+                    cursor: dragging ? 'grabbing' : 'grab',
+                    touchAction: 'none',
+                  }
+                : {
+                    cursor: dragging ? 'grabbing' : 'grab',
+                    touchAction: 'none',
+                  }
+              : undefined
           }
-          className={`group ${blinking ? 'blinking' : ''} ${saluting ? 'saluting' : ''} ${
-            dragging ? 'scale-105' : ''
-          }`}
-          title="Arrastra para mover o haz clic para interactuar"
+          className={`group ${mode === 'inline' ? 'pet-inline' : ''} ${
+            size === 'lg' ? 'pet-lg' : size === 'xl' ? 'pet-xl' : ''
+          } ${blinking ? 'blinking' : ''} ${coveringEyes ? 'covering-eyes' : ''} ${
+            saluting ? 'saluting' : ''
+          } ${dragging ? 'scale-105' : ''} ${className}`.trim()}
+          title={
+            mode === 'floating'
+              ? 'Arrastra para mover o haz clic para interactuar'
+              : 'Haz clic para interactuar con la mascota'
+          }
         >
-          {/* Botones de control de la mascota (Esconder y Restablecer posición) */}
-          <div
-            data-mascot-control="true"
-            className="absolute -top-2 right-1 z-20 flex items-center gap-1.5 opacity-85 group-hover:opacity-100 transition-opacity"
-          >
-            {pos && (
+          {/* Botones de control de la mascota (Solo en modo floating) */}
+          {mode === 'floating' && (
+            <div
+              data-mascot-control="true"
+              className="absolute -top-2 right-1 z-20 flex items-center gap-1.5 opacity-85 group-hover:opacity-100 transition-opacity"
+            >
+              {pos && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPos(null);
+                    triggerBubble('¡Posición original! 📍', 1400);
+                  }}
+                  title="Volver a la esquina inferior derecha"
+                  className="w-7 h-7 rounded-full bg-[#071c40]/95 border border-cyan-300/70 text-cyan-200 hover:bg-cyan-400 hover:text-[#021226] hover:scale-110 active:scale-90 text-xs font-black grid place-items-center shadow-[0_0_12px_rgba(0,242,254,0.45)] transition-all cursor-pointer"
+                >
+                  📍
+                </button>
+              )}
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPos(null);
-                  triggerBubble('¡Posición original! 📍', 1400);
-                }}
-                title="Volver a la esquina inferior derecha"
-                className="w-7 h-7 rounded-full bg-[#071c40]/95 border border-cyan-300/70 text-cyan-200 hover:bg-cyan-400 hover:text-[#021226] hover:scale-110 active:scale-90 text-xs font-black grid place-items-center shadow-[0_0_12px_rgba(0,242,254,0.45)] transition-all cursor-pointer"
+                onClick={handleHide}
+                title="Esconder mascota"
+                className="w-7 h-7 rounded-full bg-[#071c40]/95 border border-cyan-300/70 text-cyan-200 hover:bg-rose-500 hover:border-rose-300 hover:text-white hover:scale-110 active:scale-90 text-xs font-black grid place-items-center shadow-[0_0_12px_rgba(0,242,254,0.45)] transition-all cursor-pointer"
               >
-                📍
+                ✕
               </button>
-            )}
-            <button
-              type="button"
-              onClick={handleHide}
-              title="Esconder mascota"
-              className="w-7 h-7 rounded-full bg-[#071c40]/95 border border-cyan-300/70 text-cyan-200 hover:bg-rose-500 hover:border-rose-300 hover:text-white hover:scale-110 active:scale-90 text-xs font-black grid place-items-center shadow-[0_0_12px_rgba(0,242,254,0.45)] transition-all cursor-pointer"
-            >
-              ✕
-            </button>
-          </div>
+            </div>
+          )}
 
           <div className={`pet-bubble ${showBubble ? 'show' : ''}`} id="pet-bubble">
             {bubbleText}
@@ -445,189 +469,191 @@ export default function RobotMascot() {
                 />
               </g>
 
-              <g id="rig-arm-right">
-                <path
-                  d="M64 119 L43 153"
-                  stroke="#1e2d3a"
-                  strokeWidth="21"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M64 119 L43 153"
-                  stroke="url(#bodyGrad)"
-                  strokeWidth="15.5"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="64"
-                  cy="119"
-                  r="10.5"
-                  fill="url(#shellGrad)"
-                  stroke="#1e2d3a"
-                  strokeWidth="2.8"
-                />
-                <path
-                  d="M56 131 L51 140"
-                  stroke="#22d3ee"
-                  strokeWidth="5.5"
-                  strokeLinecap="round"
-                />
-                <g transform="translate(41, 157)">
-                  <line
-                    x1="-6"
-                    y1="4"
-                    x2="-11"
-                    y2="13"
+              <g id="rig-arms-normal">
+                <g id="rig-arm-right">
+                  <path
+                    d="M64 119 L43 153"
                     stroke="#1e2d3a"
-                    strokeWidth="6.2"
+                    strokeWidth="21"
                     strokeLinecap="round"
                   />
-                  <line
-                    x1="-6"
-                    y1="4"
-                    x2="-11"
-                    y2="13"
-                    stroke="url(#shellGrad)"
-                    strokeWidth="3.6"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="0"
-                    y1="6"
-                    x2="-1"
-                    y2="16"
-                    stroke="#1e2d3a"
-                    strokeWidth="6.2"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="0"
-                    y1="6"
-                    x2="-1"
-                    y2="16"
-                    stroke="url(#shellGrad)"
-                    strokeWidth="3.6"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="6"
-                    y1="4"
-                    x2="9"
-                    y2="13"
-                    stroke="#1e2d3a"
-                    strokeWidth="6.2"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="6"
-                    y1="4"
-                    x2="9"
-                    y2="13"
-                    stroke="url(#shellGrad)"
-                    strokeWidth="3.6"
+                  <path
+                    d="M64 119 L43 153"
+                    stroke="url(#bodyGrad)"
+                    strokeWidth="15.5"
                     strokeLinecap="round"
                   />
                   <circle
-                    cx="0"
-                    cy="0"
-                    r="9.5"
+                    cx="64"
+                    cy="119"
+                    r="10.5"
                     fill="url(#shellGrad)"
                     stroke="#1e2d3a"
-                    strokeWidth="2.6"
+                    strokeWidth="2.8"
                   />
+                  <path
+                    d="M56 131 L51 140"
+                    stroke="#22d3ee"
+                    strokeWidth="5.5"
+                    strokeLinecap="round"
+                  />
+                  <g transform="translate(41, 157)">
+                    <line
+                      x1="-6"
+                      y1="4"
+                      x2="-11"
+                      y2="13"
+                      stroke="#1e2d3a"
+                      strokeWidth="6.2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="-6"
+                      y1="4"
+                      x2="-11"
+                      y2="13"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="6"
+                      x2="-1"
+                      y2="16"
+                      stroke="#1e2d3a"
+                      strokeWidth="6.2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="6"
+                      x2="-1"
+                      y2="16"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="6"
+                      y1="4"
+                      x2="9"
+                      y2="13"
+                      stroke="#1e2d3a"
+                      strokeWidth="6.2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="6"
+                      y1="4"
+                      x2="9"
+                      y2="13"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="9.5"
+                      fill="url(#shellGrad)"
+                      stroke="#1e2d3a"
+                      strokeWidth="2.6"
+                    />
+                  </g>
                 </g>
-              </g>
 
-              <g id="rig-arm-left">
-                <path
-                  d="M136 119 L157 153"
-                  stroke="#1e2d3a"
-                  strokeWidth="21"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M136 119 L157 153"
-                  stroke="url(#bodyGrad)"
-                  strokeWidth="15.5"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="136"
-                  cy="119"
-                  r="10.5"
-                  fill="url(#shellGrad)"
-                  stroke="#1e2d3a"
-                  strokeWidth="2.8"
-                />
-                <path
-                  d="M144 131 L149 140"
-                  stroke="#22d3ee"
-                  strokeWidth="5.5"
-                  strokeLinecap="round"
-                />
-                <g transform="translate(159, 157)">
-                  <line
-                    x1="-6"
-                    y1="4"
-                    x2="-11"
-                    y2="13"
+                <g id="rig-arm-left">
+                  <path
+                    d="M136 119 L157 153"
                     stroke="#1e2d3a"
-                    strokeWidth="6.2"
+                    strokeWidth="21"
                     strokeLinecap="round"
                   />
-                  <line
-                    x1="-6"
-                    y1="4"
-                    x2="-11"
-                    y2="13"
-                    stroke="url(#shellGrad)"
-                    strokeWidth="3.6"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="0"
-                    y1="6"
-                    x2="1"
-                    y2="16"
-                    stroke="#1e2d3a"
-                    strokeWidth="6.2"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="0"
-                    y1="6"
-                    x2="1"
-                    y2="16"
-                    stroke="url(#shellGrad)"
-                    strokeWidth="3.6"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="6"
-                    y1="4"
-                    x2="11"
-                    y2="13"
-                    stroke="#1e2d3a"
-                    strokeWidth="6.2"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="6"
-                    y1="4"
-                    x2="11"
-                    y2="13"
-                    stroke="url(#shellGrad)"
-                    strokeWidth="3.6"
+                  <path
+                    d="M136 119 L157 153"
+                    stroke="url(#bodyGrad)"
+                    strokeWidth="15.5"
                     strokeLinecap="round"
                   />
                   <circle
-                    cx="0"
-                    cy="0"
-                    r="9.5"
+                    cx="136"
+                    cy="119"
+                    r="10.5"
                     fill="url(#shellGrad)"
                     stroke="#1e2d3a"
-                    strokeWidth="2.6"
+                    strokeWidth="2.8"
                   />
+                  <path
+                    d="M144 131 L149 140"
+                    stroke="#22d3ee"
+                    strokeWidth="5.5"
+                    strokeLinecap="round"
+                  />
+                  <g transform="translate(159, 157)">
+                    <line
+                      x1="-6"
+                      y1="4"
+                      x2="-11"
+                      y2="13"
+                      stroke="#1e2d3a"
+                      strokeWidth="6.2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="-6"
+                      y1="4"
+                      x2="-11"
+                      y2="13"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="6"
+                      x2="1"
+                      y2="16"
+                      stroke="#1e2d3a"
+                      strokeWidth="6.2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="6"
+                      x2="1"
+                      y2="16"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="6"
+                      y1="4"
+                      x2="11"
+                      y2="13"
+                      stroke="#1e2d3a"
+                      strokeWidth="6.2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="6"
+                      y1="4"
+                      x2="11"
+                      y2="13"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="9.5"
+                      fill="url(#shellGrad)"
+                      stroke="#1e2d3a"
+                      strokeWidth="2.6"
+                    />
+                  </g>
                 </g>
               </g>
 
@@ -787,6 +813,199 @@ export default function RobotMascot() {
                     strokeWidth="3"
                     strokeLinejoin="round"
                   />
+                </g>
+              </g>
+
+              {/* Brazos tapándose la cara / ojos (delante de la cabeza y visor) */}
+              <g id="rig-arms-covering">
+                {/* Brazo derecho subiendo y cubriendo el ojo izquierdo (perspectiva frontal) */}
+                <g id="rig-arm-covering-right">
+                  <path
+                    d="M64 119 Q48 88 78 72"
+                    stroke="#1e2d3a"
+                    strokeWidth="21"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M64 119 Q48 88 78 72"
+                    stroke="url(#bodyGrad)"
+                    strokeWidth="15.5"
+                    strokeLinecap="round"
+                  />
+                  <circle
+                    cx="64"
+                    cy="119"
+                    r="10.5"
+                    fill="url(#shellGrad)"
+                    stroke="#1e2d3a"
+                    strokeWidth="2.8"
+                  />
+                  <path
+                    d="M58 103 Q53 88 68 78"
+                    stroke="#22d3ee"
+                    strokeWidth="5.5"
+                    strokeLinecap="round"
+                  />
+                  <g transform="translate(80, 72) rotate(16)">
+                    <line
+                      x1="-7"
+                      y1="-8"
+                      x2="-4"
+                      y2="2"
+                      stroke="#1e2d3a"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="-7"
+                      y1="-8"
+                      x2="-4"
+                      y2="2"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="-10"
+                      x2="1"
+                      y2="3"
+                      stroke="#1e2d3a"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="-10"
+                      x2="1"
+                      y2="3"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="7"
+                      y1="-8"
+                      x2="5"
+                      y2="2"
+                      stroke="#1e2d3a"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="7"
+                      y1="-8"
+                      x2="5"
+                      y2="2"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="10.5"
+                      fill="url(#shellGrad)"
+                      stroke="#1e2d3a"
+                      strokeWidth="2.8"
+                    />
+                    <circle cx="-1" cy="-1" r="4.5" fill="#22d3ee" opacity="0.4" />
+                  </g>
+                </g>
+
+                {/* Brazo izquierdo subiendo y cubriendo el ojo derecho (perspectiva frontal) */}
+                <g id="rig-arm-covering-left">
+                  <path
+                    d="M136 119 Q152 88 122 72"
+                    stroke="#1e2d3a"
+                    strokeWidth="21"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M136 119 Q152 88 122 72"
+                    stroke="url(#bodyGrad)"
+                    strokeWidth="15.5"
+                    strokeLinecap="round"
+                  />
+                  <circle
+                    cx="136"
+                    cy="119"
+                    r="10.5"
+                    fill="url(#shellGrad)"
+                    stroke="#1e2d3a"
+                    strokeWidth="2.8"
+                  />
+                  <path
+                    d="M142 103 Q147 88 132 78"
+                    stroke="#22d3ee"
+                    strokeWidth="5.5"
+                    strokeLinecap="round"
+                  />
+                  <g transform="translate(120, 72) rotate(-16)">
+                    <line
+                      x1="-7"
+                      y1="-8"
+                      x2="-5"
+                      y2="2"
+                      stroke="#1e2d3a"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="-7"
+                      y1="-8"
+                      x2="-5"
+                      y2="2"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="-10"
+                      x2="-1"
+                      y2="3"
+                      stroke="#1e2d3a"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="0"
+                      y1="-10"
+                      x2="-1"
+                      y2="3"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="7"
+                      y1="-8"
+                      x2="4"
+                      y2="2"
+                      stroke="#1e2d3a"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="7"
+                      y1="-8"
+                      x2="4"
+                      y2="2"
+                      stroke="url(#shellGrad)"
+                      strokeWidth="3.6"
+                      strokeLinecap="round"
+                    />
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="10.5"
+                      fill="url(#shellGrad)"
+                      stroke="#1e2d3a"
+                      strokeWidth="2.8"
+                    />
+                    <circle cx="1" cy="-1" r="4.5" fill="#22d3ee" opacity="0.4" />
+                  </g>
                 </g>
               </g>
             </g>

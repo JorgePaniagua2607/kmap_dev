@@ -19,15 +19,6 @@ const kmapSyncController = {
     }
   },
 
-  async resetState(req, res, next) {
-    try {
-      const state = await kmapSyncService.resetState(req.body);
-      return res.json({ ok: true, state });
-    } catch (error) {
-      return next(error);
-    }
-  },
-
   async generateAI(req, res, next) {
     try {
       const questions = await kmapSyncService.generateQuestionsAI(req.body);

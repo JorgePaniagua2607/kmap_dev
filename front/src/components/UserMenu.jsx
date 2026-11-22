@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { ask, ok } from '../alerts.js';
+import './UserMenu.css';
 
 export default function UserMenu({ size = 'md', className = '' }) {
   const { user, logout } = useAuth();
@@ -40,7 +41,7 @@ export default function UserMenu({ size = 'md', className = '' }) {
     );
     if (confirmed) {
       logout();
-      nav('/login');
+      nav('/');
       ok('Sesión finalizada', '¡Hasta luego!');
     }
   };
@@ -48,6 +49,11 @@ export default function UserMenu({ size = 'md', className = '' }) {
   const handleGoProfile = () => {
     setOpen(false);
     nav('/perfil');
+  };
+
+  const handleGoLanding = () => {
+    setOpen(false);
+    nav('/');
   };
 
   const avatarSizeClass = size === 'sm' ? '!w-9 !h-9' : 'w-11 h-11';
@@ -58,8 +64,8 @@ export default function UserMenu({ size = 'md', className = '' }) {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`user-avatar-wrap ${avatarSizeClass} p-0 bg-transparent border-none outline-none focus:outline-none focus:ring-2 focus:ring-[#00d2ff]/60 rounded-full transition-transform duration-200 active:scale-95`}
-        title={`Cuenta de ${user?.name || 'Usuario'} (Clic para menú y cerrar sesión)`}
+        className={`user-avatar-wrap ${avatarSizeClass} p-0 bg-transparent border-none outline-none focus:outline-none focus:ring-2 focus:ring-[#00d2ff]/60 rounded-full transition-transform duration-200 active:scale-95 cursor-pointer`}
+        title={`Cuenta de ${user?.name || 'Usuario'}`}
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -79,7 +85,7 @@ export default function UserMenu({ size = 'md', className = '' }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 mt-2.5 w-60 rounded-2xl bg-[#061429]/95 backdrop-blur-xl border border-[#00d2ff]/40 shadow-[0_12px_36px_rgba(0,180,255,0.25)] p-3.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right text-slate-100"
+          className="absolute right-0 mt-2.5 w-60 max-h-[85vh] overflow-y-auto rounded-2xl bg-[#061429]/95 backdrop-blur-xl border border-[#00d2ff]/40 shadow-[0_12px_36px_rgba(0,180,255,0.25)] p-3 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right text-slate-100"
         >
           {/* Tarjeta de información del usuario */}
           <div className="flex items-center gap-3 pb-3 border-b border-[#00d2ff]/15">
@@ -96,13 +102,19 @@ export default function UserMenu({ size = 'md', className = '' }) {
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#00d2ff]/15 text-[#00f2fe] border border-[#00d2ff]/30">
-                  {user?.role || 'Estudiante'}
+                  {user?.role === 'admin'
+                    ? 'Administrador'
+                    : user?.role === 'docente'
+                      ? 'Docente'
+                      : 'Estudiante'}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Opciones del menú */}
+          {/* ==========================================
+              ACCIONES DE CUENTA
+              ========================================== */}
           <div className="pt-2 space-y-1">
             <button
               type="button"
@@ -115,6 +127,17 @@ export default function UserMenu({ size = 'md', className = '' }) {
               <span>Mi Perfil</span>
             </button>
 
+            <button
+              type="button"
+              onClick={handleGoLanding}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-cyan-100 hover:text-white hover:bg-[#00d2ff]/15 transition-all duration-150 cursor-pointer text-left"
+            >
+              <svg className="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+              </svg>
+              <span>Portada / Landing</span>
+            </button>
+
             {/* BOTÓN CERRAR SESIÓN */}
             <button
               type="button"
@@ -124,7 +147,7 @@ export default function UserMenu({ size = 'md', className = '' }) {
               <svg className="w-4 h-4 text-rose-400" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
               </svg>
-              <span>Cerrar Sesión</span>
+              <span>Cerrar sesión</span>
             </button>
           </div>
         </div>
