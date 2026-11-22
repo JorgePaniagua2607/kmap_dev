@@ -4,6 +4,7 @@ import { useAuth } from '../auth.jsx';
 import { resetDb } from '../lib/db.js';
 import { ask, info, ok } from '../alerts.js';
 import RobotMascot from './RobotMascot.jsx';
+import UserMenu from './UserMenu.jsx';
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -63,13 +64,7 @@ export default function Layout() {
           className="h-9 w-auto cursor-pointer"
           onClick={() => nav('/')}
         />
-        <div
-          className="user-avatar-wrap !w-9 !h-9"
-          onClick={() => nav('/perfil')}
-          title="Ir a Mi Perfil"
-        >
-          <img src="/assets/images/avatar.svg" alt={user.name} />
-        </div>
+        <UserMenu size="sm" />
       </div>
 
       {mobileOpen && (
@@ -351,23 +346,13 @@ export default function Layout() {
           </div>
         )}
 
-        {/* Acciones de sesión */}
+        {/* Acciones del sistema */}
         <div className="nav-section border-t border-[#00d2ff]/15 pt-3 mt-1">
           <ul className="nav-list">
             <li className="nav-item">
               <button type="button" onClick={reset} className="nav-link text-xs">
                 <span className="nav-icon">♻️</span>
                 <span className="nav-text">Restablecer demo</span>
-              </button>
-            </li>
-            <li className="nav-item">
-              <button
-                type="button"
-                onClick={logout}
-                className="nav-link text-rose-300 hover:!text-white hover:!bg-rose-500/20"
-              >
-                <span className="nav-icon !text-rose-400">🚪</span>
-                <span className="nav-text">Cerrar Sesión</span>
               </button>
             </li>
           </ul>

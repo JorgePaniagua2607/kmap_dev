@@ -4,6 +4,7 @@ import { useAuth } from '../auth.jsx';
 import { useDb } from '../lib/db.js';
 import { topicsOf } from '../lib/logic.js';
 import { info } from '../alerts.js';
+import UserMenu from './UserMenu.jsx';
 
 export default function Page({ title, subtitle, crumb, backTo, icon, actions, children }) {
   const { user } = useAuth();
@@ -132,13 +133,7 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
             </svg>
           </button>
 
-          <div
-            className="user-avatar-wrap"
-            title={`Perfil de ${user?.name || 'Usuario'}`}
-            onClick={() => nav('/perfil')}
-          >
-            <img src="/assets/images/avatar.svg" alt={user?.name || 'Avatar'} />
-          </div>
+          <UserMenu />
         </div>
       </header>
 
