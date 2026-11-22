@@ -204,7 +204,7 @@ export default function StudentHome() {
 
   return (
     <Page
-      crumb="Academy ❯ Inicio"
+      crumb="Academia ❯ Inicio"
       title="BIT ACADEMY"
       actions={
         <button type="button" className="btn-courses text-xs sm:text-sm" onClick={join}>
@@ -250,7 +250,7 @@ export default function StudentHome() {
             >
               <div className="access-icon-box !w-10 !h-10 shrink-0">🏆</div>
               <div>
-                <div className="text-[11px] text-[#8ca5c9] font-semibold">Leaderboard</div>
+                <div className="text-[11px] text-[#8ca5c9] font-semibold">Clasificación</div>
                 <div className="text-lg font-extrabold text-[#ffbe0b]">#{myRankPos}</div>
               </div>
             </button>
@@ -262,7 +262,7 @@ export default function StudentHome() {
             >
               <div className="access-icon-box !w-10 !h-10 shrink-0">✅</div>
               <div>
-                <div className="text-[11px] text-[#8ca5c9] font-semibold">Quizzes</div>
+                <div className="text-[11px] text-[#8ca5c9] font-semibold">Cuestionarios</div>
                 <div className="text-lg font-extrabold text-[#00e676]">
                   {attemptedTopicIds.length}
                 </div>
@@ -275,7 +275,7 @@ export default function StudentHome() {
             <div className="card-glow mb-2">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <b className="text-lg flex items-center gap-2 text-white">
-                  👑 Leaderboard · Ranking General
+                  👑 Clasificación · Ranking General
                 </b>
                 <button
                   type="button"
