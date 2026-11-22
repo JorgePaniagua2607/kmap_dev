@@ -112,12 +112,14 @@ export default function StudentSecurityGuard({ active }) {
       }
     };
 
-    const onBlur = () => {
-      // Al abrir herramientas de recorte (Win+Shift+S, Lightshot, etc.) o cambiar de ventana
+    const onBlur = (e) => {
+      // Solo reaccionar cuando la VENTANA completa pierde el foco (NO al desenfocar botones/inputs al cambiar de página)
+      if (e.target !== window) return;
       showBlackout(0);
     };
 
-    const onFocus = () => {
+    const onFocus = (e) => {
+      if (e.target !== window) return;
       if (!document.hidden) hideBlackout();
     };
 
@@ -146,11 +148,11 @@ export default function StudentSecurityGuard({ active }) {
     document.addEventListener('selectstart', onSelectStart, true);
     window.addEventListener('keydown', onKeyDown, true);
     window.addEventListener('keyup', onKeyUp, true);
-    window.addEventListener('blur', onBlur, true);
-    window.addEventListener('focus', onFocus, true);
-    document.addEventListener('visibilitychange', onVisibilityChange, true);
-    window.addEventListener('beforeprint', onBeforePrint, true);
-    window.addEventListener('afterprint', onAfterPrint, true);
+    window.addEventListener('blur', onBlur, false);
+    window.addEventListener('focus', onFocus, false);
+    document.addEventListener('visibilitychange', onVisibilityChange, false);
+    window.addEventListener('beforeprint', onBeforePrint, false);
+    window.addEventListener('afterprint', onAfterPrint, false);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -164,11 +166,11 @@ export default function StudentSecurityGuard({ active }) {
       document.removeEventListener('selectstart', onSelectStart, true);
       window.removeEventListener('keydown', onKeyDown, true);
       window.removeEventListener('keyup', onKeyUp, true);
-      window.removeEventListener('blur', onBlur, true);
-      window.removeEventListener('focus', onFocus, true);
-      document.removeEventListener('visibilitychange', onVisibilityChange, true);
-      window.removeEventListener('beforeprint', onBeforePrint, true);
-      window.removeEventListener('afterprint', onAfterPrint, true);
+      window.removeEventListener('blur', onBlur, false);
+      window.removeEventListener('focus', onFocus, false);
+      document.removeEventListener('visibilitychange', onVisibilityChange, false);
+      window.removeEventListener('beforeprint', onBeforePrint, false);
+      window.removeEventListener('afterprint', onAfterPrint, false);
     };
   }, [active]);
 
