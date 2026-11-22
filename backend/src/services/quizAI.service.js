@@ -253,14 +253,16 @@ async function callGemini({ prompt, pdfs, hasExtractedText = false }) {
   return { data: safeParseJson(raw), model: usedModel };
 }
 
+function hasGeminiKey() {
+  return Boolean(env.AI_MODE === 'gemini' && env.AI_API_KEY && !/^tu_api_key/i.test(env.AI_API_KEY));
+}
+
 /**
  * Genera un quiz REAL con un modelo de IA (Gemini) leyendo los archivos que subió el docente.
  * No existe respaldo con plantillas: si la IA no está configurada o falla, se devuelve un error claro.
  */
 async function generateQuizWithLLM({ topicTitle, topicDescription, materials = [], numQuestions = 5, difficulty = 60 }) {
-  const hasKey =
-    env.AI_MODE === 'gemini' && env.AI_API_KEY && !/^tu_api_key/i.test(env.AI_API_KEY);
-  if (!hasKey) {
+  if (!hasGeminiKey()) {
     throw new AppError(
       'La IA no está configurada. En backend/.env define AI_MODE="gemini" y AI_API_KEY con tu clave de Google AI Studio (https://aistudio.google.com/apikey) y reinicia el backend.',
       503
@@ -325,4 +327,4 @@ async function generateQuizWithLLM({ topicTitle, topicDescription, materials = [
   };
 }
 
-module.exports = { generateQuizWithLLM, readMaterials, extractPdfText };
+module.exports = { generateQuizWithLLM, readMaterials, extractPdfText, callGemini, hasGeminiKey };

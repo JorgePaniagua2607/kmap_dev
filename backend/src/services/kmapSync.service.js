@@ -1098,14 +1098,25 @@ const kmapSyncService = {
     }));
   },
 
-  async getGraphRecommendation({ userId, subjectId, topicId, score }) {
-    const state = await readStateFromMySQL();
+  async getGraphRecommendation({ userId, subjectId, topicId, score, answers = [], graph = null }) {
+    let state = await readStateFromMySQL();
+    const hasTopicInDb = (state.topics || []).some((t) => t.id === topicId && t.subjectId === subjectId);
+    if (!hasTopicInDb && graph && Array.isArray(graph.topics)) {
+      state = {
+        subjects: Array.isArray(graph.subjects) ? graph.subjects : [],
+        topics: graph.topics,
+        edges: Array.isArray(graph.edges) ? graph.edges : [],
+        questions: Array.isArray(graph.questions) ? graph.questions : [],
+        attempts: Array.isArray(graph.attempts) ? graph.attempts : [],
+      };
+    }
     return aiService.generateGraphRecommendation({
       state,
       userId,
       subjectId,
       topicId,
       score,
+      answers,
     });
   },
 };
