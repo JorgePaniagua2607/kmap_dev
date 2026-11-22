@@ -1,0 +1,73 @@
+/* ==========================================================================
+   BIT ACADEMY - Login Page Styles
+   Componente: front/src/pages/Login.jsx
+   ========================================================================== */
+
+.login-page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+.login-content-grid {
+  width: 100%;
+  max-width: 1060px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+/* Columna Izquierda: Mascota Robot */
+.login-mascot-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+}
+
+.login-mascot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  background: rgba(6, 22, 48, 0.7);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(0, 210, 255, 0.1);
+  transition: all 0.25s ease;
+}
+
+/* Columna Derecha: Tarjeta Formulario */
+.login-form-column {
+  width: 100%;
+  max-width: 440px;
+  flex-shrink: 0;
+}
+
+/* Responsive para tablets y móviles */
+@media (max-width: 860px) {
+  .login-content-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .login-mascot-column {
+    width: 100%;
+  }
+
+  .login-form-column {
+    max-width: 420px;
+  }
+}

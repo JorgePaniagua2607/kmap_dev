@@ -7,6 +7,7 @@ import { info } from '../alerts.js';
 import Page from '../components/Page.jsx';
 import KnowledgeGraph, { Legend } from '../components/KnowledgeGraph.jsx';
 import { Empty } from '../components/ui.jsx';
+import './StudentSubject.css';
 
 export default function StudentSubject() {
   const { id } = useParams();
@@ -75,7 +76,7 @@ export default function StudentSubject() {
   return (
     <Page
       crumb={`Mis Materias › ${s.name}`}
-      backTo="/"
+      backTo="/panel"
       icon={s.icon}
       title={s.name}
       subtitle="Explora el grafo de conocimiento y avanza por los temas."

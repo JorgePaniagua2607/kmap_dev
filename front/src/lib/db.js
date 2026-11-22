@@ -300,11 +300,11 @@ function seed() {
 
   // 2) Temas de Programación
   const prgTopics = [
-    ['p-var', 'Variables', 100, 180, 'Tipos de datos primitivos, declaración de variables y operadores.', '📦'],
-    ['p-con', 'Condicionales', 280, 100, 'Estructuras selectivas if, else, switch y lógica booleana.', '🔀'],
-    ['p-cic', 'Ciclos', 280, 260, 'Bucles for, while y do-while para iteración controlada.', '🔄'],
-    ['p-fnc', 'Funciones', 480, 180, 'Modularización, parámetros, retorno y alcance de variables.', '⚡'],
-    ['p-arr', 'Arreglos', 660, 180, 'Listas, vectores, recorrido y métodos de transformación.', '📚'],
+    ['p-var', 'Variables', 100, 190, 'Tipos de datos primitivos, declaración de variables y operadores.', '📦'],
+    ['p-con', 'Condicionales', 340, 110, 'Estructuras selectivas if, else, switch y lógica booleana.', '🔀'],
+    ['p-cic', 'Ciclos', 340, 270, 'Bucles for, while y do-while para iteración controlada.', '🔄'],
+    ['p-fnc', 'Funciones', 590, 190, 'Modularización, parámetros, retorno y alcance de variables.', '⚡'],
+    ['p-arr', 'Arreglos', 840, 190, 'Listas, vectores, recorrido y métodos de transformación.', '📚'],
   ];
   prgTopics.forEach(([id, name, x, y, desc, icon]) =>
     d.topics.push({
@@ -496,13 +496,6 @@ export function update(fn) {
   state = next;
   try {
     localStorage.setItem(KEY, JSON.stringify(next));
-  } catch {}
-  emit();
-}
-export function resetDb() {
-  state = seed();
-  try {
-    localStorage.setItem(KEY, JSON.stringify(state));
   } catch {}
   emit();
 }

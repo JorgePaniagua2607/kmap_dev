@@ -5,18 +5,12 @@ import { useDb } from '../lib/db.js';
 import { topicsOf } from '../lib/logic.js';
 import { info } from '../alerts.js';
 import UserMenu from './UserMenu.jsx';
+import './Page.css';
 
 export default function Page({ title, subtitle, crumb, backTo, icon, actions, children }) {
   const { user } = useAuth();
   const db = useDb();
   const nav = useNavigate();
-
-  const showNotifs = () => {
-    info(
-      'Notificaciones (3)',
-      '<div class="text-left text-sm space-y-2 text-cyan-100"><p>1. 🚀 <b>Nueva tarea en Programación:</b> Revisa el grafo de conocimiento.</p><p>2. ⭐ <b>Recompensa de XP desbloqueada:</b> Has subido tu progreso en BIT ACADEMY.</p><p>3. 🏆 <b>Calificación de Quiz publicada:</b> Revisa tu posición en el Leaderboard.</p></div>'
-    );
-  };
 
   const handleQuickQuiz = () => {
     if (user?.role === 'estudiante') {
@@ -36,13 +30,13 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
 
   const handleViewCourses = () => {
     if (user?.role === 'estudiante') {
-      nav('/?vista=materias');
+      nav('/panel?vista=materias');
     } else {
-      nav('/');
+      nav('/panel');
     }
   };
 
-  const crumbParts = crumb ? crumb.split(/›|❯/).map((c) => c.trim()) : ['Academy', 'Inicio'];
+  const crumbParts = crumb ? crumb.split(/›|❯/).map((c) => c.trim()) : ['Academia', 'Inicio'];
 
   return (
     <motion.div
@@ -51,16 +45,11 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
       transition={{ duration: 0.25 }}
       className="flex flex-col flex-1 w-full"
     >
-      {/* Top Header Bar (BIT ACADEMY aesthetic from univalle_bot) */}
+      {/* Top Header Bar (Persistente / Sticky con estética BIT ACADEMY) */}
       <header className="top-header">
         {/* Left Breadcrumbs & Quick Actions Pill Card */}
         <div className="header-breadcrumbs-card">
-          <div className="header-academy-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
-            </svg>
-          </div>
-          <div className="header-title-box">
+          <div className="header-brand-content">
             <div className="breadcrumbs">
               {crumbParts.map((part, idx) => (
                 <span key={idx} className="inline-flex items-center gap-1.5">
@@ -69,8 +58,22 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
                 </span>
               ))}
             </div>
-            <h1 className="header-main-title">{title || 'BIT ACADEMY'}</h1>
+            <div
+              className="header-logo-box cursor-pointer"
+              onClick={() => nav('/panel')}
+              title="BIT ACADEMY · Ir al Inicio"
+            >
+              <img
+                src="/assets/images/logo.svg"
+                alt="BIT ACADEMY"
+                className="header-card-logo"
+              />
+              {title && title !== 'BIT ACADEMY' && (
+                <span className="header-title-addon">· {title}</span>
+              )}
+            </div>
           </div>
+
           <div className="header-actions">
             {actions}
             {user?.role === 'estudiante' && (
@@ -94,34 +97,6 @@ export default function Page({ title, subtitle, crumb, backTo, icon, actions, ch
 
         {/* Right User & Utility Controls */}
         <div className="header-user-controls">
-          <button
-            className="control-btn notification-btn"
-            title="Notificaciones"
-            type="button"
-            onClick={showNotifs}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-            </svg>
-            <span className="badge-count">3</span>
-          </button>
-
-          <button
-            className="control-btn"
-            title="Tema Neón"
-            type="button"
-            onClick={() =>
-              info(
-                'Modo Cyber Neón Activo',
-                'El tema oscuro neón de <b>BIT ACADEMY</b> está optimizado para visualización de grafos.'
-              )
-            }
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9.37 5.51A7.35 7.35 0 0 0 9.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27A9.03 9.03 0 0 1 12 21a9 9 0 0 1-9-9c0-4.63 3.5-8.44 6.37-6.49z" />
-            </svg>
-          </button>
-
           <button
             className="control-btn"
             title="Configuración de Perfil"
