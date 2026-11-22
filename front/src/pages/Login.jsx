@@ -5,6 +5,7 @@ import { useAuth } from '../auth.jsx';
 import { fail, info } from '../alerts.js';
 import { Tabs } from '../components/ui.jsx';
 import RobotMascot from '../components/RobotMascot.jsx';
+import { CursorFX, BitLogo, Line } from '../components/FX.jsx';
 import './Login.css';
 
 export default function Login() {
@@ -51,24 +52,29 @@ export default function Login() {
     }
   };
 
+  const badgeText = passFocus
+    ? '🙈 ¡No miro tu contraseña!'
+    : '🤖 ¡Hola! Soy tu tutor interactivo KMAP';
+
   return (
     <div className="login-page-wrapper">
+      {/* Cursor con estela, anillo, luz y robotito que lo sigue */}
+      <CursorFX />
+
       <div className="login-content-grid">
-        {/* Lado izquierdo: Mascota Robot más grande e interactiva */}
+        {/* Lado izquierdo: mascota */}
         <div className="login-mascot-column">
-          <RobotMascot
-            mode="inline"
-            size="xl"
-            coveringEyes={passFocus}
-          />
+          <div className="login-mascot-float">
+            <RobotMascot mode="inline" size="xl" coveringEyes={passFocus} />
+          </div>
           <div className="login-mascot-badge mt-4">
             <span className="text-xs font-bold text-cyan-200 tracking-wide">
-              {passFocus ? '🙈 ¡No miro tu contraseña!' : '🤖 ¡Hola! Soy tu tutor interactivo KMAP'}
+              <Line text={badgeText} kind="" />
             </span>
           </div>
         </div>
 
-        {/* Lado derecho: Tarjeta de formulario de Login */}
+        {/* Lado derecho: tarjeta de formulario */}
         <div className="login-form-column">
           <motion.form
             initial={{ opacity: 0, scale: 0.96 }}
@@ -77,13 +83,8 @@ export default function Login() {
             className="card-glow w-full flex flex-col gap-4 p-7"
           >
             <div className="flex items-center justify-between gap-3">
-              <img
-                src="/assets/images/logo.svg"
-                alt="BIT ACADEMY Logo"
-                className="h-12 w-auto drop-shadow-[0_0_12px_rgba(0,210,255,0.45)] cursor-pointer hover:scale-105 transition-transform"
-                onClick={() => nav('/')}
-                title="Volver a la portada"
-              />
+              {/* Logo animado: se escribe solo y cada letra salta al pasar el cursor */}
+              <BitLogo onClick={() => nav('/')} title="Volver a la portada" />
               <button
                 type="button"
                 onClick={() => nav('/')}
@@ -93,6 +94,10 @@ export default function Login() {
                 ← Volver al inicio
               </button>
             </div>
+
+            <h1 className="login-title">
+              <Line text={reg ? 'Crea tu cuenta' : '¡Hola de nuevo!'} kind="l-wave" />
+            </h1>
 
             <p className="text-[#8ca5c9] text-sm">
               Explora tu grafo de conocimiento, realiza quizzes adaptativos y descubre tu ruta de
