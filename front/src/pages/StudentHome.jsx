@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { update, useDb } from '../lib/db.js';
 import { best, progress, ranking, topicsOf } from '../lib/logic.js';
-import { fail, info, ok } from '../alerts.js'; // Quitamos askText
+import { fail, ok } from '../alerts.js'; // Quitamos askText e info
 import Page from '../components/Page.jsx';
 import { Avatar, Empty, ProgressBar } from '../components/ui.jsx';
 import JoinSubjectModal from '../components/JoinSubjectModal.jsx'; // Importamos el nuevo modal
@@ -161,14 +161,6 @@ export default function StudentHome() {
       d.enrollments.push({ userId: user.id, subjectId: s.id });
     });
     ok('¡Materia agregada!', `Te matriculaste en ${s.name}`);
-  };
-
-  const handleRenewCard = (e) => {
-    e.preventDefault();
-    info(
-      'Tarjeta de Acceso · BIT ACADEMY',
-      'Tu suscripción actual es válida hasta el <b>30/12/2026</b>. La opción de renovación anticipada está habilitada.'
-    );
   };
 
   return (
@@ -401,45 +393,6 @@ export default function StudentHome() {
             </div>
           )}
         </section>
-
-        <aside className="widgets-column">
-          <div className="widget-card access-card-widget">
-            <svg className="card-graphic-bg" viewBox="0 0 120 80" fill="none">
-              <rect x="5" y="5" width="110" height="70" rx="8" stroke="#00d2ff" strokeWidth="2" opacity="0.7" />
-              <rect x="15" y="20" width="25" height="20" rx="4" fill="#00d2ff" opacity="0.5" />
-              <line x1="15" y1="55" x2="65" y2="55" stroke="#00d2ff" strokeWidth="3" opacity="0.7" />
-              <line x1="15" y1="62" x2="45" y2="62" stroke="#00d2ff" strokeWidth="2" opacity="0.5" />
-              <circle cx="95" cy="55" r="10" stroke="#00d2ff" strokeWidth="2" opacity="0.6" />
-            </svg>
-
-            <div className="access-header-row">
-              <div className="access-title-group">
-                <div className="access-icon-box">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-6 10H6v-2h8v2zm4-4H6V8h12v2z" />
-                  </svg>
-                </div>
-                <h3 className="access-title">Tarjeta de acceso</h3>
-              </div>
-              <a href="#renew" onClick={handleRenewCard} className="access-renew-link">
-                <span>Renovar</span>
-                <span>❯</span>
-              </a>
-            </div>
-
-            <div className="access-info-row">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z" />
-              </svg>
-              <span>2026 - 2 &nbsp;|&nbsp; Acceso activo a la plataforma</span>
-            </div>
-
-            <div className="access-validity-row">
-              <span className="status-dot-green" />
-              <span>Válido hasta: 30/12/2026</span>
-            </div>
-          </div>
-        </aside>
       </div>
     </Page>
   );
